@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="visible"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -17,12 +17,6 @@
 
     <include layout="@layout/content_main" />
 
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@+id/listView"
-        app:layout_anchorGravity="center" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -38,7 +32,6 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:text="Информация о пользователе"
@@ -47,4 +40,3 @@
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
