@@ -1,26 +1,29 @@
 package com.example.android;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    BottomNavigationView bnv;
+    ListView list;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ListView list = (ListView) findViewById(R.id.listView);
+        list = (ListView) findViewById(R.id.listView);
+        textView = (TextView) findViewById(R.id.textView2);
+        bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         String[] val = new String[50];
 
         for(int i=0;i<val.length;++i){
@@ -30,7 +33,34 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, val);
         list.setAdapter(adapter);
+        bnv.setOnNavigationItemSelectedListener(getBottomNavigationListener());
     }
+    @NonNull
+    private BottomNavigationView.OnNavigationItemSelectedListener getBottomNavigationListener(){
+        return new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch(menuItem.getItemId()){
+                    case R.id.action_profile:
+                        list.setVisibility(View.GONE);
+                        textView.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.action_posts:
+                        list.setVisibility(View.VISIBLE);
+                        textView.setVisibility(View.GONE);
+                        break;
+                }
+                return true;
+
+            }
+        };
+    }
+
+//    public void change(){
+//        Intent intent = new Intent(this, ActivityTwo.class);
+//        startActivity(intent);
+//
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
