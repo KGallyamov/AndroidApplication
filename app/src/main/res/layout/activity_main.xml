@@ -40,10 +40,11 @@
         android:id="@+id/textView2"
         android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:text="Информация о пользователе"
+        android:layout_height="wrap_content"
+        android:text="Иван Иванов"
         android:textSize="50sp"
         android:color="@color/design_default_color_primary_dark"/>
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
