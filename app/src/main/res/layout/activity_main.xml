@@ -30,10 +30,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/colorPrimary"
-        app:itemIconSize="40dp"
+        android:background="@color/bottom_navigation_background"
+        app:itemIconSize="30dp"
         app:itemIconTint="@drawable/nav_menu_color"
-        app:itemTextColor="@drawable/nav_menu_color"
+        app:itemTextColor="@color/bottom_navigation_foreground"
         app:menu="@menu/bottom_navigation_menu" />
 
     <TextView
@@ -41,11 +41,9 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Иван Иванов"
+        android:text="@string/Username"
         android:textSize="50sp"
         android:color="@color/design_default_color_primary_dark"/>
-
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

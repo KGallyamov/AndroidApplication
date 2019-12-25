@@ -22,6 +22,7 @@ public class ActivityTwo extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
+
         text = (TextView) findViewById(R.id.textView2);
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bnv.setOnNavigationItemSelectedListener(getBottomNavigationListener());
@@ -37,11 +38,11 @@ public class ActivityTwo extends AppCompatActivity{
                         finish();
                         break;
                     case R.id.action_1:
+                        finish();
                         break;
                     default:
                         break;
                 }
-
                 return true;
             }
         };
