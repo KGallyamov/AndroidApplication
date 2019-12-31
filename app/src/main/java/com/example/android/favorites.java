@@ -1,11 +1,11 @@
 package com.example.android;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,24 +13,26 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+public class favorites extends AppCompatActivity {
     BottomNavigationView bnv;
     ListView list;
     TextView textView;
-    int[] liked = {11, 15, 16, 20, 45};//ArrayList
+    int[] liked = {11, 15, 16, 20, 45};
     Activity getActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        list = (ListView) findViewById(R.id.listView);
+        list = (ListView) findViewById(R.id.favorites_list);
         textView = (TextView) findViewById(R.id.textView2);
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         String[] val = new String[50];
 
         for(int i=0;i<val.length;++i){
-            val[i] = "post " + (i+1);
+            val[i] = "post " + liked[i];
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, val);
         list.setAdapter(adapter);
@@ -58,12 +60,10 @@ public class MainActivity extends AppCompatActivity {
                 switch(menuItem.getItemId()){
                     case R.id.action_profile:
                         Intent intent1 = new Intent(getActivity, ActivityTwo.class);
-                        intent1.putExtra("liked", liked);
                         startActivity(intent1);
                         break;
                     case R.id.action_posts:
-                        Intent intent2 = new Intent(getActivity, favorites.class);
-                        intent2.putExtra("liked", liked);
+                        Intent intent2 = new Intent(getActivity, MainActivity.class);
                         startActivity(intent2);
                         break;
                 }

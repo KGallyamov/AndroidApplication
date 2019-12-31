@@ -1,5 +1,6 @@
 package com.example.android;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -15,6 +16,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class ActivityTwo extends AppCompatActivity{
     TextView text;
+    int[] liked;
+    Activity getActivity = this;
     BottomNavigationView bnv;
 
 
@@ -22,7 +25,8 @@ public class ActivityTwo extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
-
+        Intent intent = getIntent();
+        liked = intent.getIntArrayExtra("liked");
         text = (TextView) findViewById(R.id.textView2);
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bnv.setOnNavigationItemSelectedListener(getBottomNavigationListener());
@@ -38,7 +42,9 @@ public class ActivityTwo extends AppCompatActivity{
                         finish();
                         break;
                     case R.id.action_1:
-                        finish();
+                        Intent intent = new Intent(getActivity, favorites.class);
+                        intent.putExtra("liked", liked);
+                        startActivity(intent);
                         break;
                     default:
                         break;
