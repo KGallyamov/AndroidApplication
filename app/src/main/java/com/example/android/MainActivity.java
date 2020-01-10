@@ -15,9 +15,9 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnv;
-    ListView list;
+    ListView list, liked;
     TextView textView;
-    int[] liked = {11, 15, 16, 20, 45};//ArrayList
+    int[] like = {11, 15, 16, 20, 45};//ArrayList
     Activity getActivity = this;
 
     @Override
@@ -25,15 +25,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         list = (ListView) findViewById(R.id.listView);
+        liked = (ListView) findViewById(R.id.liked);
         textView = (TextView) findViewById(R.id.textView2);
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         String[] val = new String[50];
-
+        String[] l = new String[like.length];
         for(int i=0;i<val.length;++i){
             val[i] = "post " + (i+1);
         }
+        for(int i=0;i<l.length;i++){
+            l[i] = "post " + like[i];
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, val);
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, l);
         list.setAdapter(adapter);
+        liked.setAdapter(adapter1);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -57,15 +63,19 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch(menuItem.getItemId()){
                     case R.id.action_profile:
-                        Intent intent1 = new Intent(getActivity, ActivityTwo.class);
-                        intent1.putExtra("liked", liked);
-                        startActivity(intent1);
+                        textView.setVisibility(View.VISIBLE);
+                        list.setVisibility(View.INVISIBLE);
+                        liked.setVisibility(View.INVISIBLE);
                         break;
                     case R.id.action_posts:
-                        Intent intent2 = new Intent(getActivity, favorites.class);
-                        intent2.putExtra("liked", liked);
-                        startActivity(intent2);
+                        textView.setVisibility(View.INVISIBLE);
+                        list.setVisibility(View.VISIBLE);
+                        liked.setVisibility(View.INVISIBLE);
                         break;
+                    case R.id.action_1:
+                        textView.setVisibility(View.INVISIBLE);
+                        list.setVisibility(View.INVISIBLE);
+                        liked.setVisibility(View.VISIBLE);
                 }
                 return true;
             }
