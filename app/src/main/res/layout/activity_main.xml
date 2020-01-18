@@ -17,19 +17,16 @@
 
     <include layout="@layout/content_main" />
 
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@+id/listView"
-        app:layout_anchorGravity="center" />
 
-    <ListView
-        android:id="@+id/liked"
-        android:visibility="gone"
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_anchorGravity="center|top" />
+        android:layout_height="match_parent"
+        android:id="@+id/recyclerView"
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -52,11 +49,4 @@
         android:textSize="50sp"
         android:color="@color/design_default_color_primary_dark"/>
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:srcCompat="@tools:sample/avatars" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
