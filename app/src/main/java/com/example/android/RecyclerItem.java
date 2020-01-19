@@ -11,8 +11,6 @@ public class RecyclerItem {
     private Bitmap image;
 
 
-    //TODO: Image
-
     public RecyclerItem(String title, String description, Bitmap image) {
         this.title = title;
         this.description = description;
