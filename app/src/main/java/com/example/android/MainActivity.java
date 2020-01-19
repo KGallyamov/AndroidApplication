@@ -3,6 +3,9 @@ package com.example.android;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.storage.FirebaseStorage;
@@ -14,9 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -43,15 +43,23 @@ public class MainActivity extends AppCompatActivity {
 
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         listItems = new ArrayList<>();
 
         for(int i = 0; i < 10; i++){
-            RecyclerItem item = new RecyclerItem("Item " + (i + 1), "Description of item " + (i + 1));
+
+
+            Bitmap bitmap = Bitmap.createBitmap(100, 100,
+                    Bitmap.Config.ARGB_8888);
+            bitmap.eraseColor(Color.BLUE);
+            RecyclerItem item = new RecyclerItem("Item " + (i + 1), "Description of item " + (i + 1), bitmap);
+
+
             listItems.add(item);
         }
+
 
         //Adapter
         adapter = new MyAdapter(listItems, this);
@@ -91,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.action_1:
                         textView.setVisibility(View.INVISIBLE);
+                        recyclerView.setVisibility(View.INVISIBLE);
                 }
                 return true;
             }

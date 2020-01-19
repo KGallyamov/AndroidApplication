@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         holder.txtTitle.setText(itemList.getTitle());
         holder.txtDescription.setText(itemList.getDescription());
+
+        holder.picture.setImageBitmap(itemList.getImage());
+
         holder.txtOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,6 +52,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.mnu_item_save:
+                                //сохранить в понравившееся
                                 Toast.makeText(mContext, "Saved", Toast.LENGTH_LONG).show();
                                 break;
                             case R.id.mnu_item_delete:
@@ -78,6 +83,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         public TextView txtTitle;
         public TextView txtDescription;
         public TextView txtOption;
+        public ImageView picture;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -85,6 +91,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             txtTitle = itemView.findViewById(R.id.txtTitle);
             txtDescription = itemView.findViewById(R.id.txtDescription);
             txtOption = itemView.findViewById(R.id.txtOptionDigit);
+            picture = itemView.findViewById(R.id.picture);
 
 
         }
