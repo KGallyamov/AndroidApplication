@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
     <color name="bottom_navigation_background">#1328DD</color>
     <color name="bottom_navigation_foreground">#F8F8FA</color>
+    <color name="grey_50">#4B5F5C5C</color>
+    <color name="blue_800">#1328DD</color>
 </resources>

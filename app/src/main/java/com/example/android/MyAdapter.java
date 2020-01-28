@@ -13,6 +13,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
@@ -40,6 +42,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         holder.txtDescription.setText(itemList.getDescription());
 
         holder.picture.setImageBitmap(itemList.getImage());
+        //Picasso.get().load(itemList.getImage()).into(holder.picture);
+
 
         holder.txtOption.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,13 +56,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.mnu_item_save:
+
                                 //сохранить в понравившееся
-                                Toast.makeText(mContext, "Saved", Toast.LENGTH_LONG).show();
+                                Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.mnu_item_delete:
                                 listItems.remove((position));
                                 notifyDataSetChanged();
-                                Toast.makeText(mContext, "Deleted", Toast.LENGTH_LONG).show();
+                                Toast.makeText(mContext, "Deleted", Toast.LENGTH_SHORT).show();
                                 break;
                             default:
                                 break;

@@ -5,20 +5,22 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.Image;
+import android.nfc.Tag;
 import android.os.Bundle;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +28,13 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnv;
     SharedPreferences sPref;
     TextView textView;
-    private RecyclerView recyclerView;
-    private MyAdapter adapter;
-    private List<RecyclerItem> listItems;
+    TextView txtOption;
+    String toRemove = "news_feed";
+    NewsFeed nf = new NewsFeed();
+    User u = new User();
+    Add_post add = new Add_post();
+    FragmentTransaction fragmentTransaction;
+    private FirebaseAuth mAuth;
     final String SAVED = "favorite_posts";
     Activity getActivity = this;
 
@@ -36,71 +42,45 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        textView = (TextView) findViewById(R.id.textView2);
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        txtOption = (TextView) findViewById(R.id.txtOptionDigit);
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.frgmCont, nf);
+        fragmentTransaction.commit();
 
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        listItems = new ArrayList<>();
-
-        for(int i = 0; i < 10; i++){
-
-
-            Bitmap bitmap = Bitmap.createBitmap(100, 100,
-                    Bitmap.Config.ARGB_8888);
-            bitmap.eraseColor(Color.BLUE);
-            RecyclerItem item = new RecyclerItem("Item " + (i + 1), "Description of item " + (i + 1), bitmap);
-
-
-            listItems.add(item);
-        }
-
-
-        //Adapter
-        adapter = new MyAdapter(listItems, this);
-        recyclerView.setAdapter(adapter);
-
-
-
-        saveFavorite();
         bnv.setOnNavigationItemSelectedListener(getBottomNavigationListener());
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        saveFavorite();
-    }
-    void saveFavorite() {
-        sPref = getPreferences(MODE_PRIVATE);
-        Editor ed = sPref.edit();
-        String s = "";
 
-        ed.putString(SAVED, s);
-        ed.apply();
-    }
     @NonNull
     private BottomNavigationView.OnNavigationItemSelectedListener getBottomNavigationListener(){
         return new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                if(toRemove == "user"){
+                    fragmentTransaction.remove(u);
+                }else if(toRemove == "add_post"){
+                    fragmentTransaction.remove(add);
+                }else if(toRemove == "news_feed"){
+                    fragmentTransaction.remove(nf);
+                }
                 switch(menuItem.getItemId()){
                     case R.id.action_profile:
-                        textView.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.INVISIBLE);
+                        fragmentTransaction.add(R.id.frgmCont, u);
+                        toRemove = "user";
+                        break;
+                    case R.id.action_add:
+                        fragmentTransaction.add(R.id.frgmCont, add);
+                        toRemove = "add_post";
                         break;
                     case R.id.action_posts:
-                        textView.setVisibility(View.INVISIBLE);
-                        recyclerView.setVisibility(View.VISIBLE);
+                        fragmentTransaction.add(R.id.frgmCont, nf);
+//                        TextView txt = (TextView) findViewById(R.id.textView2);
+//                        txt.setText("Апчхи");
+                        toRemove = "news_feed";
                         break;
-                    case R.id.action_1:
-                        textView.setVisibility(View.INVISIBLE);
-                        recyclerView.setVisibility(View.INVISIBLE);
                 }
+                fragmentTransaction.commit();
                 return true;
             }
         };
