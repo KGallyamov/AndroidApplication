@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     String toRemove = "news_feed";
     NewsFeed nf = new NewsFeed();
     User u = new User();
+    Favorite liked = new Favorite();
     Add_post add = new Add_post();
     FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
@@ -57,12 +58,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                if(toRemove == "user"){
-                    fragmentTransaction.remove(u);
-                }else if(toRemove == "add_post"){
-                    fragmentTransaction.remove(add);
-                }else if(toRemove == "news_feed"){
-                    fragmentTransaction.remove(nf);
+                switch(toRemove){
+                    case "user":
+                        fragmentTransaction.remove(u);
+                        break;
+                    case "add_post":
+                        fragmentTransaction.remove(add);
+                    case "news_feed":
+                        fragmentTransaction.remove(nf);
+                    case "liked":
+                        fragmentTransaction.remove(liked);
                 }
                 switch(menuItem.getItemId()){
                     case R.id.action_profile:
@@ -78,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
 //                        TextView txt = (TextView) findViewById(R.id.textView2);
 //                        txt.setText("Апчхи");
                         toRemove = "news_feed";
+                        break;
+                    case R.id.action_1:
+                        fragmentTransaction.add(R.id.frgmCont, liked);
+                        toRemove = "liked";
                         break;
                 }
                 fragmentTransaction.commit();

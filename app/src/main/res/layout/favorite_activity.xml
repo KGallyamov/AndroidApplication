@@ -4,12 +4,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewsFeed">
+    tools:context=".Favorite">
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerView">
+        android:id="@+id/liked">
     </androidx.recyclerview.widget.RecyclerView>
 
 

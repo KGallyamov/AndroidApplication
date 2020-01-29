@@ -12,7 +12,7 @@
     <item
         android:id="@+id/action_add"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/baseline_create_black_18dp"
         android:title=""
         app:showAsAction="ifRoom"
         />

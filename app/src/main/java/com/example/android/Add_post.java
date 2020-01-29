@@ -16,4 +16,5 @@ public class Add_post extends Fragment {
         return inflater.inflate(R.layout.add_post_activity, null);
 
     }
+
 }

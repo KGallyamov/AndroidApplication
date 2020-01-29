@@ -9,8 +9,26 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Введите что-нибудь">
+        android:hint="@string/title">
 
     </EditText>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:id="@+id/add_photo">
+
+    </Button>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="184dp"
+        android:hint="@string/description"
+        android:gravity="top">
+
+    </EditText>
+
+
 
 </LinearLayout>
