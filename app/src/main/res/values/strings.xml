@@ -1,4 +1,25 @@
 <resources>
-    <string name="app_name">Android</string>
+    <string name="app_name">SocNet</string>
     <string name="action_settings">Settings</string>
+    <string name="Username">Иван Иванов</string>
+    <string name="News">News</string>
+    <string name="favorite">Favorites</string>
+    <string name="profile">Profile</string>
+    <string name="description">Описание</string>
+    <string name="title">Заголовок</string>
+    <string name="add_photo">Add photo</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+
+    <string name="delete_from_favorite">Delete from favorite</string>
+    <string name="post">Post</string>
+    <string name="e_mail_adress">e-mail adress</string>
+    <string name="phone_number">Phone number</string>
+
+    <string-array name="saved">
+        <item>2</item>
+        <item>4</item>
+        <item>6</item>
+        <item>1</item>
+    </string-array>
 </resources>

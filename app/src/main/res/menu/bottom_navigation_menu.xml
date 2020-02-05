@@ -4,25 +4,35 @@
     <item
         android:id="@+id/action_1"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_foreground"
-        android:title="1"
+        android:icon="@drawable/baseline_turned_in_not_black_24dp"
+        android:title=""
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/action_add"
+        android:enabled="true"
+        android:icon="@drawable/baseline_create_black_18dp"
+        android:title=""
         app:showAsAction="ifRoom"
         />
 
     <item
         android:id="@+id/action_posts"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_foreground"
-        android:title="News"
+        android:checked="true"
+        android:icon="@drawable/baseline_list_black_24dp"
+        android:title=""
         app:showAsAction="ifRoom"
         />
 
     <item
         android:id="@+id/action_profile"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_foreground"
-        android:title="Profile"
+        android:title=""
+        android:icon="@drawable/baseline_account_box_black_24dp"
         app:showAsAction="ifRoom"
         />
+
 
 </menu>
