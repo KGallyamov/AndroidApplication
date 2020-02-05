@@ -11,19 +11,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
-    private List<RecyclerItem> listItems;
+    public List<RecyclerItem> listItems;
     private Context mContext;
+    public String where = "";
 
-    public MyAdapter(List<RecyclerItem> listItems, Context mContext) {
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s) {
         this.listItems = listItems;
         this.mContext = mContext;
+        this.where = s;
     }
 
     @NonNull
@@ -44,21 +54,31 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         holder.picture.setImageBitmap(itemList.getImage());
         //Picasso.get().load(itemList.getImage()).into(holder.picture);
 
-
         holder.txtOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final PopupMenu popupMenu = new PopupMenu(mContext, holder.txtOption);
-                popupMenu.inflate(R.menu.option_menu);
+                if(where.equals("main")){
+                    popupMenu.inflate(R.menu.option_menu);
+                }else {
+                    popupMenu.inflate(R.menu.favorite_option_menu);
+                }
+
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.mnu_item_save:
-                                //сохранить в понравившееся
+                                //TODO:ЗАКИНУТЬ ПОНРАВИВШЕЕСЯ В БД
+
+//                                Information inf = new Information();
+//                                RecyclerItem ri = listItems.get(position);
+//                                inf.writeFile(ri.getTitle());
+
                                 Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.mnu_item_delete:
+                            case R.id.mnu_item_delete_1:
                                 listItems.remove((position));
                                 notifyDataSetChanged();
                                 Toast.makeText(mContext, "Deleted", Toast.LENGTH_SHORT).show();
@@ -98,6 +118,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
 
         }
-
     }
+
+
 }

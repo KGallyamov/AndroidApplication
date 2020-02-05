@@ -37,6 +37,7 @@ public class NewsFeed extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        //СКАЧАТЬ С FIREBASE
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -48,7 +49,7 @@ public class NewsFeed extends Fragment {
             RecyclerItem item = new RecyclerItem("Item " + (i + 1), "Description of item " + (i + 1), bitmap);
             listItems.add(item);
         }
-        adapter = new MyAdapter(listItems, getContext());
+        adapter = new MyAdapter(listItems, getContext(), "main");
         recyclerView.setAdapter(adapter);
 
 

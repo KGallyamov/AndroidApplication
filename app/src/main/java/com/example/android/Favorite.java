@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +32,9 @@ public class Favorite extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        //TODO:СКАЧАТЬ С FIREBASE
+        //Information inf = new Information();
+        //String s = inf.readFile();
 
         int[] liked = new int[]{2,4,6,8,10};
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.liked);
@@ -46,10 +48,8 @@ public class Favorite extends Fragment {
             RecyclerItem item = new RecyclerItem("Item " + i, "Description of item " + i, bitmap);
             listItems.add(item);
         }
-        adapter = new MyAdapter(listItems, getContext());
+        adapter = new MyAdapter(listItems, getContext(), "favorite");
         recyclerView.setAdapter(adapter);
-
-
 
     }
 }

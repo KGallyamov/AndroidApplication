@@ -6,21 +6,24 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.nfc.Tag;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.os.Bundle;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,10 +67,13 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case "add_post":
                         fragmentTransaction.remove(add);
+                        break;
                     case "news_feed":
                         fragmentTransaction.remove(nf);
+                        break;
                     case "liked":
                         fragmentTransaction.remove(liked);
+                        break;
                 }
                 switch(menuItem.getItemId()){
                     case R.id.action_profile:
@@ -80,8 +86,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.action_posts:
                         fragmentTransaction.add(R.id.frgmCont, nf);
-//                        TextView txt = (TextView) findViewById(R.id.textView2);
-//                        txt.setText("Апчхи");
                         toRemove = "news_feed";
                         break;
                     case R.id.action_1:
