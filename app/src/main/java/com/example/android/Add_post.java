@@ -3,6 +3,7 @@ package com.example.android;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,13 +27,16 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.UUID;
 
-public class Add_post extends Fragment {
+public class Add_post extends Fragment implements View.OnClickListener {
+
+    private Button btnChoose, btnUpload, btnRetrieve;
+    private ImageView imageView;
     EditText title;
     EditText description;
     Button photo, post;
-    ImageView imageView;
     private Uri filePath;
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -39,32 +44,38 @@ public class Add_post extends Fragment {
     private final int PICK_IMAGE_REQUEST = 71;
     String t="", d="";
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        title = (EditText) getActivity().findViewById(R.id.title);
-        description = (EditText) getActivity().findViewById(R.id.Description);
-        photo = (Button) getActivity().findViewById(R.id.add_photo);
-        imageView = (ImageView) getActivity().findViewById(R.id.imgView);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.add_post_activity, null);
+        View myView = inflater.inflate(R.layout.add_post_activity, container, false);
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+        btnChoose = (Button) myView.findViewById(R.id.add_photo);
+        btnUpload = (Button) myView.findViewById(R.id.button_send);
+        imageView = (ImageView) myView.findViewById(R.id.imgView);
+
+        btnChoose.setOnClickListener(this);
+        btnUpload.setOnClickListener(this);
+        return myView;
 
     }
 
-    /**
-
-    private void chooseImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onClick(View v){
+        switch (v.getId()){
+            case R.id.add_photo:
+                chooseImage();
+                break;
+            case R.id.button_send:
+                uploadImage();
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == -1
                 && data != null && data.getData() != null )
@@ -74,12 +85,14 @@ public class Add_post extends Fragment {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
                 imageView.setImageBitmap(bitmap);
             }
-            catch (IOException e)
+            catch (Exception e)
             {
+                System.out.println("УПС");
                 e.printStackTrace();
             }
         }
     }
+
     private void uploadImage() {
 
         if(filePath != null)
@@ -94,7 +107,7 @@ public class Add_post extends Fragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
-                            //Toast.makeText(Add_post.class, "Uploaded", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(Add_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -115,6 +128,11 @@ public class Add_post extends Fragment {
         }
     }
 
-**/
+    private void chooseImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
 
 }
