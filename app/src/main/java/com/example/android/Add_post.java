@@ -87,7 +87,6 @@ public class Add_post extends Fragment implements View.OnClickListener {
             }
             catch (Exception e)
             {
-                System.out.println("УПС");
                 e.printStackTrace();
             }
         }
