@@ -33,8 +33,6 @@ public class Favorite extends Fragment {
     public void onStart() {
         super.onStart();
         //TODO:СКАЧАТЬ С FIREBASE
-        //Information inf = new Information();
-        //String s = inf.readFile();
 
         int[] liked = new int[]{2,4,6,8,10};
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.liked);
