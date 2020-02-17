@@ -43,10 +43,8 @@ public class NewsFeed extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         listItems = new ArrayList<>();
         for(int i = 0; i < 10; i++){
-            Bitmap bitmap = Bitmap.createBitmap(100, 100,
-                    Bitmap.Config.ARGB_8888);
-            bitmap.eraseColor(Color.CYAN);
-            RecyclerItem item = new RecyclerItem("Item " + (i + 1), "Description of item " + (i + 1), bitmap);
+            String url = "https://firebasestorage.googleapis.com/v0/b/image-259c9.appspot.com/o/knight.jpg?alt=media&token=178026e5-1d49-4716-8953-7ad1af3088df";
+            RecyclerItem item = new RecyclerItem("Item " + (i + 1), "Description of item " + (i + 1), url);
             listItems.add(item);
         }
         adapter = new MyAdapter(listItems, getContext(), "main");

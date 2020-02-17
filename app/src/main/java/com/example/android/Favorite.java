@@ -33,8 +33,6 @@ public class Favorite extends Fragment {
     public void onStart() {
         super.onStart();
         //TODO:СКАЧАТЬ С FIREBASE
-        //Information inf = new Information();
-        //String s = inf.readFile();
 
         int[] liked = new int[]{2,4,6,8,10};
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.liked);
@@ -42,12 +40,11 @@ public class Favorite extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         listItems = new ArrayList<>();
         for(int i :liked){
-            Bitmap bitmap = Bitmap.createBitmap(100, 100,
-                    Bitmap.Config.ARGB_8888);
-            bitmap.eraseColor(Color.RED);
-            RecyclerItem item = new RecyclerItem("Item " + i, "Description of item " + i, bitmap);
+            String url = "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2F397f6d9b-31d7-4aec-9fd4-426e5fb3c104?alt=media&token=f7d2a505-9831-4d34-8f15-02069bd4a580";
+            RecyclerItem item = new RecyclerItem("Item " + i, "Description of item " + i, url);
             listItems.add(item);
         }
+
         adapter = new MyAdapter(listItems, getContext(), "favorite");
         recyclerView.setAdapter(adapter);
 
