@@ -8,20 +8,20 @@ public class RecyclerItem {
     private String title;
     private String description;
 
-    private Bitmap image;
+    private String image;
 
 
-    public RecyclerItem(String title, String description, Bitmap image) {
+    public RecyclerItem(String title, String description, String image) {
         this.title = title;
         this.description = description;
         this.image = image;
     }
 
-    public Bitmap getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Bitmap image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

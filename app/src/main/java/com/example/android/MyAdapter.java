@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -55,7 +56,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         holder.txtTitle.setText(itemList.getTitle());
         holder.txtDescription.setText(itemList.getDescription());
 
-        holder.picture.setImageBitmap(itemList.getImage());
+        //holder.picture.setImageBitmap(itemList.getImage());
+
+        Glide.with(mContext).load(itemList.getImage()).into(holder.picture);
         //Picasso.get().load(itemList.getImage()).into(holder.picture);
 
         holder.txtOption.setOnClickListener(new View.OnClickListener() {
@@ -80,18 +83,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                                 txtTitle = recyclerItem.getTitle();
                                 Data data = new Data(txtDescription, txtImage, txtTitle);
                                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
                                 databaseReference.child("Favorite").push().setValue(data, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-
+                                        Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                                     }
                                 });
-//                                Information inf = new Information();
-//                                RecyclerItem ri = listItems.get(position);
-//                                inf.writeFile(ri.getTitle());
-
-                                Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.mnu_item_delete:
 
@@ -119,7 +116,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         public String title;
 
         public Data(){
-
         }
 
         public Data(String description, String image, String title){
@@ -127,7 +123,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             this.image = image;
             this.title = title;
         }
-
     }
 
     @Override
@@ -153,6 +148,4 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         }
     }
-
-
 }
