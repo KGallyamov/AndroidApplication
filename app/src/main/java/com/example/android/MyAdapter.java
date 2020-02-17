@@ -15,6 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
@@ -69,8 +73,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.mnu_item_save:
-                                //TODO:ЗАКИНУТЬ ПОНРАВИВШЕЕСЯ В БД
+                                String txtDescription, txtImage, txtTitle;
+                                RecyclerItem recyclerItem = listItems.get(position);
+                                txtDescription = recyclerItem.getDescription();
+                                txtImage = "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2F397f6d9b-31d7-4aec-9fd4-426e5fb3c104?alt=media&token=f7d2a505-9831-4d34-8f15-02069bd4a580";
+                                txtTitle = recyclerItem.getTitle();
+                                Data data = new Data(txtDescription, txtImage, txtTitle);
+                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
+                                databaseReference.child("Favorite").push().setValue(data, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+                                    }
+                                });
 //                                Information inf = new Information();
 //                                RecyclerItem ri = listItems.get(position);
 //                                inf.writeFile(ri.getTitle());
@@ -78,6 +94,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                                 Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.mnu_item_delete:
+
                             case R.id.mnu_item_delete_1:
                                 listItems.remove((position));
                                 notifyDataSetChanged();
@@ -94,6 +111,23 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
             }
         });
+    }
+    @IgnoreExtraProperties
+    public class Data{
+        public String description;
+        public String image;
+        public String title;
+
+        public Data(){
+
+        }
+
+        public Data(String description, String image, String title){
+            this.description = description;
+            this.image = image;
+            this.title = title;
+        }
+
     }
 
     @Override

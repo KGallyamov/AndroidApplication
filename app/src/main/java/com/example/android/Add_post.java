@@ -22,6 +22,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -38,11 +42,12 @@ public class Add_post extends Fragment implements View.OnClickListener {
     EditText description;
     Button photo, post;
     private Uri filePath;
+    public String txtTitle="Title", txtDescription="Description",
+            txtImage="https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2F397f6d9b-31d7-4aec-9fd4-426e5fb3c104?alt=media&token=f7d2a505-9831-4d34-8f15-02069bd4a580";
     FirebaseStorage storage;
     StorageReference storageReference;
 
     private final int PICK_IMAGE_REQUEST = 71;
-    String t="", d="";
 
 
     @Override
@@ -54,10 +59,62 @@ public class Add_post extends Fragment implements View.OnClickListener {
         btnChoose = (Button) myView.findViewById(R.id.add_photo);
         btnUpload = (Button) myView.findViewById(R.id.button_send);
         imageView = (ImageView) myView.findViewById(R.id.imgView);
+        description = (EditText) myView.findViewById(R.id.Description);
+        title = (EditText) myView.findViewById(R.id.title);
+
+        description.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                txtDescription = s.toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        title.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                txtTitle = s.toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         btnChoose.setOnClickListener(this);
         btnUpload.setOnClickListener(this);
         return myView;
+
+    }
+    @IgnoreExtraProperties
+    public class Data{
+        public String description;
+        public String image;
+        public String title;
+
+        public Data(){
+
+        }
+
+        public Data(String description, String image, String title){
+            this.description = description;
+            this.image = image;
+            this.title = title;
+        }
 
     }
 
@@ -69,9 +126,24 @@ public class Add_post extends Fragment implements View.OnClickListener {
                 break;
             case R.id.button_send:
                 uploadImage();
+                uploadPost();
             default:
                 break;
         }
+    }
+
+    private void uploadPost() {
+        Data data = new Data(txtDescription, txtImage, txtTitle);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        databaseReference.child("Data").push().setValue(data, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                Toast.makeText(getActivity(), "Post added.", Toast.LENGTH_SHORT).show();
+                title.setText("");
+                description.setText("");
+            }
+        });
     }
 
     @Override
@@ -106,14 +178,15 @@ public class Add_post extends Fragment implements View.OnClickListener {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
-                            //Toast.makeText(Add_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Uploaded", Toast.LENGTH_SHORT).show();
+                            imageView.setImageResource(android.R.color.transparent);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            //Toast.makeText(MainActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
