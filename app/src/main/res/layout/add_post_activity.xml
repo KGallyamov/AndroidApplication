@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:text="@string/add_photo"
         android:textAllCaps="false"
-        android:background="@color/buttons"
+        android:background="@drawable/corners"
         android:id="@+id/add_photo">
 
     </Button>
@@ -45,7 +45,7 @@
         <ImageView
             android:id="@+id/imgView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:baselineAlignBottom="true" />
 
     </LinearLayout>

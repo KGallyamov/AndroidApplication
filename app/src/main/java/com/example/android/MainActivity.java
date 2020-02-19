@@ -55,13 +55,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
 
-//        CoordinatorLayout coordinatorLayout = findViewById(R.id.layout);
-//        AnimationDrawable animationDrawable = (AnimationDrawable) coordinatorLayout.getBackground();
-//        animationDrawable.setEnterFadeDuration(2000);
-//        animationDrawable.setExitFadeDuration(4000);
-//        animationDrawable.start();
-
-
         bnv.setOnNavigationItemSelectedListener(getBottomNavigationListener());
     }
 
