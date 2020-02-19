@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,9 +44,11 @@ public class Add_post extends Fragment implements View.OnClickListener {
     Button photo, post;
     private Uri filePath;
     public String txtTitle="Title", txtDescription="Description",
-            txtImage="https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2F397f6d9b-31d7-4aec-9fd4-426e5fb3c104?alt=media&token=f7d2a505-9831-4d34-8f15-02069bd4a580";
+            //txtImage="https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2F397f6d9b-31d7-4aec-9fd4-426e5fb3c104?alt=media&token=f7d2a505-9831-4d34-8f15-02069bd4a580";
+            txtImage = "0-0";
     FirebaseStorage storage;
     StorageReference storageReference;
+    String link;
 
     private final int PICK_IMAGE_REQUEST = 71;
 
@@ -126,14 +129,13 @@ public class Add_post extends Fragment implements View.OnClickListener {
                 break;
             case R.id.button_send:
                 uploadImage();
-                uploadPost();
             default:
                 break;
         }
     }
 
-    private void uploadPost() {
-        Data data = new Data(txtDescription, txtImage, txtTitle);
+    private void uploadPost(String image) {
+        Data data = new Data(txtDescription, image, txtTitle);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
         databaseReference.child("Data").push().setValue(data, new DatabaseReference.CompletionListener() {
@@ -144,6 +146,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
                 description.setText("");
             }
         });
+
     }
 
     @Override
@@ -172,14 +175,20 @@ public class Add_post extends Fragment implements View.OnClickListener {
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
+            final StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
-                            Toast.makeText(getActivity(), "Uploaded", Toast.LENGTH_SHORT).show();
-                            imageView.setImageResource(android.R.color.transparent);
+                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String image = uri.toString();
+                                    imageView.setImageResource(android.R.color.transparent);
+                                    uploadPost(image);
+                                }
+                            });
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

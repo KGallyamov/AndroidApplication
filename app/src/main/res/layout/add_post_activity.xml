@@ -27,6 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/add_photo"
+        android:textAllCaps="false"
+        android:background="@color/buttons"
         android:id="@+id/add_photo">
 
     </Button>
@@ -52,6 +54,7 @@
         android:id="@+id/button_send"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/button_add"
         android:layout_alignParentBottom="true"
         android:text="@string/post" />
 
