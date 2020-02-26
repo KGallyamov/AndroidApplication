@@ -56,10 +56,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         holder.txtTitle.setText(itemList.getTitle());
         holder.txtDescription.setText(itemList.getDescription());
 
-        //holder.picture.setImageBitmap(itemList.getImage());
-
         Glide.with(mContext).load(itemList.getImage()).into(holder.picture);
-        //Picasso.get().load(itemList.getImage()).into(holder.picture);
 
         holder.txtOption.setOnClickListener(new View.OnClickListener() {
             @Override
