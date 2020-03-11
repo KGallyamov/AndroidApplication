@@ -4,9 +4,9 @@
     <item android:drawable="@color/white"/>
 
     <item>
-        <bitmap android:src="@drawable/sigma"
+        <bitmap
+            android:src="@drawable/sigma"
             android:gravity="center">
-
         </bitmap>
     </item>
 

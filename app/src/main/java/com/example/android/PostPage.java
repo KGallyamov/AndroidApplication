@@ -1,5 +1,7 @@
 package com.example.android;
 
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +20,7 @@ public class PostPage extends AppCompatActivity {
     TextView title, description;
     ImageView imageView;
     Button close;
+    Context getActivity = this;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,16 +33,25 @@ public class PostPage extends AppCompatActivity {
         Intent intent = getIntent();
         String txt_title = intent.getStringExtra("title");
         String txt_description = intent.getStringExtra("description");
-        String image_link = intent.getStringExtra("image link");
+        final String image_link = intent.getStringExtra("image link");
 
         title.setText(txt_title);
         description.setText(txt_description);
         Glide.with(PostPage.this).load(image_link).into(imageView);
 
+
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity, PhotoPage.class);
+                intent.putExtra("link", image_link);
+                startActivity(intent);
             }
         });
     }
