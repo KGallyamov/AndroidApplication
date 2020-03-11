@@ -1,6 +1,7 @@
 package com.example.android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,14 +53,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final RecyclerItem itemList = listItems.get(position);
 
-
+        holder.click(position);
         holder.txtTitle.setText(itemList.getTitle());
-        holder.txtDescription.setText(itemList.getDescription());
-
-        //holder.picture.setImageBitmap(itemList.getImage());
+        String s = "";
+        try{
+            s = itemList.getDescription().substring(0, 37) + "...";
+        }catch (Exception e){
+            s = itemList.getDescription();
+        }
+        holder.txtDescription.setText(s);
 
         Glide.with(mContext).load(itemList.getImage()).into(holder.picture);
-        //Picasso.get().load(itemList.getImage()).into(holder.picture);
 
         holder.txtOption.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +83,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                                 String txtDescription, txtImage, txtTitle;
                                 RecyclerItem recyclerItem = listItems.get(position);
                                 txtDescription = recyclerItem.getDescription();
-                                txtImage = "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2F397f6d9b-31d7-4aec-9fd4-426e5fb3c104?alt=media&token=f7d2a505-9831-4d34-8f15-02069bd4a580";
+                                txtImage = recyclerItem.getImage();
                                 txtTitle = recyclerItem.getTitle();
                                 Data data = new Data(txtDescription, txtImage, txtTitle);
                                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -105,7 +109,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     }
                 });
                 popupMenu.show();
-
             }
         });
     }
@@ -136,16 +139,31 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         public TextView txtDescription;
         public TextView txtOption;
         public ImageView picture;
+        View v;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            v = itemView;
             txtTitle = itemView.findViewById(R.id.txtTitle);
             txtDescription = itemView.findViewById(R.id.txtDescription);
             txtOption = itemView.findViewById(R.id.txtOptionDigit);
             picture = itemView.findViewById(R.id.picture);
 
+        }
 
+        public void click(int position) {
+            final int pos = position;
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, PostPage.class);
+                    intent.putExtra("title", listItems.get(pos).getTitle());
+                    intent.putExtra("description", listItems.get(pos).getDescription());
+                    intent.putExtra("image link", listItems.get(pos).getImage());
+                    mContext.startActivity(intent);
+                }
+            });
         }
     }
 }

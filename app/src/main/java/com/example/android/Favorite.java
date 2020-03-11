@@ -6,20 +6,30 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Favorite extends Fragment {
 
     private MyAdapter adapter;
     private RecyclerView recyclerView;
-    private List<RecyclerItem> listItems;
+    private ArrayList<RecyclerItem> listItems;
+    private DatabaseReference reference;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,23 +40,38 @@ public class Favorite extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        listItems = new ArrayList<>();
+
+        reference = FirebaseDatabase.getInstance().getReference().child("Favorite");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listItems = new ArrayList<RecyclerItem>();
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
+                {
+                    RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
+                    listItems.add(p);
+                }
+                Collections.reverse(listItems);
+                adapter = new MyAdapter(listItems, getContext(), "not main");
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
-        //TODO:СКАЧАТЬ С FIREBASE
-
-        int[] liked = new int[]{2,4,6,8,10};
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.liked);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        listItems = new ArrayList<>();
-        for(int i :liked){
-            String url = "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2F397f6d9b-31d7-4aec-9fd4-426e5fb3c104?alt=media&token=f7d2a505-9831-4d34-8f15-02069bd4a580";
-            RecyclerItem item = new RecyclerItem("Item " + i, "Description of item " + i, url);
-            listItems.add(item);
-        }
-
-        adapter = new MyAdapter(listItems, getContext(), "favorite");
-        recyclerView.setAdapter(adapter);
 
     }
 }

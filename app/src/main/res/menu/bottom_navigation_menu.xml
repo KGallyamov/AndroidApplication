@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_1"
         android:enabled="true"
         android:icon="@drawable/baseline_turned_in_not_black_24dp"
-        android:title=""
-        app:showAsAction="ifRoom"
-        />
-
-    <item
-        android:id="@+id/action_add"
-        android:enabled="true"
-        android:icon="@drawable/baseline_create_black_18dp"
         android:title=""
         app:showAsAction="ifRoom"
         />
@@ -27,12 +20,15 @@
         />
 
     <item
-        android:id="@+id/action_profile"
+        android:id="@+id/action_add"
         android:enabled="true"
+        android:icon="@drawable/baseline_create_black_18dp"
         android:title=""
-        android:icon="@drawable/baseline_account_box_black_24dp"
         app:showAsAction="ifRoom"
         />
+
+
+
 
 
 </menu>

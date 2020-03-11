@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     TextView txtOption;
     String toRemove = "news_feed";
     NewsFeed nf = new NewsFeed();
-    User u = new User();
     Favorite liked = new Favorite();
     Add_post add = new Add_post();
     FragmentTransaction fragmentTransaction;
@@ -55,13 +54,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
 
-//        CoordinatorLayout coordinatorLayout = findViewById(R.id.layout);
-//        AnimationDrawable animationDrawable = (AnimationDrawable) coordinatorLayout.getBackground();
-//        animationDrawable.setEnterFadeDuration(2000);
-//        animationDrawable.setExitFadeDuration(4000);
-//        animationDrawable.start();
-
-
         bnv.setOnNavigationItemSelectedListener(getBottomNavigationListener());
     }
 
@@ -72,9 +64,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 switch(toRemove){
-                    case "user":
-                        fragmentTransaction.remove(u);
-                        break;
                     case "add_post":
                         fragmentTransaction.remove(add);
                         break;
@@ -86,10 +75,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 switch(menuItem.getItemId()){
-                    case R.id.action_profile:
-                        fragmentTransaction.add(R.id.frgmCont, u);
-                        toRemove = "user";
-                        break;
                     case R.id.action_add:
                         fragmentTransaction.add(R.id.frgmCont, add);
                         toRemove = "add_post";

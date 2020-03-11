@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_list"
+    android:background="#343438"
     tools:context=".NewsFeed">
 
     <androidx.recyclerview.widget.RecyclerView

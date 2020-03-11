@@ -10,6 +10,9 @@ public class RecyclerItem {
 
     private String image;
 
+    RecyclerItem(){
+    }
+
 
     public RecyclerItem(String title, String description, String image) {
         this.title = title;
