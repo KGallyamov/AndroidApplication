@@ -15,6 +15,10 @@
     <string name="post">Post</string>
     <string name="e_mail_adress">e-mail adress</string>
     <string name="phone_number">Phone number</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="create_an_account_or_log_in">Create an account or log in</string>
+    <string name="confrim">Confrim</string>
 
     <string-array name="saved">
         <item>2</item>

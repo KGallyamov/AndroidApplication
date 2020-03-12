@@ -95,7 +95,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                                 });
                                 break;
                             case R.id.mnu_item_delete:
-
+                                //TODO: удаление из бд (ТОЛЬКО сохраненных для юзера) или (главным модером любых постов)
+                                //DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                                //db.child("Data").removeValue();
+                                break;
                             case R.id.mnu_item_delete_1:
                                 listItems.remove((position));
                                 notifyDataSetChanged();

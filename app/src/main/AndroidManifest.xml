@@ -29,11 +29,16 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity android:name=".PhotoPage"
             android:label="Photo">
+
+        </activity>
+        <activity android:name=".Authentication"
+            android:label="Authentication">
 
         </activity>
     </application>
