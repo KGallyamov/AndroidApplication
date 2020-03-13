@@ -1,6 +1,7 @@
 package com.example.android;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     TextView txtOption;
     String toRemove = "news_feed";
     NewsFeed nf = new NewsFeed();
-    Favorite liked = new Favorite();
+    Favorite liked;
     Add_post add = new Add_post();
     FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
@@ -48,11 +49,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = getIntent();
+        String login = intent.getStringExtra("Login");
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         txtOption = (TextView) findViewById(R.id.txtOptionDigit);
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
+        liked = new Favorite(login);
 
         bnv.setOnNavigationItemSelectedListener(getBottomNavigationListener());
     }

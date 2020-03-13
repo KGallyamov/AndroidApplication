@@ -41,6 +41,11 @@
             android:label="Authentication">
 
         </activity>
+
+        <activity android:name=".NewAccount"
+            android:label="New account">
+
+        </activity>
     </application>
 
 </manifest>

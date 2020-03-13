@@ -26,12 +26,13 @@ import java.util.HashMap;
 
 public class Authentication extends AppCompatActivity {
     EditText login, password;
-    Button confirm;
+    Button confirm, create;
 
-    String text_login, text_password;
+    String text_login="", text_password="";
     Context getContext = this;
     DatabaseReference databaseReference;
     ArrayList<User> users;
+    User user;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class Authentication extends AppCompatActivity {
         login = (EditText) findViewById(R.id.login);
         password = (EditText) findViewById(R.id.password);
         confirm = (Button) findViewById(R.id.confirm);
+        create = (Button) findViewById(R.id.create);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
@@ -79,52 +81,43 @@ public class Authentication extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(text_login.equals("") || text_password.equals("")){
-                    Toast.makeText(getContext, "Заполните все поля", Toast.LENGTH_SHORT).show();
-                }else{
-                    User user = new User(text_password, "user");
-                    users = new ArrayList<>();
-
-
-                    databaseReference.addValueEventListener(new ValueEventListener() {
+                    databaseReference.child(text_login).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            users = new ArrayList<>();
-                            for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
-                            {
-                                User u = dataSnapshot1.getValue(User.class);
-                                users.add(u);
-                                Log.d("MyLogs", dataSnapshot1.getKey());
+                            try {
+                                user = dataSnapshot.getValue(User.class);
+                                if (user.getPassword().equals(text_password)) {
+                                    Intent intent = new Intent(getContext, MainActivity.class);
+                                    intent.putExtra("Login", text_login);
+                                    intent.putExtra("role", user.getRole());
+                                    startActivity(intent);
 
+                                } else {
+                                    password.setText("");
+                                    Toast.makeText(getContext, "Перепроверьте данные", Toast.LENGTH_LONG).show();
+                                }
+                            }catch (Exception e){
+                                Toast.makeText(getContext, "Перепроверьте данные", Toast.LENGTH_SHORT).show();
                             }
+                            // все пустым сделать
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Toast.makeText(getContext, "Проверьте соединение", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext, "Проверьте соединение", Toast.LENGTH_SHORT).show();
                         }
                     });
 
-
-
-
-                    databaseReference.child(text_login).setValue(user, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                            Toast.makeText(getContext, "Success", Toast.LENGTH_SHORT).show();
-                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                            ref.child("Favorite" + text_login).setValue(new User("a", "b"));
-
-                            //TODO:только класс не юзера а RecyclerItem(какой-нибудь приветственный пост),
-                            //TODO:но только если такой пользователь появился впервые
-
-                            startActivity(new Intent(getContext, MainActivity.class));
-                        }
-                    });
-
-                }
             }
         });
+
+        create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext, NewAccount.class));
+            }
+        });
+
 
     }
 }

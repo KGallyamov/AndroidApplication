@@ -19,6 +19,9 @@
     <string name="login">Login</string>
     <string name="create_an_account_or_log_in">Create an account or log in</string>
     <string name="confrim">Confrim</string>
+    <string name="create_an_account">Create an account</string>
+    <string name="log_in">Log in</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
 
     <string-array name="saved">
         <item>2</item>

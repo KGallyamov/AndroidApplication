@@ -34,14 +34,6 @@
         android:title=""
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/action_moderate"
-        android:enabled="true"
-        android:icon="@drawable/baseline_account_box_black_24dp"
-        android:title=""
-        app:showAsAction="ifRoom" />
-
-
 
 
 </menu>

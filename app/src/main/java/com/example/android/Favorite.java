@@ -30,6 +30,10 @@ public class Favorite extends Fragment {
     private RecyclerView recyclerView;
     private ArrayList<RecyclerItem> listItems;
     private DatabaseReference reference;
+    private String login;
+    Favorite(String login){
+        this.login = login;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,7 +48,7 @@ public class Favorite extends Fragment {
         super.onCreate(savedInstanceState);
         listItems = new ArrayList<>();
 
-        reference = FirebaseDatabase.getInstance().getReference().child("Favorite");
+        reference = FirebaseDatabase.getInstance().getReference().child("Favorite"+login);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
