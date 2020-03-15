@@ -134,8 +134,9 @@ public class Add_post extends Fragment implements View.OnClickListener {
     private void uploadPost(String image) {
         Data data = new Data(txtDescription, image, txtTitle);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        //TODO:админ отправляет посты в обход модераторов
 
-        databaseReference.child("Data").push().setValue(data, new DatabaseReference.CompletionListener() {
+        databaseReference.child("Moderate").push().setValue(data, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 Toast.makeText(getActivity(), "Post added.", Toast.LENGTH_SHORT).show();
@@ -144,7 +145,6 @@ public class Add_post extends Fragment implements View.OnClickListener {
                 imageView.setImageResource(android.R.color.transparent);
             }
         });
-
     }
 
     @Override

@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     TextView txtOption;
     String toRemove = "news_feed";
-    NewsFeed nf = new NewsFeed();
+    NewsFeed nf;
     Favorite liked;
     Add_post add = new Add_post();
     FragmentTransaction fragmentTransaction;
@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         txtOption = (TextView) findViewById(R.id.txtOptionDigit);
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        nf = new NewsFeed(intent.getStringExtra("role"));
+
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
         liked = new Favorite(login);

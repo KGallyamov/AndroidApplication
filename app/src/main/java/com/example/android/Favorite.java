@@ -31,6 +31,7 @@ public class Favorite extends Fragment {
     private ArrayList<RecyclerItem> listItems;
     private DatabaseReference reference;
     private String login;
+
     Favorite(String login){
         this.login = login;
     }
@@ -59,7 +60,7 @@ public class Favorite extends Fragment {
                     listItems.add(p);
                 }
                 Collections.reverse(listItems);
-                adapter = new MyAdapter(listItems, getContext(), "not main");
+                adapter = new MyAdapter(listItems, getContext(), "not main", "user");//а по факту неважно
                 recyclerView.setAdapter(adapter);
             }
 

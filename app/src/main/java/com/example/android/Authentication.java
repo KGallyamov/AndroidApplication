@@ -98,8 +98,8 @@ public class Authentication extends AppCompatActivity {
                                 }
                             }catch (Exception e){
                                 Toast.makeText(getContext, "Перепроверьте данные", Toast.LENGTH_SHORT).show();
+                                password.setText("");
                             }
-                            // все пустым сделать
                         }
 
                         @Override

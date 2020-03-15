@@ -2,6 +2,7 @@ package com.example.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,17 +30,28 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     public List<RecyclerItem> listItems;
     private Context mContext;
     public String where = "";
+    private String role;
+    ArrayList<String> paths;
 
-    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s) {
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role) {
         this.listItems = listItems;
         this.mContext = mContext;
         this.where = s;
+        this.role = role;
+    }
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, ArrayList<String> paths) {
+        this.listItems = listItems;
+        this.mContext = mContext;
+        this.where = s;
+        this.role = role;
+        this.paths = paths;
     }
 
     @NonNull
@@ -160,10 +172,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     Intent intent = new Intent(mContext, PostPage.class);
                     intent.putExtra("title", listItems.get(pos).getTitle());
                     intent.putExtra("description", listItems.get(pos).getDescription());
                     intent.putExtra("image link", listItems.get(pos).getImage());
+                    intent.putExtra("role", role);
+                    intent.putExtra("post path", paths.get(pos));
+
                     mContext.startActivity(intent);
                 }
             });

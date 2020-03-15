@@ -3,9 +3,11 @@ package com.example.android;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,8 +36,14 @@ import java.util.Objects;
 public class NewsFeed extends Fragment {
     private MyAdapter adapter;
     private RecyclerView recyclerView;
-    private ArrayList<RecyclerItem> listItems;
-    private DatabaseReference reference;
+    private ArrayList<RecyclerItem> listItems = new ArrayList<>();
+    private Button moderate;
+    private DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
+    private String role;
+    private String wh = "Moderate";
+    NewsFeed(String role){
+        this.role = role;
+    }
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,9 +55,7 @@ public class NewsFeed extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        listItems = new ArrayList<>();
 
-        reference = FirebaseDatabase.getInstance().getReference().child("Data");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -60,7 +66,7 @@ public class NewsFeed extends Fragment {
                     listItems.add(p);
                 }
                 Collections.reverse(listItems);
-                adapter = new MyAdapter(listItems, getContext(), "main");
+                adapter = new MyAdapter(listItems, getContext(), "main", "user");
                 recyclerView.setAdapter(adapter);
             }
 
@@ -69,13 +75,54 @@ public class NewsFeed extends Fragment {
                 Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
+        moderate = (Button) getActivity().findViewById(R.id.moderate);
+        if(!role.equals("user")){
+            moderate.setVisibility(View.VISIBLE);
+            moderate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(wh);
+                    ref.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            listItems = new ArrayList<RecyclerItem>();
+                            ArrayList<String> paths = new ArrayList<>();
+                            for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
+                                listItems.add(p);
+                                paths.add(dataSnapshot1.getKey());
 
+                            }
+                            Collections.reverse(listItems);
+                            Collections.reverse(paths);
+                            adapter = new MyAdapter(listItems, getContext(), "main", role, paths);
+                            recyclerView.setAdapter(adapter);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    if(wh.equals("Moderate")) {
+                        Toast.makeText(getContext(), "Hi moderator", Toast.LENGTH_SHORT).show();
+                        wh = "Data";
+                    }else{
+                        wh = "Moderate";
+                    }
+                    moderate.setText(wh);
+                }
+            });
+        }
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
     }

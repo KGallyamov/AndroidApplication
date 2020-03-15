@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class NewAccount extends AppCompatActivity {
     DatabaseReference databaseReference;
     EditText login, password;
-    Button confirm;
+    Button confirm, cancel;
     Context getContext = this;
     String text_password, text_login;
     User user;
@@ -36,6 +36,7 @@ public class NewAccount extends AppCompatActivity {
         login = (EditText) findViewById(R.id.login);
         password = (EditText) findViewById(R.id.password);
         confirm = (Button) findViewById(R.id.confirm);
+        cancel = (Button) findViewById(R.id.cancel);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
@@ -57,6 +58,12 @@ public class NewAccount extends AppCompatActivity {
             }
         });
 
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         login.addTextChangedListener(new TextWatcher() {
             @Override

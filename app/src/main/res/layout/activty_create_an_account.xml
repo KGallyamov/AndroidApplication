@@ -14,16 +14,20 @@
         android:layout_gravity="center">
 
     </ImageView>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:text="@string/create_an_account"
-        android:textColor="#000000"
-        android:textSize="30sp"
-        android:gravity="center_vertical"
-        android:visibility="visible">
 
-    </TextView>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:text="@string/create_an_account"
+            android:textColor="#000000"
+            android:textSize="30sp"
+            android:gravity="center_vertical"
+            android:visibility="visible"/>
+
+
+
+
+
 
     <EditText
         android:id="@+id/login"
@@ -47,6 +51,15 @@
         android:layout_height="wrap_content"
         android:text="@string/confrim"
         android:textAllCaps="false">
+
+    </Button>
+    <Button
+        android:id="@+id/cancel"
+        android:textAllCaps="false"
+        android:text="@string/cancel"
+        android:textColor="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     </Button>
 

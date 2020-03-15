@@ -14,16 +14,30 @@
         android:layout_gravity="center">
 
     </ImageView>
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:text="@string/log_in"
-        android:textColor="#000000"
-        android:textSize="30sp"
-        android:gravity="center_vertical"
-        android:visibility="visible">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="105dp"
+            android:layout_height="200dp"
+            android:text="@string/log_in_or"
+            android:textColor="#000000"
+            android:textSize="25sp"
+            android:gravity="center_vertical"
+            android:visibility="visible"/>
 
-    </TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:text="@string/create_lower"
+            android:textColor="@color/blue_800"
+            android:textSize="25sp"
+            android:gravity="center_vertical"
+            android:visibility="visible"/>
+
+    </LinearLayout>
+
 
     <EditText
         android:id="@+id/login"
@@ -55,6 +69,7 @@
         android:layout_height="wrap_content"
         android:text="@string/don_t_have_an_account"
         android:textAllCaps="false"
+        android:textColor="#FFFFFF"
         android:background="@color/blue_800"
         >
 
