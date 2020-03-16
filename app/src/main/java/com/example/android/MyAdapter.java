@@ -38,7 +38,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     private Context mContext;
     public String where = "";
     private String role;
-    ArrayList<String> paths;
+    ArrayList<String> paths = new ArrayList<>();
 
     public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role) {
         this.listItems = listItems;
@@ -178,7 +178,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     intent.putExtra("description", listItems.get(pos).getDescription());
                     intent.putExtra("image link", listItems.get(pos).getImage());
                     intent.putExtra("role", role);
-                    intent.putExtra("post path", paths.get(pos));
+                    if(paths.size() > 0) {
+                        intent.putExtra("post path", paths.get(pos));
+                    }
 
                     mContext.startActivity(intent);
                 }
