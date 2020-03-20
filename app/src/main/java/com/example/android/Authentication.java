@@ -81,7 +81,7 @@ public class Authentication extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    databaseReference.child(text_login).addValueEventListener(new ValueEventListener() {
+                    databaseReference.child(text_login).addValueEventListener(new ValueEventListener(){
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             try {
@@ -90,6 +90,8 @@ public class Authentication extends AppCompatActivity {
                                     Intent intent = new Intent(getContext, MainActivity.class);
                                     intent.putExtra("Login", text_login);
                                     intent.putExtra("role", user.getRole());
+                                    password.setText("");
+                                    login.setText("");
                                     startActivity(intent);
 
                                 } else {

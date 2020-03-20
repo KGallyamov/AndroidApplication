@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     String toRemove = "news_feed";
     NewsFeed nf;
     Favorite liked;
-    Add_post add = new Add_post();
+    Add_post add;
     FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
     final String SAVED = "favorite_posts";
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         txtOption = (TextView) findViewById(R.id.txtOptionDigit);
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         nf = new NewsFeed(intent.getStringExtra("role"));
+        add = new Add_post(intent.getStringExtra("role"), intent.getStringExtra("Login"));
 
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();

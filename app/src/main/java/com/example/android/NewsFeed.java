@@ -36,6 +36,7 @@ import java.util.Objects;
 public class NewsFeed extends Fragment {
     private MyAdapter adapter;
     private RecyclerView recyclerView;
+    private TextView allDone;
     private ArrayList<RecyclerItem> listItems = new ArrayList<>();
     private Button moderate;
     private DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
@@ -101,8 +102,15 @@ public class NewsFeed extends Fragment {
                                 paths.add(dataSnapshot1.getKey());
 
                             }
+                            if(wh.equals("Data")){
+                                listItems.remove(0);
+                                if(listItems.size() == 0){
+                                    Toast.makeText(getContext(), "Nothing to moderate", Toast.LENGTH_LONG).show();
+                                }
+                            }
                             Collections.reverse(listItems);
                             Collections.reverse(paths);
+
                             adapter = new MyAdapter(listItems, getContext(), "main", role, paths);
                             recyclerView.setAdapter(adapter);
                         }

@@ -18,14 +18,23 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="#7B7B91"
         android:hint="@string/title">
 
     </EditText>
+
+        <Spinner
+            android:id="@+id/spinner"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </Spinner>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/add_photo"
+        android:textColor="#FFFFFF"
         android:textAllCaps="false"
         android:background="@drawable/corners"
         android:id="@+id/add_photo">
@@ -37,9 +46,19 @@
         android:layout_width="match_parent"
         android:layout_height="184dp"
         android:hint="@string/description"
+        android:textColorHint="#7B7B91"
         android:gravity="top">
 
     </EditText>
+        <EditText
+            android:id="@+id/tags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="#enteryourtags"
+            android:textColorHint="#7B7B91"
+            android:gravity="top">
+
+        </EditText>
 
         <ImageView
             android:id="@+id/imgView"
@@ -49,11 +68,11 @@
 
     </LinearLayout>
 
+
     <Button
         android:id="@+id/button_send"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/button_add"
         android:layout_alignParentBottom="true"
         android:text="@string/post" />
 

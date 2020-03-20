@@ -14,10 +14,22 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/heading"
+            android:text=""
+            android:background="#7aaff0"
+            android:textSize="18sp"
+            android:textAppearance="@android:style/TextAppearance.Large">
+
+        </Button>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/txtTitle"
+            android:layout_below="@+id/heading"
             android:text="Title"
             android:textAppearance="@android:style/TextAppearance.Large">
 

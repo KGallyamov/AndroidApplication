@@ -48,9 +48,15 @@ public class NewAccount extends AppCompatActivity {
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         Toast.makeText(getContext, "Success", Toast.LENGTH_SHORT).show();
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                        ArrayList<String> t = new ArrayList<>();
+                        t.add("system");
+                        t.add("greetings");
+                        t.add("admin");
                         ref.child("Favorite" + text_login).child("0").setValue(new RecyclerItem("Добро пожаловать!",
                                 "Это лента избранных постов",
-                                "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/sigma.jpg?alt=media&token=328187a2-65a5-4623-885f-1d19c12d72d2"));
+                                "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/sigma.jpg?alt=media&token=328187a2-65a5-4623-885f-1d19c12d72d2",
+                                "System message",
+                                t));
 
                         finish();
                     }

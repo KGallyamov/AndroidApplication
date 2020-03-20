@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -74,6 +75,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             s = itemList.getDescription();
         }
         holder.txtDescription.setText(s);
+        holder.heading.setText(itemList.getHeading());
 
         Glide.with(mContext).load(itemList.getImage()).into(holder.picture);
 
@@ -91,13 +93,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
+
+                            //TODO: одна кнопка сохранения и ВСЕ
                             case R.id.mnu_item_save:
                                 String txtDescription, txtImage, txtTitle;
                                 RecyclerItem recyclerItem = listItems.get(position);
                                 txtDescription = recyclerItem.getDescription();
                                 txtImage = recyclerItem.getImage();
                                 txtTitle = recyclerItem.getTitle();
-                                Data data = new Data(txtDescription, txtImage, txtTitle);
+                                ArrayList<String> t = new ArrayList<>();
+                                t.add(role);
+                                Data data = new Data(txtDescription, txtImage, txtTitle, "Heading", t);
                                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                                 databaseReference.child("Favorite").push().setValue(data, new DatabaseReference.CompletionListener() {
                                     @Override
@@ -107,7 +113,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                                 });
                                 break;
                             case R.id.mnu_item_delete:
-                                //TODO: удаление из бд (ТОЛЬКО сохраненных для юзера) или (главным модером любых постов)
+                                // удаление из бд (ТОЛЬКО сохраненных для юзера) или (главным модером любых постов)
                                 //DatabaseReference db = FirebaseDatabase.getInstance().getReference();
                                 //db.child("Data").removeValue();
                                 break;
@@ -132,14 +138,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         public String description;
         public String image;
         public String title;
+        public String heading;
+        public ArrayList<String> tags;
+
 
         public Data(){
         }
 
-        public Data(String description, String image, String title){
+        public Data(String description, String image, String title, String heading, ArrayList<String> tags){
             this.description = description;
             this.image = image;
             this.title = title;
+            this.heading = heading;
+            this.tags = tags;
         }
     }
 
@@ -154,6 +165,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         public TextView txtDescription;
         public TextView txtOption;
         public ImageView picture;
+        public Button heading;
         View v;
 
 
@@ -164,6 +176,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             txtDescription = itemView.findViewById(R.id.txtDescription);
             txtOption = itemView.findViewById(R.id.txtOptionDigit);
             picture = itemView.findViewById(R.id.picture);
+            heading = itemView.findViewById(R.id.heading);
 
         }
 
@@ -177,7 +190,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     intent.putExtra("title", listItems.get(pos).getTitle());
                     intent.putExtra("description", listItems.get(pos).getDescription());
                     intent.putExtra("image link", listItems.get(pos).getImage());
+                    intent.putExtra("heading", listItems.get(pos).getHeading());
                     intent.putExtra("role", role);
+                    intent.putExtra("tags", listItems.get(pos).getTags());
+                    //Log.d("ADAPTER", listItems.get(pos).getTags().toString());
                     if(paths.size() > 0) {
                         intent.putExtra("post path", paths.get(pos));
                     }

@@ -27,6 +27,7 @@
     <string name="create_lower">create an account</string>
     <string name="refuse">Refuse</string>
     <string name="ok">Ok</string>
+    <string name="nothing_to_moderate">Nothing to moderate</string>
 
     <string-array name="saved">
         <item>2</item>
