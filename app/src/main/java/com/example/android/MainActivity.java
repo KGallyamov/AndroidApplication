@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.nfc.Tag;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -100,4 +102,5 @@ public class MainActivity extends AppCompatActivity {
             }
         };
     }
+
 }

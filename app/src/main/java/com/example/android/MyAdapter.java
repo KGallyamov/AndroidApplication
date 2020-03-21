@@ -79,59 +79,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         Glide.with(mContext).load(itemList.getImage()).into(holder.picture);
 
-        holder.txtOption.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final PopupMenu popupMenu = new PopupMenu(mContext, holder.txtOption);
-                if(where.equals("main")){
-                    popupMenu.inflate(R.menu.option_menu);
-                }else {
-                    popupMenu.inflate(R.menu.favorite_option_menu);
-                }
 
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()){
-
-                            //TODO: одна кнопка сохранения и ВСЕ
-                            case R.id.mnu_item_save:
-                                String txtDescription, txtImage, txtTitle;
-                                RecyclerItem recyclerItem = listItems.get(position);
-                                txtDescription = recyclerItem.getDescription();
-                                txtImage = recyclerItem.getImage();
-                                txtTitle = recyclerItem.getTitle();
-                                ArrayList<String> t = new ArrayList<>();
-                                t.add(role);
-                                Data data = new Data(txtDescription, txtImage, txtTitle, "Heading", t);
-                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                                databaseReference.child("Favorite").push().setValue(data, new DatabaseReference.CompletionListener() {
-                                    @Override
-                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                        Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                break;
-                            case R.id.mnu_item_delete:
-                                // удаление из бд (ТОЛЬКО сохраненных для юзера) или (главным модером любых постов)
-                                //DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                                //db.child("Data").removeValue();
-                                break;
-                            case R.id.mnu_item_delete_1:
-                                listItems.remove((position));
-                                notifyDataSetChanged();
-                                Toast.makeText(mContext, "Deleted", Toast.LENGTH_SHORT).show();
-                                break;
-                            default:
-                                break;
-                        }
-
-                        return false;
-                    }
-                });
-                popupMenu.show();
-            }
-        });
     }
     @IgnoreExtraProperties
     public class Data{
@@ -193,7 +141,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     intent.putExtra("heading", listItems.get(pos).getHeading());
                     intent.putExtra("role", role);
                     intent.putExtra("tags", listItems.get(pos).getTags());
-                    //Log.d("ADAPTER", listItems.get(pos).getTags().toString());
                     if(paths.size() > 0) {
                         intent.putExtra("post path", paths.get(pos));
                     }

@@ -1,6 +1,8 @@
 package com.example.android;
 
 import android.app.Application;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.luseen.autolinklibrary.AutoLinkMode;
+import com.luseen.autolinklibrary.AutoLinkOnClickListener;
 import com.luseen.autolinklibrary.AutoLinkTextView;
 
 import org.w3c.dom.Text;
@@ -47,8 +50,26 @@ public class PostPage extends AppCompatActivity {
         heading = (Button) findViewById(R.id.heading);
         refuse = (Button) findViewById(R.id.reject);
         autoLinkTextView = (AutoLinkTextView) findViewById(R.id.tags);
+
         autoLinkTextView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG);
         autoLinkTextView.setHashtagModeColor(ContextCompat.getColor(this, R.color.blue_800));
+        autoLinkTextView.setAutoLinkOnClickListener(new AutoLinkOnClickListener() {
+            @Override
+            public void onAutoLinkTextClick(AutoLinkMode autoLinkMode, String matchedText) {
+                String[] tag = matchedText.split(" ");
+                String res = "";
+                for(String i:tag){
+                    res += i;
+                }
+
+                ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("", res);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(context, "Tag copied", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
 
         Intent intent = getIntent();
         final String txt_title = intent.getStringExtra("title");

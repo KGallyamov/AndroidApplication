@@ -1,13 +1,21 @@
 package com.example.android;
 
+import android.content.ClipData;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,11 +44,13 @@ import java.util.Objects;
 public class NewsFeed extends Fragment {
     private MyAdapter adapter;
     private RecyclerView recyclerView;
-    private TextView allDone;
+    private TextView title, menu;
     private ArrayList<RecyclerItem> listItems = new ArrayList<>();
-    private Button moderate;
+    private Button btn_search;
+    private EditText watch;
     private DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
     private String role;
+    public static String tag = "";
     private String wh = "Moderate";
     NewsFeed(String role){
         this.role = role;
@@ -76,62 +86,158 @@ public class NewsFeed extends Fragment {
                 Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
             }
         });
-
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
-        moderate = (Button) getActivity().findViewById(R.id.moderate);
-        if(!role.equals("user")){
-            moderate.setVisibility(View.VISIBLE);
-            moderate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(wh);
-                    ref.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            listItems = new ArrayList<RecyclerItem>();
-                            ArrayList<String> paths = new ArrayList<>();
-                            for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                                RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
-                                listItems.add(p);
-                                paths.add(dataSnapshot1.getKey());
 
-                            }
-                            if(wh.equals("Data")){
-                                listItems.remove(0);
-                                if(listItems.size() == 0){
-                                    Toast.makeText(getContext(), "Nothing to moderate", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                            Collections.reverse(listItems);
-                            Collections.reverse(paths);
+        watch = (EditText) getActivity().findViewById(R.id.watch);
+        title = (TextView) getActivity().findViewById(R.id.title);
+        menu = (TextView) getActivity().findViewById(R.id.options);
+        btn_search = (Button) getActivity().findViewById(R.id.search);
 
-                            adapter = new MyAdapter(listItems, getContext(), "main", role, paths);
-                            recyclerView.setAdapter(adapter);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    if(wh.equals("Moderate")) {
-                        Toast.makeText(getContext(), "Hi moderator", Toast.LENGTH_SHORT).show();
-                        wh = "Data";
-                    }else{
-                        wh = "Moderate";
-                    }
-                    moderate.setText(wh);
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popupMenu = new PopupMenu(getContext(), menu);
+                if(role.equals("user")){
+                    popupMenu.inflate(R.menu.option_user);
+                }else {
+                    popupMenu.inflate(R.menu.option_menu);
                 }
-            });
-        }
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.mnu_main:
+                                title.setVisibility(View.VISIBLE);
+                                watch.setVisibility(View.GONE);
+                                btn_search.setVisibility(View.GONE);
+                                reference.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        listItems = new ArrayList<RecyclerItem>();
+                                        for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
+                                        {
+                                            RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
+                                            listItems.add(p);
+                                        }
+                                        Collections.reverse(listItems);
+                                        adapter = new MyAdapter(listItems, getContext(), "main", "user");
+                                        recyclerView.setAdapter(adapter);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                Toast.makeText(getContext(), "Main", Toast.LENGTH_SHORT).show();
+                                break;
+
+                            case R.id.mnu_search:
+                                search();
+                                Toast.makeText(getContext(), "Search", Toast.LENGTH_SHORT).show();
+                                break;
+
+                            case R.id.mnu_moderate:
+                                title.setVisibility(View.VISIBLE);
+                                watch.setVisibility(View.GONE);
+                                btn_search.setVisibility(View.GONE);
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Moderate");
+                                ref.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        listItems = new ArrayList<RecyclerItem>();
+                                        ArrayList<String> paths = new ArrayList<>();
+                                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                            RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
+                                            listItems.add(p);
+                                            paths.add(dataSnapshot1.getKey());
+
+                                        }
+                                        listItems.remove(0);
+                                        if(listItems.size() == 0){
+                                            Toast.makeText(getContext(), "Nothing to moderate", Toast.LENGTH_LONG).show();
+                                        }
+
+                                        Collections.reverse(listItems);
+                                        Collections.reverse(paths);
+
+                                        adapter = new MyAdapter(listItems, getContext(), "main", role, paths);
+                                        recyclerView.setAdapter(adapter);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                Toast.makeText(getContext(), "Moderator", Toast.LENGTH_SHORT).show();
+                                break;
+
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    public void search(){
+        title.setVisibility(View.GONE);
+        watch.setVisibility(View.VISIBLE);
+        btn_search.setVisibility(View.VISIBLE);
+        watch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tag = s.toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        listItems = new ArrayList<RecyclerItem>();
+                        for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
+                        {
+                            RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
+                            if(p.getHeading().equals(tag) || p.getTags().contains(tag)) {
+                                listItems.add(p);
+                            }
+                        }
+                        Collections.reverse(listItems);
+                        adapter = new MyAdapter(listItems, getContext(), "main", "user");
+                        recyclerView.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        });
 
     }
 

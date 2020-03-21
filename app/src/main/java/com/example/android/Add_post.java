@@ -54,19 +54,20 @@ public class Add_post extends Fragment implements View.OnClickListener {
     Button photo, post;
     Spinner spinner;
     private Uri filePath;
-    public String txtTitle="Title", txtDescription="Description", txtImage = "0-0", role, username;
+    public String txtTitle="Title", txtDescription="Description", txtImage = "0-0", role;
     FirebaseStorage storage;
     StorageReference storageReference;
     ArrayAdapter<String> adapter;
-    String heading = "";
+    String heading = "", login;
     String [] text_tags;
     ArrayList<String> tags_db = new ArrayList<>();
     static List<String> headings = new ArrayList<>();
 
     private final int PICK_IMAGE_REQUEST = 71;
-    Add_post(String role, String username){
+
+    Add_post(String role, String login){
         this.role = role;
-        this.username = username;
+        this.login = login;
     }
 
 
@@ -128,6 +129,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 text_tags = s.toString().split(" ");
+
 
             }
 
@@ -212,8 +214,8 @@ public class Add_post extends Fragment implements View.OnClickListener {
         for(String i:text_tags){
             tags_db.add(i);
         }
-        tags_db.add("#"+role);
-        tags_db.add("#"+username);
+        tags_db.add("#" + role);
+        tags_db.add("#" + login);
             Data data = new Data(txtDescription, image, txtTitle, heading, tags_db);
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
             String wh = "Moderate";
@@ -232,7 +234,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
                     tags.setText("");
                 }
             });
-
+        
     }
 
     @Override
