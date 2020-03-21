@@ -9,4 +9,8 @@
 
     </item>
 
+    <item android:id="@+id/favorite" android:title="@string/search">
+
+    </item>
+
 </menu>

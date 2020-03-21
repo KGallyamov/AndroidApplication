@@ -49,11 +49,12 @@ public class NewsFeed extends Fragment {
     private Button btn_search;
     private EditText watch;
     private DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
-    private String role;
+    private String role, login;
     public static String tag = "";
     private String wh = "Moderate";
-    NewsFeed(String role){
+    NewsFeed(String role, String login){
         this.role = role;
+        this.login = login;
     }
 
 
@@ -178,7 +179,33 @@ public class NewsFeed extends Fragment {
                                 });
                                 Toast.makeText(getContext(), "Moderator", Toast.LENGTH_SHORT).show();
                                 break;
+                            case R.id.favorite:
+                                DatabaseReference fav = FirebaseDatabase.getInstance().getReference().child("Favorite"+login);
+                                fav.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        listItems = new ArrayList<RecyclerItem>();
+                                        ArrayList<String> paths = new ArrayList<>();
+                                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                            RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
+                                            listItems.add(p);
+                                            paths.add(dataSnapshot1.getKey());
 
+                                        }
+
+                                        Collections.reverse(listItems);
+                                        Collections.reverse(paths);
+
+                                        adapter = new MyAdapter(listItems, getContext(), "main", role, paths);
+                                        recyclerView.setAdapter(adapter);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                break;
                         }
                         return false;
                     }

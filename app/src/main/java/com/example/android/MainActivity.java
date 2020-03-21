@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
     TextView txtOption;
     String toRemove = "news_feed";
     NewsFeed nf;
-    Favorite liked;
     Add_post add;
+    Profile profile;
     FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
     final String SAVED = "favorite_posts";
@@ -56,12 +56,12 @@ public class MainActivity extends AppCompatActivity {
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         txtOption = (TextView) findViewById(R.id.txtOptionDigit);
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        nf = new NewsFeed(intent.getStringExtra("role"));
+        nf = new NewsFeed(intent.getStringExtra("role"), intent.getStringExtra("Login"));
         add = new Add_post(intent.getStringExtra("role"), intent.getStringExtra("Login"));
+        profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"));
 
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
-        liked = new Favorite(login);
 
         bnv.setOnNavigationItemSelectedListener(getBottomNavigationListener());
     }
@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
                     case "news_feed":
                         fragmentTransaction.remove(nf);
                         break;
-                    case "liked":
-                        fragmentTransaction.remove(liked);
+                    case "profile":
+                        fragmentTransaction.remove(profile);
                         break;
                 }
                 switch(menuItem.getItemId()){
@@ -92,9 +92,9 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction.add(R.id.frgmCont, nf);
                         toRemove = "news_feed";
                         break;
-                    case R.id.action_1:
-                        fragmentTransaction.add(R.id.frgmCont, liked);
-                        toRemove = "liked";
+                    case R.id.user_account:
+                        fragmentTransaction.add(R.id.frgmCont, profile);
+                        toRemove = "profile";
                         break;
                 }
                 fragmentTransaction.commit();

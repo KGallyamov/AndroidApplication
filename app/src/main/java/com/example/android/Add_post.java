@@ -38,8 +38,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.sql.SQLOutput;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -84,6 +86,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
         title = (EditText) myView.findViewById(R.id.title);
         tags = (EditText) myView.findViewById(R.id.tags);
         spinner = (Spinner) myView.findViewById(R.id.spinner);
+
         DatabaseReference head = FirebaseDatabase.getInstance().getReference().child("Headings");
         if(role.equals("admin")){
             headings.add("System message");
@@ -214,6 +217,11 @@ public class Add_post extends Fragment implements View.OnClickListener {
         for(String i:text_tags){
             tags_db.add(i);
         }
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMMM-yyyy HH:mm:ss");
+        String[] datetime = dateformat.format(c.getTime()).split(" ")[0].split("-");
+        tags_db.add("#" + datetime[0] + datetime[1]);
+        tags_db.add("#" + datetime[2]);
         tags_db.add("#" + role);
         tags_db.add("#" + login);
             Data data = new Data(txtDescription, image, txtTitle, heading, tags_db);
