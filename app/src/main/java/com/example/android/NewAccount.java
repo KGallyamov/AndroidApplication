@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,7 +24,8 @@ import java.util.ArrayList;
 public class NewAccount extends AppCompatActivity {
     DatabaseReference databaseReference;
     EditText login, password;
-    Button confirm, cancel;
+    Button confirm;
+    TextView cancel;
     Context getContext = this;
     String text_password, text_login;
     User user;
@@ -36,7 +38,7 @@ public class NewAccount extends AppCompatActivity {
         login = (EditText) findViewById(R.id.login);
         password = (EditText) findViewById(R.id.password);
         confirm = (Button) findViewById(R.id.confirm);
-        cancel = (Button) findViewById(R.id.cancel);
+        cancel = (TextView) findViewById(R.id.cancel);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
 

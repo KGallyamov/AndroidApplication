@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.os.Bundle;
 
@@ -26,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     final String SAVED = "favorite_posts";
     Activity getActivity = this;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
+
+
 
         bnv.setOnNavigationItemSelectedListener(getBottomNavigationListener());
     }

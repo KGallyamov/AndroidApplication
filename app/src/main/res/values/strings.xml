@@ -32,6 +32,9 @@
     <string name="search">Search</string>
     <string name="news_feed">News feed</string>
     <string name="enter_tag_or_heading">Enter tag or heading</string>
+    <string name="auth">Авторизация</string>
+
+    <string name="registration">Регистрация</string>
 
     <string-array name="saved">
         <item>2</item>

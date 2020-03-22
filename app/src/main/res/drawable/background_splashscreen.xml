@@ -3,11 +3,12 @@
 
     <item android:drawable="@color/white"/>
 
+
     <item>
-        <bitmap
-            android:src="@drawable/sigma"
-            android:gravity="center">
-        </bitmap>
+        <color android:color="#353E4f">
+
+        </color>
+
     </item>
 
 </layer-list>

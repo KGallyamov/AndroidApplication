@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 
 public class Profile extends Fragment {
     String role, login;
+    Button exit;
     private TextView tv_login, password, tv_role;
 
     Profile(String role, String login){
@@ -33,9 +35,17 @@ public class Profile extends Fragment {
         super.onStart();
         tv_login = (TextView) getActivity().findViewById(R.id.login);
         tv_role  =(TextView) getActivity().findViewById(R.id.role);
+        exit = (Button) getActivity().findViewById(R.id.exit123456);
 
         tv_role.setText(role);
         tv_login.setText(login);
+
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+            }
+        });
 
     }
 }

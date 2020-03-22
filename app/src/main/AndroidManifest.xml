@@ -9,7 +9,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/sigma"
+        android:icon="@drawable/sigma6"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -37,11 +37,13 @@
 
         </activity>
         <activity android:name=".Authentication"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="Authentication">
 
         </activity>
 
         <activity android:name=".NewAccount"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="New account">
 
         </activity>

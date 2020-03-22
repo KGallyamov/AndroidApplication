@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,7 +27,8 @@ import java.util.HashMap;
 
 public class Authentication extends AppCompatActivity {
     EditText login, password;
-    Button confirm, create;
+    Button confirm;
+    TextView create;
 
     String text_login="", text_password="";
     Context getContext = this;
@@ -41,7 +43,7 @@ public class Authentication extends AppCompatActivity {
         login = (EditText) findViewById(R.id.login);
         password = (EditText) findViewById(R.id.password);
         confirm = (Button) findViewById(R.id.confirm);
-        create = (Button) findViewById(R.id.create);
+        create = (TextView) findViewById(R.id.create);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
