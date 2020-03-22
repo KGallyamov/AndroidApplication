@@ -52,7 +52,7 @@ public class PostPage extends AppCompatActivity {
         autoLinkTextView = (AutoLinkTextView) findViewById(R.id.tags);
 
         autoLinkTextView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG);
-        autoLinkTextView.setHashtagModeColor(ContextCompat.getColor(this, R.color.blue_800));
+        autoLinkTextView.setHashtagModeColor(ContextCompat.getColor(this, R.color.colorAccent));
         autoLinkTextView.setAutoLinkOnClickListener(new AutoLinkOnClickListener() {
             @Override
             public void onAutoLinkTextClick(AutoLinkMode autoLinkMode, String matchedText) {
