@@ -56,12 +56,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
         String login = intent.getStringExtra("Login");
+        String password = intent.getStringExtra("password");
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         nf = new NewsFeed(intent.getStringExtra("role"), intent.getStringExtra("Login"));
         add = new Add_post(intent.getStringExtra("role"), intent.getStringExtra("Login"));
-        profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"));
+        profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"), password);
         bnv.setItemBackground(getDrawable(R.drawable.toolbar));
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();

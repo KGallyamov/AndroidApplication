@@ -92,6 +92,7 @@ public class Authentication extends AppCompatActivity {
                                     Intent intent = new Intent(getContext, MainActivity.class);
                                     intent.putExtra("Login", text_login);
                                     intent.putExtra("role", user.getRole());
+                                    intent.putExtra("password", user.getPassword());
                                     password.setText("");
                                     login.setText("");
                                     startActivity(intent);
