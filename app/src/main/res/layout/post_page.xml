@@ -11,51 +11,78 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="4sp"
         android:orientation="vertical">
 
-        <Button
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/heading"
-            android:text=""
-            android:background="#7aaff0"
-            android:textSize="18sp"
-            android:textAppearance="@android:style/TextAppearance.Large">
+            android:layout_marginTop="5sp"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/heading"
+                android:fontFamily="monospace"
+                android:textColor="#464C4E"
+                android:layout_weight="4"
+                android:text="Programming"
+                android:layout_marginBottom="7sp"
+                android:background="@drawable/fields"
+                android:layout_marginEnd="140sp"
+                android:layout_marginTop="5dp"
+                android:textSize="15sp"
+                android:textAppearance="@android:style/TextAppearance.Large">
 
-        </Button>
+            </Button>
+
+            <Button
+                android:id="@+id/close"
+                android:fontFamily="monospace"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button"
+                android:layout_weight="1"
+                android:layout_marginBottom="7sp"
+                android:layout_marginTop="5dp"
+                android:text="@string/close"
+                android:textAllCaps="false" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/txtTitle"
             android:textColor="#C4B7B7"
+            android:fontFamily="monospace"
+            android:layout_marginTop="10sp"
+            android:layout_below="@+id/heading"
             android:text="Title"
             android:textAppearance="@android:style/TextAppearance.Large">
 
         </TextView>
-
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/image_link"
             android:text=""
-            android:textColor="#C4B7B7"
             android:visibility="gone"
             android:layout_below="@id/picture">
         </TextView>
 
-
-
-
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
             android:id="@+id/picture"
             android:scaleType="centerCrop"
+            android:layout_marginTop="7sp"
+            android:layout_marginBottom="7dp"
             android:adjustViewBounds="true"
             android:src="@drawable/ic_launcher_foreground"
-            android:layout_below="@id/txtTitle"/>
+            android:layout_below="@id/txtTitle">
+        </ImageView>
 
 
         <TextView
@@ -64,48 +91,49 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/picture"
             android:text="Description"
-            android:textAppearance="@android:style/TextAppearance.Medium"
-            android:textColor="#C4B7B7 " />
 
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textColor="#C4B7B7" />
 
         <com.luseen.autolinklibrary.AutoLinkTextView
             android:id="@+id/tags"
             android:text="#tag"
             android:textSize="18sp"
+            android:layout_marginTop="15sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Close"
-            android:id="@+id/close"
-            android:textAllCaps="false">
-        </Button>
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/reject"
-                android:visibility="gone"
                 android:text="@string/refuse"
+                android:background="@drawable/button_refuse"
                 android:layout_width="wrap_content"
+                android:visibility="gone"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_marginLeft="40sp"
+                >
 
             </Button>
             <Button
                 android:id="@+id/ok"
                 android:text="@string/ok"
+                android:background="@drawable/button_ok"
+                android:layout_width="0dp"
                 android:visibility="gone"
-                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:layout_marginStart="80sp"
+                android:layout_marginEnd="40sp"
+                >
             </Button>
 
         </LinearLayout>
