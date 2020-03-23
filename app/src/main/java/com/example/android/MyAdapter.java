@@ -39,6 +39,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     private Context mContext;
     public String where = "";
     private String role;
+    public static String login = "";
     ArrayList<String> paths = new ArrayList<>();
 
     public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role) {
@@ -54,6 +55,22 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         this.role = role;
         this.paths = paths;
     }
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, ArrayList<String> paths, String login) {
+        this.listItems = listItems;
+        this.mContext = mContext;
+        this.where = s;
+        this.role = role;
+        this.paths = paths;
+        this.login = login;
+    }
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, String login) {
+        this.listItems = listItems;
+        this.mContext = mContext;
+        this.where = s;
+        this.role = role;
+        this.login = login;
+    }
+
 
     @NonNull
     @Override
@@ -78,7 +95,25 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         holder.heading.setText(itemList.getHeading());
 
         Glide.with(mContext).load(itemList.getImage()).into(holder.picture);
+        if(where.equals("favorite")){
+            holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
+        }else{
+            holder.txtSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
+                    databaseReference.child("Favorite"+login).push().setValue(listItems.get(position), new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            Toast.makeText(mContext, "Post added.", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                    holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
+                }
+            });
+        }
 
     }
     @IgnoreExtraProperties
@@ -111,7 +146,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         public TextView txtTitle;
         public TextView txtDescription;
-        public TextView txtOption;
+        public TextView txtSave;
         public ImageView picture;
         public Button heading;
         View v;
@@ -122,7 +157,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             v = itemView;
             txtTitle = itemView.findViewById(R.id.txtTitle);
             txtDescription = itemView.findViewById(R.id.txtDescription);
-            txtOption = itemView.findViewById(R.id.txtOptionDigit);
+            txtSave = itemView.findViewById(R.id.save_to_favorite);
+
             picture = itemView.findViewById(R.id.picture);
             heading = itemView.findViewById(R.id.heading);
 

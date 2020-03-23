@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnv;
     SharedPreferences sPref;
     TextView textView;
-    TextView txtOption;
+
     String toRemove = "news_feed";
     NewsFeed nf;
     Add_post add;
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String login = intent.getStringExtra("Login");
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-        txtOption = (TextView) findViewById(R.id.txtOptionDigit);
+
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         nf = new NewsFeed(intent.getStringExtra("role"), intent.getStringExtra("Login"));
         add = new Add_post(intent.getStringExtra("role"), intent.getStringExtra("Login"));

@@ -67,6 +67,8 @@ public class NewsFeed extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyAdapter.login = login;
+
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -127,7 +129,8 @@ public class NewsFeed extends Fragment {
                                             listItems.add(p);
                                         }
                                         Collections.reverse(listItems);
-                                        adapter = new MyAdapter(listItems, getContext(), "main", "user");
+                                        adapter = new MyAdapter(listItems, getContext(), "main", "user", login);
+                                        MyAdapter.login = login;
                                         recyclerView.setAdapter(adapter);
                                     }
 
@@ -196,7 +199,7 @@ public class NewsFeed extends Fragment {
                                         Collections.reverse(listItems);
                                         Collections.reverse(paths);
 
-                                        adapter = new MyAdapter(listItems, getContext(), "main", role, paths);
+                                        adapter = new MyAdapter(listItems, getContext(), "favorite", "user", paths, login);
                                         recyclerView.setAdapter(adapter);
                                     }
 
