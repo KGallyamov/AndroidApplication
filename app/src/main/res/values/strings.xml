@@ -35,6 +35,8 @@
     <string name="auth">Авторизация</string>
 
     <string name="registration">Регистрация</string>
+    <string name="personal_account">Личный кабинет</string>
+    <string name="password_str">Password:</string>
 
     <string-array name="saved">
         <item>2</item>
