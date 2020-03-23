@@ -18,10 +18,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class Profile extends Fragment {
     String role, login, password, fake_password;
-    TextView exit, change;
-    Button look_password, confirm;
+    TextView change;
+    Button look_password, confirm, exit;
     EditText new_password;
     String updated = "";
     boolean is = true;
@@ -51,7 +54,7 @@ public class Profile extends Fragment {
         look_password = (Button) getActivity().findViewById(R.id.look_password);
         change = (TextView) getActivity().findViewById(R.id.change);
         confirm  =(Button) getActivity().findViewById(R.id.confirm);
-        exit = (TextView) getActivity().findViewById(R.id.exit123456);
+        exit = (Button) getActivity().findViewById(R.id.exit123456);
         new_password = (EditText) getActivity().findViewById(R.id.new_password);
 
         tv_role.setText(role);
@@ -67,44 +70,46 @@ public class Profile extends Fragment {
             @Override
             public void onClick(View v) {
                 if(is){
-                change.setText("Cancel");
-                is = false;
-                change.setTextColor(getActivity().getResources().getColor(R.color.colorAccent));
-                look_password.setVisibility(View.GONE);
-                confirm.setVisibility(View.VISIBLE);
-                tv_password.setVisibility(View.GONE);
-                new_password.setVisibility(View.VISIBLE);
-                new_password.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    change.setText("Cancel");
+                    is = false;
+                    change.setTextColor(getActivity().getResources().getColor(R.color.colorAccent));
+                    look_password.setVisibility(View.GONE);
+                    confirm.setVisibility(View.VISIBLE);
+                    tv_password.setVisibility(View.GONE);
+                    new_password.setVisibility(View.VISIBLE);
+                    new_password.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        updated = s.toString();
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
-
-                confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(updated.equals("") || updated.length() < 4){
-                            Toast.makeText(getContext(), "Too simple", Toast.LENGTH_SHORT).show();
-                        }else{
-                            Toast.makeText(getContext(), updated, Toast.LENGTH_SHORT).show();
-                            look_password.setVisibility(View.VISIBLE);
-                            confirm.setVisibility(View.GONE);
-                            tv_password.setVisibility(View.VISIBLE);
-                            new_password.setVisibility(View.GONE);
                         }
-                    }
-                });
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            updated = s.toString();
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
+
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(updated.equals("") || updated.length() < 4){
+                                Toast.makeText(getContext(), "Too simple", Toast.LENGTH_SHORT).show();
+                            }else{
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(login);
+                                ref.child("password").setValue(updated);
+                                Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+                                look_password.setVisibility(View.VISIBLE);
+                                confirm.setVisibility(View.GONE);
+                                tv_password.setVisibility(View.VISIBLE);
+                                new_password.setVisibility(View.GONE);
+                            }
+                        }
+                    });
                 }else{
                     is = true;
                     change.setTextColor(getActivity().getResources().getColor(R.color.bzzzz));
