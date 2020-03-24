@@ -7,6 +7,82 @@
     android:background="#343438"
     tools:context=".NewsFeed">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:background="@drawable/toolbar"
+        android:layout_height="70sp">
+        <TextView
+            android:id="@+id/title"
+            android:text="@string/news_feed"
+            android:textSize="25sp"
+            android:layout_weight="15"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:paddingTop="5dp"
+            android:textAlignment="center"
+            android:textColor="#C4B7B7"
+            android:paddingStart="10dp"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+        </TextView>
+        <EditText
+            android:visibility="gone"
+            android:id="@+id/watch"
+            android:hint="@string/enter_tag_or_heading"
+            android:textSize="17sp"
+            android:layout_weight="15"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:paddingTop="5dp"
+            android:background="@drawable/fields"
+            android:textAlignment="center"
+            android:textColor="#C4B7B7"
+            android:paddingLeft="10dp"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+        </EditText>
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/search"
+            android:layout_weight="1"
+            android:background="@drawable/button"
+            android:layout_marginRight="20sp"
+            android:textSize="25sp"
+            android:text="🔍"
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+        </Button>
+
+        <TextView
+            android:id="@+id/options"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_marginRight="15sp"
+            android:textAlignment="center"
+            android:textColor="#C4B7B7"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            android:text="⋮"
+            android:textSize="25sp">
+
+        </TextView>
+
+
+    </LinearLayout>
+
+
+
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

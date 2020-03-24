@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingRight="15dp"
+    android:paddingLeft="15dp"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp"
+    android:background="#353E4f">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/sigma6"
+        android:paddingBottom="40sp"
+        android:paddingTop="70sp"
+        android:layout_gravity="center">
+
+    </ImageView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:gravity="center_vertical"
+        android:text="@string/registration"
+        android:textAlignment="center"
+        android:textColor="#C4B7B7"
+        android:textSize="25sp"
+        android:visibility="visible" />
+
+
+    <EditText
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40sp"
+        android:layout_marginEnd="40sp"
+        android:layout_marginTop="20sp"
+        android:background="@drawable/fields"
+        android:padding="15sp"
+        android:textColor="@color/colorAccent"
+        android:inputType="textPersonName"
+        android:hint="@string/login">
+
+    </EditText>
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40sp"
+        android:layout_marginEnd="40sp"
+        android:layout_marginTop="20sp"
+        android:layout_marginBottom="20sp"
+        android:background="@drawable/fields"
+        android:padding="15sp"
+        android:textColor="@color/colorAccent"
+        android:inputType="textPassword"
+        android:hint="@string/password">
+
+    </EditText>
+
+
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100sp"
+        android:layout_marginEnd="100sp"
+        android:background="@drawable/button"
+        android:fontFamily="monospace"
+        android:text="@string/confrim"
+        android:textAllCaps="false"
+        android:textColor="#C4B7B7"
+        android:textSize="26sp">
+
+    </Button>
+
+    <TextView
+        android:id="@+id/cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"
+        android:layout_marginStart="50sp"
+        android:layout_marginEnd="50sp"
+        android:layout_marginTop="12sp"
+        android:textSize="20sp"
+        android:fontFamily="monospace"
+        android:gravity="center_vertical"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="#E41313"
+        >
+
+    </TextView>
+
+
+</LinearLayout>

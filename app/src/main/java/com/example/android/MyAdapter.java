@@ -2,10 +2,12 @@ package com.example.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -29,18 +31,46 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     public List<RecyclerItem> listItems;
     private Context mContext;
     public String where = "";
+    private String role;
+    public static String login = "";
+    ArrayList<String> paths = new ArrayList<>();
 
-    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s) {
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role) {
         this.listItems = listItems;
         this.mContext = mContext;
         this.where = s;
+        this.role = role;
     }
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, ArrayList<String> paths) {
+        this.listItems = listItems;
+        this.mContext = mContext;
+        this.where = s;
+        this.role = role;
+        this.paths = paths;
+    }
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, ArrayList<String> paths, String login) {
+        this.listItems = listItems;
+        this.mContext = mContext;
+        this.where = s;
+        this.role = role;
+        this.paths = paths;
+        this.login = login;
+    }
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, String login) {
+        this.listItems = listItems;
+        this.mContext = mContext;
+        this.where = s;
+        this.role = role;
+        this.login = login;
+    }
+
 
     @NonNull
     @Override
@@ -62,69 +92,48 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             s = itemList.getDescription();
         }
         holder.txtDescription.setText(s);
+        holder.heading.setText(itemList.getHeading());
 
         Glide.with(mContext).load(itemList.getImage()).into(holder.picture);
+        if(where.equals("favorite")){
+            holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
+        }else{
+            holder.txtSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        holder.txtOption.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final PopupMenu popupMenu = new PopupMenu(mContext, holder.txtOption);
-                if(where.equals("main")){
-                    popupMenu.inflate(R.menu.option_menu);
-                }else {
-                    popupMenu.inflate(R.menu.favorite_option_menu);
-                }
+                    databaseReference.child("Favorite"+login).push().setValue(listItems.get(position), new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            Toast.makeText(mContext, "Post added.", Toast.LENGTH_SHORT).show();
 
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()){
-                            case R.id.mnu_item_save:
-                                String txtDescription, txtImage, txtTitle;
-                                RecyclerItem recyclerItem = listItems.get(position);
-                                txtDescription = recyclerItem.getDescription();
-                                txtImage = recyclerItem.getImage();
-                                txtTitle = recyclerItem.getTitle();
-                                Data data = new Data(txtDescription, txtImage, txtTitle);
-                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                                databaseReference.child("Favorite").push().setValue(data, new DatabaseReference.CompletionListener() {
-                                    @Override
-                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                        Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                break;
-                            case R.id.mnu_item_delete:
-
-                            case R.id.mnu_item_delete_1:
-                                listItems.remove((position));
-                                notifyDataSetChanged();
-                                Toast.makeText(mContext, "Deleted", Toast.LENGTH_SHORT).show();
-                                break;
-                            default:
-                                break;
                         }
+                    });
+                    holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
+                }
+            });
+        }
 
-                        return false;
-                    }
-                });
-                popupMenu.show();
-            }
-        });
     }
     @IgnoreExtraProperties
     public class Data{
         public String description;
         public String image;
         public String title;
+        public String heading;
+        public ArrayList<String> tags;
+
 
         public Data(){
         }
 
-        public Data(String description, String image, String title){
+        public Data(String description, String image, String title, String heading, ArrayList<String> tags){
             this.description = description;
             this.image = image;
             this.title = title;
+            this.heading = heading;
+            this.tags = tags;
         }
     }
 
@@ -137,8 +146,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         public TextView txtTitle;
         public TextView txtDescription;
-        public TextView txtOption;
+        public TextView txtSave;
         public ImageView picture;
+        public Button heading;
         View v;
 
 
@@ -147,8 +157,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             v = itemView;
             txtTitle = itemView.findViewById(R.id.txtTitle);
             txtDescription = itemView.findViewById(R.id.txtDescription);
-            txtOption = itemView.findViewById(R.id.txtOptionDigit);
+            txtSave = itemView.findViewById(R.id.save_to_favorite);
+
             picture = itemView.findViewById(R.id.picture);
+            heading = itemView.findViewById(R.id.heading);
 
         }
 
@@ -157,10 +169,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     Intent intent = new Intent(mContext, PostPage.class);
                     intent.putExtra("title", listItems.get(pos).getTitle());
                     intent.putExtra("description", listItems.get(pos).getDescription());
                     intent.putExtra("image link", listItems.get(pos).getImage());
+                    intent.putExtra("heading", listItems.get(pos).getHeading());
+                    intent.putExtra("role", role);
+                    intent.putExtra("tags", listItems.get(pos).getTags());
+                    if(paths.size() > 0) {
+                        intent.putExtra("post path", paths.get(pos));
+                    }
+
                     mContext.startActivity(intent);
                 }
             });

@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/mnu_main" android:title="@string/news_feed">
 
-    <item android:id="@+id/mnu_item_save" android:title="@string/save" >
+    </item>
+
+    <item android:id="@+id/mnu_moderate" android:title="@string/moderate">
 
     </item>
 
-    <item android:id="@+id/mnu_item_delete" android:title="@string/delete" >
+    <item android:id="@+id/mnu_search" android:title="@string/search">
 
     </item>
+
+    <item android:id="@+id/favorite" android:title="@string/favorite">
+
+    </item>
+
 </menu>

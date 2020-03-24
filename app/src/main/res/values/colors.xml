@@ -2,13 +2,15 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#FF0000</color>
     <color name="bottom_navigation_background">#1328DD</color>
-    <color name="bottom_navigation_foreground">#F8F8FA</color>
+    <color name="bottom_navigation_foreground">#BBBBC9</color>
     <color name="grey_50">#4B5F5C5C</color>
     <color name="blue_800">#1328DD</color>
     <color name="black">#000000</color>
     <color name="button_add">#800000</color>
     <color name="buttons">#7aaff0</color>
     <color name="white">#FFFFFF</color>
+    <color name="colorWhite">#fafafa</color>
+    <color name="bzzzz">#03A9F4</color>
 </resources>
