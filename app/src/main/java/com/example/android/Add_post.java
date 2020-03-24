@@ -96,8 +96,8 @@ public class Add_post extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     headings.add(dataSnapshot1.getValue().toString());
-                    adapter = new ArrayAdapter<String>(myView.getContext(), android.R.layout.simple_spinner_item, headings.toArray(new String[headings.size()]));
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    adapter = new ArrayAdapter<>(myView.getContext(), R.layout.spinner_item, R.id.choose, headings.toArray(new String[headings.size()]));
                     spinner.setAdapter(adapter);
                 }
             }

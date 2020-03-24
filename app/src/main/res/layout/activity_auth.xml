@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="monospace"
         android:gravity="center_vertical"
-        android:text="@string/auth"
+        android:text="@string/authorisation"
         android:textAlignment="center"
         android:textColor="#C4B7B7"
         android:textSize="25sp"

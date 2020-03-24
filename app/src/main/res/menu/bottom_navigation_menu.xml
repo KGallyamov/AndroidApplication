@@ -3,19 +3,21 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/action_posts"
-        android:enabled="true"
-        android:checked="true"
-        android:icon="@drawable/baseline_list_black_24dp"
-        android:title=""
-        app:showAsAction="ifRoom"
-        />
+
 
     <item
         android:id="@+id/action_add"
         android:enabled="true"
         android:icon="@drawable/baseline_create_black_18dp"
+        android:title=""
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/action_posts"
+        android:enabled="true"
+        android:checked="true"
+        android:icon="@drawable/baseline_list_black_24dp"
         android:title=""
         app:showAsAction="ifRoom"
         />
