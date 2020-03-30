@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ public class PostPage extends AppCompatActivity {
     Context context = this;
     ArrayList<String> tags;
     AutoLinkTextView autoLinkTextView;
+    RatingBar ratingBar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +51,7 @@ public class PostPage extends AppCompatActivity {
         ok = (Button) findViewById(R.id.ok);
         heading = (Button) findViewById(R.id.heading);
         refuse = (Button) findViewById(R.id.reject);
+        ratingBar = (RatingBar) findViewById(R.id.rating);
         autoLinkTextView = (AutoLinkTextView) findViewById(R.id.tags);
 
         autoLinkTextView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG);
@@ -68,6 +71,13 @@ public class PostPage extends AppCompatActivity {
                 Toast.makeText(context, "Tag copied", Toast.LENGTH_SHORT).show();
 
 
+            }
+        });
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                ratingBar.setRating(rating);
+                Log.d("OAOAOAO", rating+"");
             }
         });
 

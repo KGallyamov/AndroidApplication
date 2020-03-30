@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -85,7 +87,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         holder.click(position);
         holder.txtTitle.setText(itemList.getTitle());
-        String s = "";
+        String s;
         try{
             s = itemList.getDescription().substring(0, 37) + "...";
         }catch (Exception e){
@@ -93,11 +95,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         }
         holder.txtDescription.setText(s);
         holder.heading.setText(itemList.getHeading());
+        holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                Toast.makeText(mContext, rating+"", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         Glide.with(mContext).load(itemList.getImage()).into(holder.picture);
+
         if(where.equals("favorite")){
             holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
         }else{
+
             holder.txtSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -149,6 +159,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         public TextView txtSave;
         public ImageView picture;
         public Button heading;
+        public RatingBar ratingBar;
         View v;
 
 
@@ -158,14 +169,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             txtTitle = itemView.findViewById(R.id.txtTitle);
             txtDescription = itemView.findViewById(R.id.txtDescription);
             txtSave = itemView.findViewById(R.id.save_to_favorite);
+            ratingBar  =itemView.findViewById(R.id.rating);
 
             picture = itemView.findViewById(R.id.picture);
             heading = itemView.findViewById(R.id.heading);
 
+
         }
 
-        public void click(int position) {
+        public void click(final int position) {
             final int pos = position;
+
+
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

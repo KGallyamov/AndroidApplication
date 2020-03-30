@@ -103,7 +103,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-
+        <RatingBar
+            android:id="@+id/rating"
+            style="?android:attr/ratingBarStyle"
+            android:theme="@style/MyRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
 
         <LinearLayout
