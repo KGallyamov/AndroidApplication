@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NewAccount extends AppCompatActivity {
     DatabaseReference databaseReference;
@@ -54,11 +55,14 @@ public class NewAccount extends AppCompatActivity {
                         t.add("system");
                         t.add("greetings");
                         t.add("admin");
+                        HashMap<String, Float> rating = new HashMap<>();
+                        rating.put("zero", (float) 0);
                         ref.child("Favorite" + text_login).child("0").setValue(new RecyclerItem("Добро пожаловать!",
                                 "Это лента избранных постов",
                                 "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/sigma.jpg?alt=media&token=328187a2-65a5-4623-885f-1d19c12d72d2",
                                 "System message",
-                                t));
+                                t,
+                                rating));
 
                         finish();
                     }

@@ -15,16 +15,30 @@ public class RecyclerItem {
     private String heading;
     private ArrayList<String> tags;
 
+
+    private HashMap<String, Float> rating;
+
+
+
     RecyclerItem(){
     }
 
 
-    public RecyclerItem(String title, String description, String image, String heading, ArrayList<String> tags) {
+    public RecyclerItem(String title, String description, String image, String heading, ArrayList<String> tags, HashMap<String, Float> rating) {
         this.title = title;
         this.description = description;
         this.image = image;
         this.heading = heading;
         this.tags = tags;
+        this.rating = rating;
+    }
+
+    public HashMap<String, Float> getRating() {
+        return rating;
+    }
+
+    public void setRating(HashMap<String, Float> rating) {
+        this.rating = rating;
     }
 
     public ArrayList<String> getTags() {

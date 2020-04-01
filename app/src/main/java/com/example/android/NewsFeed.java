@@ -74,13 +74,15 @@ public class NewsFeed extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listItems = new ArrayList<RecyclerItem>();
+                ArrayList<String> pt = new ArrayList<>();
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
                 {
                     RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
                     listItems.add(p);
+                    pt.add(dataSnapshot1.getKey());
                 }
                 Collections.reverse(listItems);
-                adapter = new MyAdapter(listItems, getContext(), "main", "user");
+                adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt);
                 recyclerView.setAdapter(adapter);
             }
 
@@ -123,13 +125,15 @@ public class NewsFeed extends Fragment {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         listItems = new ArrayList<RecyclerItem>();
+                                        ArrayList<String> pt = new ArrayList<>();
                                         for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
                                         {
                                             RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
                                             listItems.add(p);
+                                            pt.add(dataSnapshot1.getKey());
                                         }
                                         Collections.reverse(listItems);
-                                        adapter = new MyAdapter(listItems, getContext(), "main", "user", login);
+                                        adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
                                         MyAdapter.login = login;
                                         recyclerView.setAdapter(adapter);
                                     }
@@ -171,7 +175,7 @@ public class NewsFeed extends Fragment {
                                         Collections.reverse(listItems);
                                         Collections.reverse(paths);
 
-                                        adapter = new MyAdapter(listItems, getContext(), "main", role, paths);
+                                        adapter = new MyAdapter(listItems, getContext(), "Moderate", role, paths);
                                         recyclerView.setAdapter(adapter);
                                     }
 
@@ -199,7 +203,7 @@ public class NewsFeed extends Fragment {
                                         Collections.reverse(listItems);
                                         Collections.reverse(paths);
 
-                                        adapter = new MyAdapter(listItems, getContext(), "favorite", "user", paths, login);
+                                        adapter = new MyAdapter(listItems, getContext(), "Favorite", "user", paths, login);
                                         recyclerView.setAdapter(adapter);
                                     }
 
@@ -248,15 +252,17 @@ public class NewsFeed extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         listItems = new ArrayList<RecyclerItem>();
+                        ArrayList<String> pt = new ArrayList<>();
                         for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
                         {
                             RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
                             if(p.getHeading().equals(tag) || p.getTags().contains(tag)) {
                                 listItems.add(p);
+                                pt.add(dataSnapshot1.getKey());
                             }
                         }
                         Collections.reverse(listItems);
-                        adapter = new MyAdapter(listItems, getContext(), "main", "user");
+                        adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt);
                         recyclerView.setAdapter(adapter);
                     }
 

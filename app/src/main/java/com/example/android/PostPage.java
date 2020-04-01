@@ -14,14 +14,17 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.luseen.autolinklibrary.AutoLinkMode;
 import com.luseen.autolinklibrary.AutoLinkOnClickListener;
 import com.luseen.autolinklibrary.AutoLinkTextView;
@@ -29,9 +32,10 @@ import com.luseen.autolinklibrary.AutoLinkTextView;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PostPage extends AppCompatActivity {
-    TextView title, description;
+    TextView title, description, middle;
     ImageView imageView;
     Button close, ok, refuse, heading;
     Context getActivity = this;
@@ -40,6 +44,8 @@ public class PostPage extends AppCompatActivity {
     ArrayList<String> tags;
     AutoLinkTextView autoLinkTextView;
     RatingBar ratingBar;
+    float midValue = 0;
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +58,46 @@ public class PostPage extends AppCompatActivity {
         heading = (Button) findViewById(R.id.heading);
         refuse = (Button) findViewById(R.id.reject);
         ratingBar = (RatingBar) findViewById(R.id.rating);
+        middle = (TextView) findViewById(R.id.middle_rating);
         autoLinkTextView = (AutoLinkTextView) findViewById(R.id.tags);
+
+        Intent intent = getIntent();
+        final String txt_title = intent.getStringExtra("title");
+        final String txt_description = intent.getStringExtra("description");
+        final String image_link = intent.getStringExtra("image link");
+        final String txt_heading = intent.getStringExtra("heading");
+        final HashMap<String, Float> rating = new HashMap<>();
+        final String where = intent.getStringExtra("Where");
+        final float rate = intent.getFloatExtra("rating", 1);
+        final String login = intent.getStringExtra("login");
+        tags = intent.getStringArrayListExtra("tags");
+        role = intent.getStringExtra("role");
+        path = intent.getStringExtra("post path");
+        ratingBar.setRating(rate);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int i=0;
+                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                    i++;
+                    midValue += ds.getValue(Float.TYPE);
+                }
+                if(i==1){
+                    middle.setText("0.0");
+                }else{
+                    middle.setText(Float.toString(midValue/(i-1)));
+                }
+                midValue = 0;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
         autoLinkTextView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG);
         autoLinkTextView.setHashtagModeColor(ContextCompat.getColor(this, R.color.colorAccent));
@@ -68,6 +113,7 @@ public class PostPage extends AppCompatActivity {
                 ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("", res);
                 clipboard.setPrimaryClip(clip);
+
                 Toast.makeText(context, "Tag copied", Toast.LENGTH_SHORT).show();
 
 
@@ -76,32 +122,31 @@ public class PostPage extends AppCompatActivity {
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                ratingBar.setRating(rating);
-                Log.d("OAOAOAO", rating+"");
+                databaseReference.child(where).child(path).child("rating").child(login).setValue(rating);
+                Toast.makeText(context, Float.toString(rating), Toast.LENGTH_SHORT).show();
             }
         });
 
-        Intent intent = getIntent();
-        final String txt_title = intent.getStringExtra("title");
-        final String txt_description = intent.getStringExtra("description");
-        final String image_link = intent.getStringExtra("image link");
-        final String txt_heading = intent.getStringExtra("heading");
-        tags = intent.getStringArrayListExtra("tags");
+
+
         String to_tag = "";
         for(String s:tags){
             to_tag += s + " ";
         }
+        rating.put("zero", (float) 0);
+
         autoLinkTextView.setAutoLinkText(to_tag);
-        role = intent.getStringExtra("role");
-        path = intent.getStringExtra("post path");
+
         if(!role.equals("user")){
             ok.setVisibility(View.VISIBLE);
             refuse.setVisibility(View.VISIBLE);
+            ratingBar.setVisibility(View.GONE);
+            middle.setVisibility(View.GONE);
 
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link, txt_heading, tags);
+                    RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link, txt_heading, tags, rating);
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("Data").push().setValue(post, new DatabaseReference.CompletionListener() {
                         @Override
