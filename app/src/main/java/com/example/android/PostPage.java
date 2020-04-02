@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -99,8 +100,9 @@ public class PostPage extends AppCompatActivity {
         });
 
 
-        autoLinkTextView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG);
+        autoLinkTextView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG, AutoLinkMode.MODE_URL);
         autoLinkTextView.setHashtagModeColor(ContextCompat.getColor(this, R.color.colorAccent));
+        autoLinkTextView.setUrlModeColor(ContextCompat.getColor(this, R.color.blue_800));
         autoLinkTextView.setAutoLinkOnClickListener(new AutoLinkOnClickListener() {
             @Override
             public void onAutoLinkTextClick(AutoLinkMode autoLinkMode, String matchedText) {
@@ -109,12 +111,17 @@ public class PostPage extends AppCompatActivity {
                 for(String i:tag){
                     res += i;
                 }
+                if(res.charAt(0) == '#') {
+                    ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("", res);
+                    clipboard.setPrimaryClip(clip);
 
-                ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("", res);
-                clipboard.setPrimaryClip(clip);
-
-                Toast.makeText(context, "Tag copied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Tag copied", Toast.LENGTH_SHORT).show();
+                }else{
+                    Uri address = Uri.parse(res);
+                    Intent openlink = new Intent(Intent.ACTION_VIEW, address);
+                    startActivity(openlink);
+                }
 
 
             }
@@ -135,7 +142,7 @@ public class PostPage extends AppCompatActivity {
         }
         rating.put("zero", (float) 0);
 
-        autoLinkTextView.setAutoLinkText(to_tag);
+        autoLinkTextView.setAutoLinkText(to_tag + " https://ru.stackoverflow.com/questions/219888/%D0%9A%D0%B0%D0%BA-%D0%BE%D1%82%D0%BA%D1%80%D1%8B%D1%82%D1%8C-%D1%81%D1%81%D1%8B%D0%BB%D0%BA%D1%83-%D0%B2-%D1%81%D1%82%D0%B0%D0%BD%D0%B4%D0%B0%D1%80%D1%82%D0%BD%D0%BE%D0%BC-%D0%B1%D1%80%D0%B0%D1%83%D0%B7%D0%B5%D1%80%D0%B5-%D0%90%D0%BD%D0%B4%D1%80%D0%BE%D0%B8%D0%B4");
 
         if(!role.equals("user")){
             ok.setVisibility(View.VISIBLE);
