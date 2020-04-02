@@ -61,7 +61,7 @@ public class NewAccount extends AppCompatActivity {
                                 already_exists = true;
                             }
                         }
-                        if(!already_exists){
+                        if(!already_exists & !(text_login.length() == 0)){
                             already_exists = true;
                             databaseReference.child(text_login).setValue(new User(text_password, "user"), new DatabaseReference.CompletionListener() {
                                 @Override
@@ -84,7 +84,10 @@ public class NewAccount extends AppCompatActivity {
                                     finish();
                                 }
                             });
-                        }else{
+                        }else if(text_login.length() == 0){
+                            Toast.makeText(getContext, "Enter the login", Toast.LENGTH_LONG).show();
+                        }
+                        else{
                             Toast.makeText(getContext, "Login is already used", Toast.LENGTH_LONG).show();
                             login.setText("");
                             text_login = "";
