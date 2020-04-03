@@ -2,10 +2,12 @@ package com.example.android;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.INotificationSideChannel;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,8 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class Profile extends Fragment {
     String role, login, password, fake_password;
@@ -145,7 +149,14 @@ public class Profile extends Fragment {
                 .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences preferences = getActivity().getSharedPreferences("UserData", MODE_PRIVATE);
+                        SharedPreferences.Editor ed = preferences.edit();
+                        ed.remove("login");
+                        ed.remove("password");
+                        ed.remove("role");
+                        ed.apply();
                         getActivity().finish();
+
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
