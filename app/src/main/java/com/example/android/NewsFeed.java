@@ -84,7 +84,9 @@ public class NewsFeed extends Fragment {
                     listItems.add(p);
                     pt.add(dataSnapshot1.getKey());
                 }
+                //Collections.reverse(listItems);
                 adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt);
+                manager.scrollToPosition(0);
                 recyclerView.setAdapter(adapter);
             }
 
@@ -102,6 +104,9 @@ public class NewsFeed extends Fragment {
         SharedPreferences preferences = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
         int pos = preferences.getInt("position", 0);
         manager.scrollToPosition(pos);
+        SharedPreferences.Editor ed = preferences.edit();
+        ed.remove("position");
+        ed.apply();
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
 
         watch = (EditText) getActivity().findViewById(R.id.watch);
@@ -218,6 +223,7 @@ public class NewsFeed extends Fragment {
                                         Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
                                     }
                                 });
+                                manager = new LinearLayoutManager(getContext());
                                 break;
                         }
                         return false;
