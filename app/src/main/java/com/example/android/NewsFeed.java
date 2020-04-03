@@ -1,6 +1,8 @@
 package com.example.android;
 
 import android.content.ClipData;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -50,6 +52,7 @@ public class NewsFeed extends Fragment {
     private EditText watch;
     private DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
     private String role, login;
+    private LinearLayoutManager manager;
     public static String tag = "";
     private String wh = "Moderate";
     NewsFeed(String role, String login){
@@ -81,7 +84,6 @@ public class NewsFeed extends Fragment {
                     listItems.add(p);
                     pt.add(dataSnapshot1.getKey());
                 }
-                Collections.reverse(listItems);
                 adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt);
                 recyclerView.setAdapter(adapter);
             }
@@ -96,6 +98,10 @@ public class NewsFeed extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        manager = new LinearLayoutManager(getContext());
+        SharedPreferences preferences = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
+        int pos = preferences.getInt("position", 0);
+        manager.scrollToPosition(pos);
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
 
         watch = (EditText) getActivity().findViewById(R.id.watch);
@@ -221,7 +227,8 @@ public class NewsFeed extends Fragment {
             }
         });
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        recyclerView.setLayoutManager(manager);
     }
 
     public void search(){

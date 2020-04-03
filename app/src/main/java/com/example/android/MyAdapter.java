@@ -218,6 +218,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     intent.putExtra("role", role);
                     intent.putExtra("Where", where);
                     intent.putExtra("login", login);
+                    intent.putExtra("position", pos);
                     intent.putExtra("tags", listItems.get(pos).getTags());
                     intent.putExtra("rating", listItems.get(pos).getRating().get(login));
                     if(paths.size() > 0) {

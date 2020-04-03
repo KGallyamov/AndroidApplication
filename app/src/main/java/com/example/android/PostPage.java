@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,6 +47,7 @@ public class PostPage extends AppCompatActivity {
     AutoLinkTextView autoLinkTextView;
     RatingBar ratingBar;
     float midValue = 0;
+    int pos;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +73,7 @@ public class PostPage extends AppCompatActivity {
         final String where = intent.getStringExtra("Where");
         final float rate = intent.getFloatExtra("rating", 1);
         final String login = intent.getStringExtra("login");
+        pos = intent.getIntExtra("position", 0);
         tags = intent.getStringArrayListExtra("tags");
         role = intent.getStringExtra("role");
         path = intent.getStringExtra("post path");
@@ -183,6 +186,10 @@ public class PostPage extends AppCompatActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences preferences = getSharedPreferences("position", MODE_PRIVATE);
+                SharedPreferences.Editor ed = preferences.edit();
+                ed.putInt("position", pos);
+                ed.apply();
                 finish();
             }
         });
