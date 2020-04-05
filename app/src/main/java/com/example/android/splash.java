@@ -1,5 +1,8 @@
 package com.example.android;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,9 +12,11 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 public class splash extends AppCompatActivity {
     public SharedPreferences preferences;
+    int notifyId = 100;
     String login, role, password;
 
     @Override

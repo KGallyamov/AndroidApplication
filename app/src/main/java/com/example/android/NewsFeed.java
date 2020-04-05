@@ -86,7 +86,12 @@ public class NewsFeed extends Fragment {
                 }
                 //Collections.reverse(listItems);
                 adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt);
-                manager.scrollToPosition(0);
+                SharedPreferences preferences = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
+                int pos = preferences.getInt("position", 0);
+                manager.scrollToPosition(pos);
+                SharedPreferences.Editor ed = preferences.edit();
+                ed.remove("position");
+                ed.apply();
                 recyclerView.setAdapter(adapter);
             }
 

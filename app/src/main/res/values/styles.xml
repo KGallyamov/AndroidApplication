@@ -38,5 +38,10 @@
         <item name="colorControlActivated">#921313</item>
     </style>
 
+    <style name="PostPageRatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">#9193A5</item>
+        <item name="colorControlActivated">#AF3333</item>
+    </style>
+
 
 </resources>

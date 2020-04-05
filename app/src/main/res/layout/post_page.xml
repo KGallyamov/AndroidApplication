@@ -112,7 +112,7 @@
             <RatingBar
                 android:id="@+id/rating"
                 style="?android:attr/ratingBarStyle"
-                android:theme="@style/MyRatingBar"
+                android:theme="@style/PostPageRatingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

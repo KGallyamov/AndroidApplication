@@ -2,6 +2,7 @@ package com.example.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     public List<RecyclerItem> listItems;
     private Context mContext;
@@ -34,6 +37,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     HashMap<String, Float> rate;
     public static String login = "";
     ArrayList<String> paths = new ArrayList<>();
+    boolean remove = false;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
 
@@ -124,6 +128,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                SharedPreferences preferences = mContext.getSharedPreferences("position", MODE_PRIVATE);
+                SharedPreferences.Editor ed = preferences.edit();
+                ed.putInt("position", position);
+                ed.apply();
                 databaseReference.child(where).child(paths.get(position)).child("rating").child(login).setValue(rating);
             }
         });
@@ -132,22 +140,68 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         if(where.equals("Favorite")){
             holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
-        }else{
             holder.txtSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-                    databaseReference.child("Favorite"+login).push().setValue(listItems.get(position), new DatabaseReference.CompletionListener() {
+                    databaseReference.child("Favorite" + login).child(paths.get(position)).removeValue(new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            Toast.makeText(mContext, "Post added.", Toast.LENGTH_SHORT).show();
-
+                            Toast.makeText(mContext, "Post removed.", Toast.LENGTH_SHORT).show();
+                            Log.d("HERE", "");
                         }
                     });
-                    holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
                 }
             });
+        }else{
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            databaseReference.child("Favorite" + login).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot i:dataSnapshot.getChildren()){
+                        if(i.getKey().equals(paths.get(position))){
+                            remove = true;
+                            holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
+                        }
+                    }
+                    holder.txtSave.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(!remove) {
+                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                                databaseReference.child("Favorite" + login).child(paths.get(position)).setValue(listItems.get(position), new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        Toast.makeText(mContext, "Post added.", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                });
+
+                                holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
+                            }else{
+                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                                databaseReference.child("Favorite" + login).child(paths.get(position)).removeValue(new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        Toast.makeText(mContext, "Post removed.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                                holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_border_black_24dp));
+                            }
+
+                            remove = !remove;
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
         }
 
     }
