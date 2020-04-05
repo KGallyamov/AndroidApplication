@@ -17,9 +17,14 @@
         android:id="@+id/close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Close"
+        android:text="←"
+        android:textSize="40sp"
+        android:paddingBottom="15sp"
+        android:textColor="#E3E7E3"
+        android:background="@drawable/close_photo_button"
+        android:layout_marginRight="330dp"
         android:textAllCaps="false"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentTop="true">
 
     </Button>
 

@@ -37,12 +37,14 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
+import java.nio.channels.FileLock;
 import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -186,17 +188,19 @@ public class Add_post extends Fragment implements View.OnClickListener {
         public String title;
         public String heading;
         public ArrayList<String> tags;
+        public HashMap<String, Float> rating;
 
 
         public Data(){
         }
 
-        public Data(String description, String image, String title, String heading, ArrayList<String> tags){
+        public Data(String description, String image, String title, String heading, ArrayList<String> tags, HashMap<String, Float> rating){
             this.description = description;
             this.image = image;
             this.title = title;
             this.heading = heading;
             this.tags = tags;
+            this.rating = rating;
         }
     }
 
@@ -224,7 +228,9 @@ public class Add_post extends Fragment implements View.OnClickListener {
         tags_db.add("#" + datetime[2]);
         tags_db.add("#" + role);
         tags_db.add("#" + login);
-            Data data = new Data(txtDescription, image, txtTitle, heading, tags_db);
+        HashMap<String, Float> rating = new HashMap<>();
+        rating.put("zero", (float) 0);
+            Data data = new Data(txtDescription, image, txtTitle, heading, tags_db, rating);
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
             String wh = "Moderate";
 

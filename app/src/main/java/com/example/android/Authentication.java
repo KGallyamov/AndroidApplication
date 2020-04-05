@@ -2,6 +2,7 @@ package com.example.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -89,6 +90,14 @@ public class Authentication extends AppCompatActivity {
                             try {
                                 user = dataSnapshot.getValue(User.class);
                                 if (user.getPassword().equals(text_password)) {
+                                    SharedPreferences preferences = getSharedPreferences("UserData", MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = preferences.edit();
+
+                                    editor.putString("login", text_login);
+                                    editor.putString("role", user.getRole());
+                                    editor.putString("password", text_password);
+                                    editor.apply();
+
                                     Intent intent = new Intent(getContext, MainActivity.class);
                                     intent.putExtra("Login", text_login);
                                     intent.putExtra("role", user.getRole());
@@ -96,6 +105,7 @@ public class Authentication extends AppCompatActivity {
                                     password.setText("");
                                     login.setText("");
                                     startActivity(intent);
+
 
                                 } else {
                                     password.setText("");
