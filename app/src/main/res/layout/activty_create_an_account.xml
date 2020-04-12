@@ -40,8 +40,8 @@
         android:background="@drawable/fields"
         android:padding="15sp"
         android:textColor="@color/colorAccent"
-        android:inputType="textPersonName"
-        android:hint="@string/login">
+        android:inputType="textEmailAddress"
+        android:hint="@string/email">
 
     </EditText>
 

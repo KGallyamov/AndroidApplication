@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -144,17 +145,13 @@ public class Profile extends Fragment {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
+                final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
                 ask.setMessage("Are you sure you want to log out?").setCancelable(false)
                 .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        SharedPreferences preferences = getActivity().getSharedPreferences("UserData", MODE_PRIVATE);
-                        SharedPreferences.Editor ed = preferences.edit();
-                        ed.remove("login");
-                        ed.remove("password");
-                        ed.remove("role");
-                        ed.apply();
+                        FirebaseAuth auth = FirebaseAuth.getInstance();
+                        auth.signOut();
                         getActivity().finish();
 
                     }

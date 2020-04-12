@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,38 +36,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     public float midValue;
     private String role;
     HashMap<String, Float> rate;
-    public static String login = "";
+    public String login = "";
     ArrayList<String> paths = new ArrayList<>();
     boolean remove = false;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
 
-    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role) {
-        this.listItems = listItems;
-        this.mContext = mContext;
-        this.where = s;
-        this.role = role;
-    }
-    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, ArrayList<String> paths) {
-        this.listItems = listItems;
-        this.mContext = mContext;
-        this.where = s;
-        this.role = role;
-        this.paths = paths;
-    }
     public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, ArrayList<String> paths, String login) {
         this.listItems = listItems;
         this.mContext = mContext;
         this.where = s;
         this.role = role;
         this.paths = paths;
-        this.login = login;
-    }
-    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, String login) {
-        this.listItems = listItems;
-        this.mContext = mContext;
-        this.where = s;
-        this.role = role;
         this.login = login;
     }
 
@@ -122,7 +103,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             holder.middle_rating.setText("0.0");
         }else{
             midValue = middle/(itemList.getRating().size() - 1);
-            holder.middle_rating.setText(Float.toString(middle/(itemList.getRating().size() - 1)));
+            DecimalFormat df = new DecimalFormat("#.##");
+            Float f = middle/(itemList.getRating().size() - 1);
+            holder.middle_rating.setText(df.format(f));
         }
 
         holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {

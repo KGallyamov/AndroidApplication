@@ -41,6 +41,7 @@
     <string name="close">Close</string>
     <string name="authorisation">Authorisation</string>
     <string name="enteryourtags">#enteryourtags</string>
+    <string name="email">Email</string>
 
     <string-array name="saved">
         <item>2</item>

@@ -1,5 +1,6 @@
 package com.example.android;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,7 +37,7 @@ public class NewAccount extends AppCompatActivity {
     TextView cancel;
     Context getContext = this;
     String text_password, text_login;
-    User user;
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,10 +55,8 @@ public class NewAccount extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 check.addValueEventListener(new ValueEventListener() {
                     boolean already_exists = false;
-
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for(DataSnapshot ds:dataSnapshot.getChildren()){
@@ -61,9 +64,17 @@ public class NewAccount extends AppCompatActivity {
                                 already_exists = true;
                             }
                         }
-                        if(!already_exists & !(text_login.length() == 0)){
+                        if(!already_exists && !(text_login.length() == 0) && !(text_password.length() < 8)){
                             already_exists = true;
-                            databaseReference.child(text_login).setValue(new User(text_password, "user"), new DatabaseReference.CompletionListener() {
+                            auth = FirebaseAuth.getInstance();
+                            auth.createUserWithEmailAndPassword(text_login, text_password).addOnCompleteListener((Activity) getContext, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    Toast.makeText(getContext, String.valueOf(task.isSuccessful()), Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            final String db_login = text_login.split("@")[0];
+                            databaseReference.child(db_login).setValue(new User(text_password, "user"), new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                     Toast.makeText(getContext, "Success", Toast.LENGTH_SHORT).show();
@@ -74,17 +85,20 @@ public class NewAccount extends AppCompatActivity {
                                     t.add("admin");
                                     HashMap<String, Float> rating = new HashMap<>();
                                     rating.put("zero", (float) 0);
-                                    ref.child("Favorite" + text_login).child("0").setValue(new RecyclerItem("Добро пожаловать!",
+
+                                    ref.child("Favorite" + db_login).child("0").setValue(new RecyclerItem("Добро пожаловать!",
                                             "Это лента избранных постов",
                                             "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/sigma.jpg?alt=media&token=328187a2-65a5-4623-885f-1d19c12d72d2",
                                             "System message",
                                             t,
                                             rating));
-
                                     finish();
                                 }
                             });
-                        }else if(text_login.length() == 0){
+                        }else if(text_password.length() < 8){
+                            Toast.makeText(getContext, "Create stronger password", Toast.LENGTH_LONG).show();
+                        }
+                        else if(text_login.length() == 0){
                             Toast.makeText(getContext, "Enter the login", Toast.LENGTH_LONG).show();
                         }else{
                             Toast.makeText(getContext, "Login is already used", Toast.LENGTH_LONG).show();
@@ -137,7 +151,10 @@ public class NewAccount extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                if(s.toString().length() < 8){
+                    Toast.makeText(getContext, "Create stronger password", Toast.LENGTH_SHORT).show();
 
+                }
             }
         });
 

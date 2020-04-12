@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
-        String login = intent.getStringExtra("Login");
         String password = intent.getStringExtra("password");
         bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
