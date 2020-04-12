@@ -70,7 +70,6 @@ public class NewsFeed extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyAdapter.login = login;
 
 
         reference.addValueEventListener(new ValueEventListener() {
@@ -85,7 +84,7 @@ public class NewsFeed extends Fragment {
                     pt.add(dataSnapshot1.getKey());
                 }
                 //Collections.reverse(listItems);
-                adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt);
+                adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
                 SharedPreferences preferences = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
                 int pos = preferences.getInt("position", 0);
                 manager.scrollToPosition(pos);
@@ -150,7 +149,6 @@ public class NewsFeed extends Fragment {
                                         }
                                         Collections.reverse(listItems);
                                         adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
-                                        MyAdapter.login = login;
                                         recyclerView.setAdapter(adapter);
                                     }
 
@@ -191,7 +189,7 @@ public class NewsFeed extends Fragment {
                                         Collections.reverse(listItems);
                                         Collections.reverse(paths);
 
-                                        adapter = new MyAdapter(listItems, getContext(), "Moderate", role, paths);
+                                        adapter = new MyAdapter(listItems, getContext(), "Moderate", role, paths, login);
                                         recyclerView.setAdapter(adapter);
                                     }
 
@@ -280,7 +278,7 @@ public class NewsFeed extends Fragment {
                             }
                         }
                         Collections.reverse(listItems);
-                        adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt);
+                        adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
                         recyclerView.setAdapter(adapter);
                     }
 
