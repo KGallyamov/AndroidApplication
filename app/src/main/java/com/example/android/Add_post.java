@@ -181,28 +181,6 @@ public class Add_post extends Fragment implements View.OnClickListener {
         return myView;
 
     }
-    @IgnoreExtraProperties
-    public class Data{
-        public String description;
-        public String image;
-        public String title;
-        public String heading;
-        public ArrayList<String> tags;
-        public HashMap<String, Float> rating;
-
-
-        public Data(){
-        }
-
-        public Data(String description, String image, String title, String heading, ArrayList<String> tags, HashMap<String, Float> rating){
-            this.description = description;
-            this.image = image;
-            this.title = title;
-            this.heading = heading;
-            this.tags = tags;
-            this.rating = rating;
-        }
-    }
 
     @Override
     public void onClick(View v){
@@ -229,10 +207,12 @@ public class Add_post extends Fragment implements View.OnClickListener {
         tags_db.add("#" + role);
         tags_db.add("#" + login);
         HashMap<String, Float> rating = new HashMap<>();
+        HashMap<String, String> comments = new HashMap<>();
         rating.put("zero", (float) 0);
-            Data data = new Data(txtDescription, image, txtTitle, heading, tags_db, rating);
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-            String wh = "Moderate";
+        comments.put("zero", "nothing interesting");
+        RecyclerItem data = new RecyclerItem(txtDescription, image, txtTitle, heading, tags_db, rating, comments);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        String wh = "Moderate";
 
             if (role.equals("admin")) {
                 wh = "Data";
@@ -278,8 +258,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
             progressDialog.show();
 
             final StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
-            ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();

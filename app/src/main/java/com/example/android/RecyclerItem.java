@@ -17,6 +17,7 @@ public class RecyclerItem {
 
 
     private HashMap<String, Float> rating;
+    private HashMap<String, String> comments;
 
 
 
@@ -24,13 +25,22 @@ public class RecyclerItem {
     }
 
 
-    public RecyclerItem(String title, String description, String image, String heading, ArrayList<String> tags, HashMap<String, Float> rating) {
+    public RecyclerItem(String title, String description, String image, String heading, ArrayList<String> tags, HashMap<String, Float> rating, HashMap<String, String> comments) {
         this.title = title;
         this.description = description;
         this.image = image;
         this.heading = heading;
         this.tags = tags;
         this.rating = rating;
+        this.comments = comments;
+    }
+
+    public HashMap<String, String> getComments() {
+        return comments;
+    }
+
+    public void setComments(HashMap<String, String> comments) {
+        this.comments = comments;
     }
 
     public HashMap<String, Float> getRating() {

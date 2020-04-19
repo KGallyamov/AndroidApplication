@@ -3,7 +3,6 @@
     <string name="action_settings">Settings</string>
     <string name="Username">Иван Иванов</string>
     <string name="News">News</string>
-    <string name="favorite">Favorite</string>
     <string name="profile">Profile</string>
     <string name="description">Описание</string>
     <string name="title">Заголовок</string>
@@ -42,6 +41,7 @@
     <string name="authorisation">Authorisation</string>
     <string name="enteryourtags">#enteryourtags</string>
     <string name="email">Email</string>
+    <string name="favorite">Favorite</string>
 
     <string-array name="saved">
         <item>2</item>

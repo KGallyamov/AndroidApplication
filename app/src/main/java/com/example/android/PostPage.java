@@ -10,8 +10,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +35,7 @@ import com.luseen.autolinklibrary.AutoLinkTextView;
 
 import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -43,9 +46,11 @@ public class PostPage extends AppCompatActivity {
     Context getActivity = this;
     String role = "", path;
     Context context = this;
+    ListView comments;
     ArrayList<String> tags;
     AutoLinkTextView autoLinkTextView;
     RatingBar ratingBar;
+    String[] opinion;
     float midValue = 0;
     int pos;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -58,6 +63,7 @@ public class PostPage extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.picture);
         close = (Button) findViewById(R.id.close);
         ok = (Button) findViewById(R.id.ok);
+        comments = findViewById(R.id.comments);
         heading = (Button) findViewById(R.id.heading);
         refuse = (Button) findViewById(R.id.reject);
         ratingBar = (RatingBar) findViewById(R.id.rating);
@@ -70,13 +76,16 @@ public class PostPage extends AppCompatActivity {
         final String image_link = intent.getStringExtra("image link");
         final String txt_heading = intent.getStringExtra("heading");
         final HashMap<String, Float> rating = new HashMap<>();
+        final HashMap<String, String> comment = new HashMap<>();
         final String where = intent.getStringExtra("Where");
         final float rate = intent.getFloatExtra("rating", 1);
         final String login = intent.getStringExtra("login");
+        final DecimalFormat df = new DecimalFormat("#.##");
         pos = intent.getIntExtra("position", 0);
         tags = intent.getStringArrayListExtra("tags");
         role = intent.getStringExtra("role");
         path = intent.getStringExtra("post path");
+        opinion = intent.getStringArrayExtra("comments");
         ratingBar.setRating(rate);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
@@ -91,7 +100,8 @@ public class PostPage extends AppCompatActivity {
                 if(i==1){
                     middle.setText("0.0");
                 }else{
-                    middle.setText(Float.toString(midValue/(i-1)));
+                    Float f = midValue/(i-1);
+                    middle.setText(df.format(f));
                 }
                 midValue = 0;
             }
@@ -143,7 +153,7 @@ public class PostPage extends AppCompatActivity {
         for(String s:tags){
             to_tag += s + " ";
         }
-        rating.put("zero", (float) 0);
+
 
         autoLinkTextView.setAutoLinkText(to_tag);
         if(!role.equals("user")){
@@ -155,7 +165,9 @@ public class PostPage extends AppCompatActivity {
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link, txt_heading, tags, rating);
+                    rating.put("zero", (float) 0);
+                    comment.put("zero", "nothing interesting");
+                    RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link, txt_heading, tags, rating, comment);
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("Data").push().setValue(post, new DatabaseReference.CompletionListener() {
                         @Override
@@ -177,7 +189,8 @@ public class PostPage extends AppCompatActivity {
                 }
             });
         }
-
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, opinion);
+        comments.setAdapter(adapter);
         title.setText(txt_title);
         description.setText(txt_description);
         Glide.with(PostPage.this).load(image_link).into(imageView);
