@@ -10,8 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,16 +36,19 @@ import com.luseen.autolinklibrary.AutoLinkTextView;
 
 import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PostPage extends AppCompatActivity {
     TextView title, description, middle;
     ImageView imageView;
-    Button close, ok, refuse, heading;
+    Button close, ok, refuse, heading, send;
     Context getActivity = this;
     String role = "", path;
     Context context = this;
+    ListView comments_list;
+    EditText leave_a_comment;
     ArrayList<String> tags;
     AutoLinkTextView autoLinkTextView;
     RatingBar ratingBar;
@@ -58,6 +64,9 @@ public class PostPage extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.picture);
         close = (Button) findViewById(R.id.close);
         ok = (Button) findViewById(R.id.ok);
+        send = (Button) findViewById(R.id.send_comment);
+        leave_a_comment = (EditText) findViewById(R.id.leave_a_comment);
+        comments_list = findViewById(R.id.comments);
         heading = (Button) findViewById(R.id.heading);
         refuse = (Button) findViewById(R.id.reject);
         ratingBar = (RatingBar) findViewById(R.id.rating);
@@ -70,16 +79,18 @@ public class PostPage extends AppCompatActivity {
         final String image_link = intent.getStringExtra("image link");
         final String txt_heading = intent.getStringExtra("heading");
         final HashMap<String, Float> rating = new HashMap<>();
+        final HashMap<String, String> comment = new HashMap<>();
         final String where = intent.getStringExtra("Where");
         final float rate = intent.getFloatExtra("rating", 1);
         final String login = intent.getStringExtra("login");
+        final DecimalFormat df = new DecimalFormat("#.##");
         pos = intent.getIntExtra("position", 0);
         tags = intent.getStringArrayListExtra("tags");
         role = intent.getStringExtra("role");
         path = intent.getStringExtra("post path");
         ratingBar.setRating(rate);
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -91,7 +102,8 @@ public class PostPage extends AppCompatActivity {
                 if(i==1){
                     middle.setText("0.0");
                 }else{
-                    middle.setText(Float.toString(midValue/(i-1)));
+                    Float f = midValue/(i-1);
+                    middle.setText(df.format(f));
                 }
                 midValue = 0;
             }
@@ -143,19 +155,22 @@ public class PostPage extends AppCompatActivity {
         for(String s:tags){
             to_tag += s + " ";
         }
-        rating.put("zero", (float) 0);
+
 
         autoLinkTextView.setAutoLinkText(to_tag);
         if(!role.equals("user")){
             ok.setVisibility(View.VISIBLE);
             refuse.setVisibility(View.VISIBLE);
+            comments_list.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
             middle.setVisibility(View.GONE);
 
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link, txt_heading, tags, rating);
+                    rating.put("zero", (float) 0);
+                    comment.put("zero", "nothing interesting");
+                    RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link, txt_heading, tags, rating, comment);
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("Data").push().setValue(post, new DatabaseReference.CompletionListener() {
                         @Override
@@ -177,6 +192,32 @@ public class PostPage extends AppCompatActivity {
                 }
             });
         }
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Data").child(path);
+        databaseReference.child("comments").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<String> op = new ArrayList<>();
+                for(DataSnapshot i:dataSnapshot.getChildren()){
+                    if(!i.getKey().equals("zero")) {
+                        op.add(i.getValue().toString());
+                    }
+                }
+                String[] opinion = op.toArray(new String[op.size()]);
+                Comment[] comments = new Comment[opinion.length];
+                for(int i=0;i<opinion.length;i++){
+                    comments[i] = new Comment(opinion[i].split("/-/")[0], opinion[i].split("/-/")[1]);
+                }
+
+                CommentAdapter adapter = new CommentAdapter(context, R.layout.comment_item, comments);
+                comments_list.setAdapter(adapter);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getActivity, "Check your connection", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         title.setText(txt_title);
         description.setText(txt_description);
@@ -199,6 +240,15 @@ public class PostPage extends AppCompatActivity {
                 Intent intent = new Intent(getActivity, PhotoPage.class);
                 intent.putExtra("link", image_link);
                 startActivity(intent);
+            }
+        });
+
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
+                reference.child(path).child("comments").push().setValue(login + "/-/" + leave_a_comment.getText().toString());
+                leave_a_comment.setText("");
             }
         });
 

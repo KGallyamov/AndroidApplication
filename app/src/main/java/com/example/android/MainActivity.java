@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         nf = new NewsFeed(intent.getStringExtra("role"), intent.getStringExtra("Login"));
         add = new Add_post(intent.getStringExtra("role"), intent.getStringExtra("Login"));
         profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"), password);
-        bnv.setItemBackground(getDrawable(R.drawable.toolbar));
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
 

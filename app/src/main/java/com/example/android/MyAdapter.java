@@ -104,8 +104,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         }else{
             midValue = middle/(itemList.getRating().size() - 1);
             DecimalFormat df = new DecimalFormat("#.##");
-            Float f = middle/(itemList.getRating().size() - 1);
-            holder.middle_rating.setText(df.format(f));
+            holder.middle_rating.setText(df.format(midValue));
         }
 
         holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -188,26 +187,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         }
 
     }
-    @IgnoreExtraProperties
-    public class Data{
-        public String description;
-        public String image;
-        public String title;
-        public String heading;
-        public ArrayList<String> tags;
 
-
-        public Data(){
-        }
-
-        public Data(String description, String image, String title, String heading, ArrayList<String> tags){
-            this.description = description;
-            this.image = image;
-            this.title = title;
-            this.heading = heading;
-            this.tags = tags;
-        }
-    }
 
     @Override
     public int getItemCount() {
@@ -247,6 +227,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     Intent intent = new Intent(mContext, PostPage.class);
                     intent.putExtra("title", listItems.get(pos).getTitle());
                     intent.putExtra("description", listItems.get(pos).getDescription());
