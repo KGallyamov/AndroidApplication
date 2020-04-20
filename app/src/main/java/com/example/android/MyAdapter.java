@@ -227,15 +227,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String[] comments = new String[listItems.get(pos).getComments().size() - 1];
-                    int k = 0;
-                    for(String i:listItems.get(pos).getComments().keySet()){
-                        if(!i.equals("zero")) {
-                            comments[k] = i + ": " + listItems.get(pos).getComments().get(i);
-                            k++;
-                        }
 
-                    }
                     Intent intent = new Intent(mContext, PostPage.class);
                     intent.putExtra("title", listItems.get(pos).getTitle());
                     intent.putExtra("description", listItems.get(pos).getDescription());
@@ -245,7 +237,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     intent.putExtra("Where", where);
                     intent.putExtra("login", login);
                     intent.putExtra("position", pos);
-                    intent.putExtra("comments", comments);
                     intent.putExtra("tags", listItems.get(pos).getTags());
                     intent.putExtra("rating", listItems.get(pos).getRating().get(login));
                     if(paths.size() > 0) {

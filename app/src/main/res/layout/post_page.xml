@@ -165,7 +165,31 @@
         <ListView
             android:id="@+id/comments"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="150dp" />
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/leave_a_comment"
+                android:hint="Leave a comment"
+                android:textColor="#E21F1F"
+                android:textColorHint="#7C7373"
+                android:inputType="textLongMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+            <Button
+                android:id="@+id/send_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:text="Send"
+                android:background="@drawable/button"
+                android:layout_marginRight="10dp"/>
+
+        </RelativeLayout>
 
 
     </LinearLayout>

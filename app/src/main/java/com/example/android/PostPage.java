@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -42,15 +43,15 @@ import java.util.HashMap;
 public class PostPage extends AppCompatActivity {
     TextView title, description, middle;
     ImageView imageView;
-    Button close, ok, refuse, heading;
+    Button close, ok, refuse, heading, send;
     Context getActivity = this;
     String role = "", path;
     Context context = this;
-    ListView comments;
+    ListView comments_list;
+    EditText leave_a_comment;
     ArrayList<String> tags;
     AutoLinkTextView autoLinkTextView;
     RatingBar ratingBar;
-    String[] opinion;
     float midValue = 0;
     int pos;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -63,7 +64,9 @@ public class PostPage extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.picture);
         close = (Button) findViewById(R.id.close);
         ok = (Button) findViewById(R.id.ok);
-        comments = findViewById(R.id.comments);
+        send = (Button) findViewById(R.id.send_comment);
+        leave_a_comment = (EditText) findViewById(R.id.leave_a_comment);
+        comments_list = findViewById(R.id.comments);
         heading = (Button) findViewById(R.id.heading);
         refuse = (Button) findViewById(R.id.reject);
         ratingBar = (RatingBar) findViewById(R.id.rating);
@@ -85,10 +88,9 @@ public class PostPage extends AppCompatActivity {
         tags = intent.getStringArrayListExtra("tags");
         role = intent.getStringExtra("role");
         path = intent.getStringExtra("post path");
-        opinion = intent.getStringArrayExtra("comments");
         ratingBar.setRating(rate);
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -159,6 +161,7 @@ public class PostPage extends AppCompatActivity {
         if(!role.equals("user")){
             ok.setVisibility(View.VISIBLE);
             refuse.setVisibility(View.VISIBLE);
+            comments_list.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
             middle.setVisibility(View.GONE);
 
@@ -189,8 +192,33 @@ public class PostPage extends AppCompatActivity {
                 }
             });
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, opinion);
-        comments.setAdapter(adapter);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Data").child(path);
+        databaseReference.child("comments").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<String> op = new ArrayList<>();
+                for(DataSnapshot i:dataSnapshot.getChildren()){
+                    if(!i.getKey().equals("zero")) {
+                        op.add(i.getValue().toString());
+                    }
+                }
+                String[] opinion = op.toArray(new String[op.size()]);
+                Comment[] comments = new Comment[opinion.length];
+                for(int i=0;i<opinion.length;i++){
+                    comments[i] = new Comment(opinion[i].split("/-/")[0], opinion[i].split("/-/")[1]);
+                }
+
+                CommentAdapter adapter = new CommentAdapter(context, R.layout.comment_item, comments);
+                comments_list.setAdapter(adapter);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getActivity, "Check your connection", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         title.setText(txt_title);
         description.setText(txt_description);
         Glide.with(PostPage.this).load(image_link).into(imageView);
@@ -212,6 +240,15 @@ public class PostPage extends AppCompatActivity {
                 Intent intent = new Intent(getActivity, PhotoPage.class);
                 intent.putExtra("link", image_link);
                 startActivity(intent);
+            }
+        });
+
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
+                reference.child(path).child("comments").push().setValue(login + "/-/" + leave_a_comment.getText().toString());
+                leave_a_comment.setText("");
             }
         });
 
