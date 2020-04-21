@@ -7,7 +7,7 @@
         android:text="Author"
         android:textSize="17dp"
         android:fontFamily="monospace"
-
+        android:textColor="#03A9F4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -16,7 +16,7 @@
         android:text="Comment"
         android:textAlignment="textEnd"
         android:fontFamily="monospace"
-
+        android:textColor="#C4B7B7"
         android:textSize="20sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
