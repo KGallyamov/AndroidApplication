@@ -26,12 +26,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
+import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -199,6 +205,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
         for(String i:text_tags){
             tags_db.add(i);
         }
+
         Calendar c = Calendar.getInstance();
         SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMMM-yyyy HH:mm:ss");
         String[] datetime = dateformat.format(c.getTime()).split(" ")[0].split("-");
@@ -241,6 +248,36 @@ public class Add_post extends Fragment implements View.OnClickListener {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
                 imageView.setImageBitmap(bitmap);
+
+
+                FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+
+                FirebaseVisionOnDeviceImageLabelerOptions options =
+                        new FirebaseVisionOnDeviceImageLabelerOptions.Builder()
+                         .setConfidenceThreshold(0.7f)
+                         .build();
+                FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance()
+                     .getOnDeviceImageLabeler(options);
+                labeler.processImage(image)
+                        .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
+                            @Override
+                            public void onSuccess(List<FirebaseVisionImageLabel> labels) {
+                                for (FirebaseVisionImageLabel label: labels) {
+                                    String text = label.getText();
+                                    String entityId = label.getEntityId();
+                                    float confidence = label.getConfidence();
+                                    Log.d("LOOK_HERE", text);
+
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("LOOK_HERE", e.getMessage());
+                            }
+                        });
+
             }
             catch (Exception e)
             {
@@ -248,6 +285,8 @@ public class Add_post extends Fragment implements View.OnClickListener {
             }
         }
     }
+
+
 
     private void uploadImage() {
 
