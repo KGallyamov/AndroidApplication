@@ -2,8 +2,10 @@ package com.example.android;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -54,6 +56,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class Add_post extends Fragment implements View.OnClickListener {
 
     private Button btnChoose, btnUpload, btnRetrieve;
@@ -63,6 +67,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
     EditText tags;
     Button photo, post;
     Spinner spinner;
+    String picture_descr;
     private Uri filePath;
     public String txtTitle="Title", txtDescription="Description", txtImage = "0-0", role;
     FirebaseStorage storage;
@@ -209,10 +214,15 @@ public class Add_post extends Fragment implements View.OnClickListener {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMMM-yyyy HH:mm:ss");
         String[] datetime = dateformat.format(c.getTime()).split(" ")[0].split("-");
+
         tags_db.add("#" + datetime[0] + datetime[1]);
         tags_db.add("#" + datetime[2]);
         tags_db.add("#" + role);
         tags_db.add("#" + login);
+        SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
+        String tag = preferences.getString("TAG", "");
+
+        tags_db.add("#" + tag);
         HashMap<String, Float> rating = new HashMap<>();
         HashMap<String, String> comments = new HashMap<>();
         rating.put("zero", (float) 0);
@@ -238,6 +248,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
         
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -249,24 +260,25 @@ public class Add_post extends Fragment implements View.OnClickListener {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
                 imageView.setImageBitmap(bitmap);
 
-
                 FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
 
                 FirebaseVisionOnDeviceImageLabelerOptions options =
                         new FirebaseVisionOnDeviceImageLabelerOptions.Builder()
-                         .setConfidenceThreshold(0.7f)
-                         .build();
+                                .setConfidenceThreshold(0.8f)
+                                .build();
                 FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance()
-                     .getOnDeviceImageLabeler(options);
+                        .getOnDeviceImageLabeler(options);
                 labeler.processImage(image)
                         .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
                             @Override
                             public void onSuccess(List<FirebaseVisionImageLabel> labels) {
                                 for (FirebaseVisionImageLabel label: labels) {
                                     String text = label.getText();
-                                    String entityId = label.getEntityId();
-                                    float confidence = label.getConfidence();
                                     Log.d("LOOK_HERE", text);
+                                    SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
+                                    SharedPreferences.Editor ed = preferences.edit();
+                                    ed.putString("TAG", text);
+                                    ed.apply();
 
                                 }
                             }
@@ -277,6 +289,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
                                 Log.d("LOOK_HERE", e.getMessage());
                             }
                         });
+
 
             }
             catch (Exception e)
