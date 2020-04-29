@@ -20,38 +20,38 @@
 
     <FrameLayout
         android:id="@+id/frgmCont"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="60dp">
+        android:layout_alignParentRight="true"
+        android:layout_width="940dp"
+        android:layout_height="match_parent">
 
 
     </FrameLayout>
     <LinearLayout
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:orientation="vertical"
+        android:layout_width="80dp"
+        android:layout_height="match_parent">
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/add"
             android:src="@drawable/baseline_create_black_18dp"
             android:background="@drawable/toolbar"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <ImageButton
             android:id="@+id/main"
             android:layout_weight="1"
             android:src="@drawable/baseline_list_black_24dp"
             android:background="@drawable/toolbar"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <ImageButton
             android:id="@+id/profile"
             android:layout_weight="1"
             android:src="@drawable/baseline_account_box_black_24dp"
             android:background="@drawable/toolbar"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

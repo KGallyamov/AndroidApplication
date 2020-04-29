@@ -274,7 +274,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
                             public void onSuccess(List<FirebaseVisionImageLabel> labels) {
                                 for (FirebaseVisionImageLabel label: labels) {
                                     String text = label.getText();
-                                    Log.d("LOOK_HERE", text);
+                                    Log.d("Look: ", text);
                                     SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
                                     SharedPreferences.Editor ed = preferences.edit();
                                     ed.putString("TAG", text);
@@ -289,8 +289,6 @@ public class Add_post extends Fragment implements View.OnClickListener {
                                 Log.d("LOOK_HERE", e.getMessage());
                             }
                         });
-
-
             }
             catch (Exception e)
             {
