@@ -7,17 +7,17 @@ import android.content.SharedPreferences;
 import android.view.MenuItem;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
-    BottomNavigationView bnv;
+    ImageButton btn_add, btn_main, btn_profile;
     SharedPreferences sPref;
     NewsFeed nf;
     Add_post add;
@@ -31,9 +31,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        btn_add = (ImageButton) findViewById(R.id.add);
+        btn_main = (ImageButton) findViewById(R.id.main);
+        btn_profile = (ImageButton) findViewById(R.id.profile);
         Intent intent = getIntent();
         String password = intent.getStringExtra("password");
-        bnv = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         nf = new NewsFeed(intent.getStringExtra("role"), intent.getStringExtra("Login"));
@@ -42,33 +44,32 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
 
-
-
-        bnv.setOnNavigationItemSelectedListener(getBottomNavigationListener());
-    }
-
-    @NonNull
-    private BottomNavigationView.OnNavigationItemSelectedListener getBottomNavigationListener(){
-        return new BottomNavigationView.OnNavigationItemSelectedListener() {
+        btn_profile.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            public void onClick(View v) {
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                switch(menuItem.getItemId()){
-                    case R.id.action_add:
-                        fragmentTransaction.replace(R.id.frgmCont, add);
-                        break;
-                    case R.id.action_posts:
-                        fragmentTransaction.replace(R.id.frgmCont, nf);
-                        break;
-                    case R.id.user_account:
-                        fragmentTransaction.replace(R.id.frgmCont, profile);
-                        break;
-                }
+                fragmentTransaction.replace(R.id.frgmCont, profile);
                 fragmentTransaction.commit();
-                return true;
             }
-        };
+        });
+        btn_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frgmCont, nf);
+                fragmentTransaction.commit();
+            }
+        });
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frgmCont, add);
+                fragmentTransaction.commit();
+            }
+        });
     }
+
+
 
 }
