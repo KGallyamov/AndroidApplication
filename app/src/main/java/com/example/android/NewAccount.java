@@ -85,8 +85,8 @@ public class NewAccount extends AppCompatActivity {
                                     t.add("admin");
                                     HashMap<String, Float> rating = new HashMap<>();
                                     rating.put("zero", (float) 0);
-                                    HashMap<String, String> comments = new HashMap<>();
-                                    comments.put("zero", "nothing interesting");
+                                    HashMap<String, Comment> comments = new HashMap<>();
+                                    comments.put("zero", new Comment("nothing", "interesting", "in here"));
                                     ref.child("Favorite" + db_login).child("0").setValue(new RecyclerItem("Добро пожаловать!",
                                             "Это лента избранных постов",
                                             "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/sigma.jpg?alt=media&token=328187a2-65a5-4623-885f-1d19c12d72d2",
