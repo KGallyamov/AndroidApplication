@@ -1,13 +1,22 @@
 package com.example.android;
 
 public class Comment {
-    String author, text;
+    String author, text, time;
 
     Comment(){}
 
-    Comment(String author, String text){
+    Comment(String author, String text, String time){
         this.author = author;
         this.text = text;
+        this.time = time;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getAuthor() {

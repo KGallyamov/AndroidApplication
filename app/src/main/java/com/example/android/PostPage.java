@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.Request;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,10 +36,20 @@ import com.luseen.autolinklibrary.AutoLinkMode;
 import com.luseen.autolinklibrary.AutoLinkOnClickListener;
 import com.luseen.autolinklibrary.AutoLinkTextView;
 
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 
 public class PostPage extends AppCompatActivity {
@@ -79,7 +91,7 @@ public class PostPage extends AppCompatActivity {
         final String image_link = intent.getStringExtra("image link");
         final String txt_heading = intent.getStringExtra("heading");
         final HashMap<String, Float> rating = new HashMap<>();
-        final HashMap<String, String> comment = new HashMap<>();
+        final HashMap<String, Comment> comment = new HashMap<>();
         final String where = intent.getStringExtra("Where");
         final float rate = intent.getFloatExtra("rating", 1);
         final String login = intent.getStringExtra("login");
@@ -91,6 +103,7 @@ public class PostPage extends AppCompatActivity {
         ratingBar.setRating(rate);
 
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
+        // средний рейтинг поста
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -114,7 +127,7 @@ public class PostPage extends AppCompatActivity {
             }
         });
 
-
+        // подсветка ссылок и хэштегов
         autoLinkTextView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG, AutoLinkMode.MODE_URL);
         autoLinkTextView.setHashtagModeColor(ContextCompat.getColor(this, R.color.colorAccent));
         autoLinkTextView.setUrlModeColor(ContextCompat.getColor(this, R.color.blue_800));
@@ -148,28 +161,25 @@ public class PostPage extends AppCompatActivity {
                 Toast.makeText(context, Float.toString(rating), Toast.LENGTH_SHORT).show();
             }
         });
-
-
-
         String to_tag = "";
         for(String s:tags){
             to_tag += s + " ";
         }
-
-
         autoLinkTextView.setAutoLinkText(to_tag);
+
+        // модерация
         if(!role.equals("user")){
             ok.setVisibility(View.VISIBLE);
             refuse.setVisibility(View.VISIBLE);
             comments_list.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
             middle.setVisibility(View.GONE);
-
+            // пост допущен в общую ленту
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     rating.put("zero", (float) 0);
-                    comment.put("zero", "nothing interesting");
+                    comment.put("zero", new Comment("nothing", "interesting", "in here"));
                     RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link, txt_heading, tags, rating, comment);
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("Data").push().setValue(post, new DatabaseReference.CompletionListener() {
@@ -182,6 +192,7 @@ public class PostPage extends AppCompatActivity {
                     });
                 }
             });
+            // пост не допущен в общую ленту
             refuse.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -192,23 +203,19 @@ public class PostPage extends AppCompatActivity {
                 }
             });
         }
+
+        //считывание комментариев с базы данных
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Data").child(path);
         databaseReference.child("comments").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<String> op = new ArrayList<>();
+                ArrayList<Comment> opinion = new ArrayList<>();
                 for(DataSnapshot i:dataSnapshot.getChildren()){
                     if(!i.getKey().equals("zero")) {
-                        op.add(i.getValue().toString());
+                        opinion.add(i.getValue(Comment.class));
                     }
                 }
-                String[] opinion = op.toArray(new String[op.size()]);
-                Comment[] comments = new Comment[opinion.length];
-                for(int i=0;i<opinion.length;i++){
-                    comments[i] = new Comment(opinion[i].split("/-/")[0], opinion[i].split("/-/")[1]);
-                }
-
-                CommentAdapter adapter = new CommentAdapter(context, R.layout.comment_item, comments);
+                CommentAdapter adapter = new CommentAdapter(context, R.layout.comment_item, opinion.toArray(new Comment[0]));
                 comments_list.setAdapter(adapter);
 
             }
@@ -224,6 +231,7 @@ public class PostPage extends AppCompatActivity {
         Glide.with(PostPage.this).load(image_link).into(imageView);
         heading.setText(txt_heading);
 
+        //закроет текущее окно
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,6 +242,8 @@ public class PostPage extends AppCompatActivity {
                 finish();
             }
         });
+
+        //откроет новое окно только с картинкой
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -243,14 +253,31 @@ public class PostPage extends AppCompatActivity {
             }
         });
 
+        // отправка комментария
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // если у пользователя стоит неправильное время
+                String timeSettings = android.provider.Settings.System.getString(
+                        getContentResolver(),
+                        android.provider.Settings.System.AUTO_TIME);
+                if (timeSettings.contentEquals("0")) {
+                    android.provider.Settings.System.putString(
+                            getContentResolver(),
+                            android.provider.Settings.System.AUTO_TIME, "1");
+                }
+                // время отправки комментария
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat dateformat = new SimpleDateFormat("dd MMMM yyyy/HH:mm:ss");
+                String datetime = dateformat.format(c.getTime());
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
-                reference.child(path).child("comments").push().setValue(login + "/-/" + leave_a_comment.getText().toString());
+                reference.child(path).child("comments").push().setValue(new Comment(login,
+                        leave_a_comment.getText().toString(), datetime));
                 leave_a_comment.setText("");
             }
         });
-
     }
+
+
+
 }

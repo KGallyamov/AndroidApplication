@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
 
+        //Переключение между экранами - фрагментами
         btn_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
