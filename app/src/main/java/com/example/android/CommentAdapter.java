@@ -32,11 +32,14 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 
         ((TextView) convertView.findViewById(R.id.author)).setText(db.getAuthor());
         ((TextView) convertView.findViewById(R.id.main_text)).setText(db.getText());
+
         Calendar c = Calendar.getInstance();
         SimpleDateFormat dateformat = new SimpleDateFormat("dd MMMM yyyy");
         String now = dateformat.format(c.getTime());
         String time = db.getTime().split("/")[0];
         Log.d("Look", now);
+
+        // если отправили не сегодня, а раньше
         if(now.equals(time)) {
             ((TextView) convertView.findViewById(R.id.time)).setText(db.getTime().split("/")[1]);
         }else{

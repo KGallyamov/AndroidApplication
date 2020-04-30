@@ -103,6 +103,7 @@ public class PostPage extends AppCompatActivity {
         ratingBar.setRating(rate);
 
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
+        // средний рейтинг поста
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -126,7 +127,7 @@ public class PostPage extends AppCompatActivity {
             }
         });
 
-
+        // подсветка ссылок и хэштегов
         autoLinkTextView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG, AutoLinkMode.MODE_URL);
         autoLinkTextView.setHashtagModeColor(ContextCompat.getColor(this, R.color.colorAccent));
         autoLinkTextView.setUrlModeColor(ContextCompat.getColor(this, R.color.blue_800));
@@ -166,14 +167,14 @@ public class PostPage extends AppCompatActivity {
         }
         autoLinkTextView.setAutoLinkText(to_tag);
 
-        //модерация
+        // модерация
         if(!role.equals("user")){
             ok.setVisibility(View.VISIBLE);
             refuse.setVisibility(View.VISIBLE);
             comments_list.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
             middle.setVisibility(View.GONE);
-
+            // пост допущен в общую ленту
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -191,6 +192,7 @@ public class PostPage extends AppCompatActivity {
                     });
                 }
             });
+            // пост не допущен в общую ленту
             refuse.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -255,6 +257,7 @@ public class PostPage extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // если у пользователя стоит неправильное время
                 String timeSettings = android.provider.Settings.System.getString(
                         getContentResolver(),
                         android.provider.Settings.System.AUTO_TIME);
@@ -263,6 +266,7 @@ public class PostPage extends AppCompatActivity {
                             getContentResolver(),
                             android.provider.Settings.System.AUTO_TIME, "1");
                 }
+                // время отправки комментария
                 Calendar c = Calendar.getInstance();
                 SimpleDateFormat dateformat = new SimpleDateFormat("dd MMMM yyyy/HH:mm:ss");
                 String datetime = dateformat.format(c.getTime());
