@@ -21,7 +21,8 @@
     <FrameLayout
         android:id="@+id/frgmCont"
         android:layout_alignParentRight="true"
-        android:layout_width="940dp"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="80dp"
         android:layout_height="match_parent">
 
 

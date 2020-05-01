@@ -3,9 +3,9 @@ package com.example.android;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,18 +22,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
@@ -44,14 +43,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import java.io.IOException;
-import java.nio.channels.FileLock;
-import java.sql.SQLOutput;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -90,6 +85,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View myView = inflater.inflate(R.layout.add_post_activity, container, false);
+
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         btnChoose = (Button) myView.findViewById(R.id.add_photo);
@@ -200,7 +196,13 @@ public class Add_post extends Fragment implements View.OnClickListener {
                 chooseImage();
                 break;
             case R.id.button_send:
-                uploadImage();
+                if(description.getText().toString().equals("") ||
+                          tags.getText().toString().equals("") ||
+                          title.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Заполните все поля перед отправкой", Toast.LENGTH_SHORT).show();
+                }else{
+                    uploadImage();
+                }
             default:
                 break;
         }
@@ -227,7 +229,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
         HashMap<String, Comment> comments = new HashMap<>();
         rating.put("zero", (float) 0);
         comments.put("zero", new Comment("nothing", "interesting", "in here"));
-        RecyclerItem data = new RecyclerItem(txtDescription, image, txtTitle, heading, tags_db, rating, comments);
+        RecyclerItem data = new RecyclerItem(txtTitle, txtDescription, image, heading, tags_db, rating, comments);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         String wh = "Moderate";
 
@@ -346,4 +348,16 @@ public class Add_post extends Fragment implements View.OnClickListener {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        boolean isLarge =  (getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+        if(isLarge){
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }else{
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
 }
