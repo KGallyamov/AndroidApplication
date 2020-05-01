@@ -1,17 +1,12 @@
 package com.example.android;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,21 +22,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 public class NewsFeed extends Fragment {
     private MyAdapter adapter;
@@ -83,14 +71,19 @@ public class NewsFeed extends Fragment {
                     listItems.add(p);
                     pt.add(dataSnapshot1.getKey());
                 }
-                //Collections.reverse(listItems);
+                Collections.reverse(listItems);
+                Collections.reverse(pt);
                 adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
-                SharedPreferences preferences = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
-                int pos = preferences.getInt("position", 0);
-                manager.scrollToPosition(pos);
-                SharedPreferences.Editor ed = preferences.edit();
-                ed.remove("position");
-                ed.apply();
+                try {
+                    SharedPreferences preferences = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
+                    int pos = preferences.getInt("position", 0);
+                    manager.scrollToPosition(pos);
+                    SharedPreferences.Editor ed = preferences.edit();
+                    ed.remove("position");
+                    ed.apply();
+                }catch(NullPointerException e){
+                    Log.d("Error", e.toString());
+                }
                 recyclerView.setAdapter(adapter);
             }
 
@@ -148,6 +141,7 @@ public class NewsFeed extends Fragment {
                                             pt.add(dataSnapshot1.getKey());
                                         }
                                         Collections.reverse(listItems);
+                                        Collections.reverse(pt);
                                         adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
                                         recyclerView.setAdapter(adapter);
                                     }
@@ -179,7 +173,6 @@ public class NewsFeed extends Fragment {
                                             RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
                                             listItems.add(p);
                                             paths.add(dataSnapshot1.getKey());
-
                                         }
                                         listItems.remove(0);
                                         if(listItems.size() == 0){
@@ -278,6 +271,7 @@ public class NewsFeed extends Fragment {
                             }
                         }
                         Collections.reverse(listItems);
+                        Collections.reverse(pt);
                         adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
                         recyclerView.setAdapter(adapter);
                     }
