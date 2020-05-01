@@ -203,7 +203,13 @@ public class Add_post extends Fragment implements View.OnClickListener {
                 chooseImage();
                 break;
             case R.id.button_send:
-                uploadImage();
+                if(description.getText().toString().equals("") ||
+                          tags.getText().toString().equals("") ||
+                          title.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Заполните все поля перед отправкой", Toast.LENGTH_SHORT).show();
+                }else{
+                    uploadImage();
+                }
             default:
                 break;
         }
