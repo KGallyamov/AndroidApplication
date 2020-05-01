@@ -6,6 +6,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -68,9 +70,22 @@ public class PostPage extends AppCompatActivity {
     int pos;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     @Override
+    protected void onStart() {
+        super.onStart();
+        boolean isLarge =  (getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+        if(isLarge){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_page);
+
         title = (TextView) findViewById(R.id.txtTitle);
         description = (TextView) findViewById(R.id.txtDescription);
         imageView = (ImageView) findViewById(R.id.picture);

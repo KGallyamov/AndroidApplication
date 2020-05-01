@@ -4,6 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.graphics.Point;
+import android.os.PersistableBundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
 
 import android.os.Bundle;
@@ -12,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.fragment.app.FragmentTransaction;
@@ -26,10 +33,24 @@ public class MainActivity extends AppCompatActivity {
 
     Activity getActivity = this;
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        boolean isLarge =  (getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+        if(isLarge){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
         btn_add = (ImageButton) findViewById(R.id.add);
         btn_main = (ImageButton) findViewById(R.id.main);
@@ -70,7 +91,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
 }

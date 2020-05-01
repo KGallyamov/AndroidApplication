@@ -1,6 +1,8 @@
 package com.example.android;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
@@ -17,8 +19,21 @@ import com.github.chrisbanes.photoview.PhotoViewAttacher;
 public class PhotoPage extends AppCompatActivity {
     PhotoViewAttacher attacher;
     @Override
+    protected void onStart() {
+        super.onStart();
+        boolean isLarge =  (getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+        if(isLarge){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.photo_view);
 
         Intent intent = getIntent();
