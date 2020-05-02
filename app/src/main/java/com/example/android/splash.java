@@ -50,15 +50,16 @@ public class splash extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Intent intent = new Intent(context, MainActivity.class);
-                    String[] data = new String[2];
+                    String[] data = new String[3];
                     int k = 0;
                     for(DataSnapshot i:dataSnapshot.getChildren()){
                         data[k] = i.getValue().toString();
                         k++;
                     }
-                    intent.putExtra("role", data[1]);
+                    intent.putExtra("role", data[2]);
                     intent.putExtra("Login", username);
-                    intent.putExtra("password", data[0]);
+                    intent.putExtra("password", data[1]);
+                    intent.putExtra("avatar", data[0]);
                     Toast.makeText(context,"Signed In successfully",Toast.LENGTH_LONG).show();
                     startActivity(intent);
                 }
