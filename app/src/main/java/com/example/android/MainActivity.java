@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         nf = new NewsFeed(intent.getStringExtra("role"), intent.getStringExtra("Login"));
         add = new Add_post(intent.getStringExtra("role"), intent.getStringExtra("Login"));
-        profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"), password);
+        profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"), password, intent.getStringExtra("avatar"));
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
 
