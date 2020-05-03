@@ -1,6 +1,7 @@
 package com.example.android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CommentAdapter extends ArrayAdapter<Comment> {
+    TextView author;
 
     CommentAdapter(@NonNull Context context, int resource, Comment[] arr) {
         super(context, resource, arr);
@@ -51,8 +53,9 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 
             }
         });
+        author = (TextView) convertView.findViewById(R.id.author);
 
-        ((TextView) convertView.findViewById(R.id.author)).setText(db.getAuthor());
+        author.setText(db.getAuthor());
         ((TextView) convertView.findViewById(R.id.main_text)).setText(db.getText());
 
         Calendar c = Calendar.getInstance();
@@ -67,6 +70,14 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
         }else{
             ((TextView) convertView.findViewById(R.id.time)).setText(db.getTime().split("/")[0]);
         }
+        author.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AnotherUserPage.class);
+                intent.putExtra("author", author.getText().toString());
+                getContext().startActivity(intent);
+            }
+        });
 
         return convertView;
     }
