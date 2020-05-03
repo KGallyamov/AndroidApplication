@@ -109,6 +109,22 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             DecimalFormat df = new DecimalFormat("#.##");
             holder.middle_rating.setText(df.format(midValue));
         }
+        holder.author.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, AnotherUserPage.class);
+                intent.putExtra("author", holder.author.getText().toString());
+                mContext.startActivity(intent);
+            }
+        });
+        holder.author_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, AnotherUserPage.class);
+                intent.putExtra("author", holder.author.getText().toString());
+                mContext.startActivity(intent);
+            }
+        });
 
         holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -241,7 +257,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         public void click(final int position) {
             final int pos = position;
-
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override

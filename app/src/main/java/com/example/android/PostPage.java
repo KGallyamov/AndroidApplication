@@ -263,6 +263,22 @@ public class PostPage extends AppCompatActivity {
                 finish();
             }
         });
+        author.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity, AnotherUserPage.class);
+                intent.putExtra("author", author.getText().toString());
+                getActivity.startActivity(intent);
+            }
+        });
+        author_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity, AnotherUserPage.class);
+                intent.putExtra("author", author.getText().toString());
+                getActivity.startActivity(intent);
+            }
+        });
 
         //откроет новое окно только с картинкой
         imageView.setOnClickListener(new View.OnClickListener() {
