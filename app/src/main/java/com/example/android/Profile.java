@@ -42,21 +42,23 @@ import java.util.UUID;
 
 public class Profile extends Fragment {
     String role, login, password, fake_password, text_avatar;
-    TextView change;
+    TextView change, tv_posts;
     Button look_password, confirm, exit;
     EditText new_password;
     String updated = "";
     ImageView avatar;
     boolean is = true;
+    int posts;
     private TextView tv_login, tv_password, tv_role;
     private final int PICK_IMAGE_REQUEST = 71;
 
 
-    Profile(String role, String login, String password, String text_avatar){
+    Profile(String role, String login, String password, String text_avatar, int posts){
         this.role = role;
         this.login = login;
         this.password = "Password: " + password;
         this.text_avatar = text_avatar;
+        this.posts = posts;
     }
 
 
@@ -74,6 +76,7 @@ public class Profile extends Fragment {
         tv_login = (TextView) getActivity().findViewById(R.id.login);
         tv_role  =(TextView) getActivity().findViewById(R.id.role);
         tv_password = (TextView) getActivity().findViewById(R.id.password);
+        tv_posts = (TextView) getActivity().findViewById(R.id.posts);
         look_password = (Button) getActivity().findViewById(R.id.look_password);
         change = (TextView) getActivity().findViewById(R.id.change);
         confirm  =(Button) getActivity().findViewById(R.id.confirm);
@@ -83,6 +86,7 @@ public class Profile extends Fragment {
 
         tv_role.setText(role);
         tv_login.setText(login);
+        tv_posts.setText(Integer.toString(posts));
         Glide.with(getActivity()).load(text_avatar).into(avatar);
 
         fake_password = "Password: ";

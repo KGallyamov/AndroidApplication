@@ -90,7 +90,8 @@ public class NewAccount extends AppCompatActivity {
                             final String db_login = text_login.split("@")[0];
                             databaseReference.child(db_login).setValue(new User(text_password,
                                                                                 "user",
-                                    "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2Fdefault_avatar.png?alt=media&token=7807ba53-1240-41d1-8f63-70f2e3e38cec"),
+                                    "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2Fdefault_avatar.png?alt=media&token=7807ba53-1240-41d1-8f63-70f2e3e38cec",
+                                            0),
                                     new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {

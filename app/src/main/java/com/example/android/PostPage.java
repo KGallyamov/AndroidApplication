@@ -207,6 +207,20 @@ public class PostPage extends AppCompatActivity {
                             db.child("Moderate").child(path).removeValue();
                         }
                     });
+
+                    final DatabaseReference user = FirebaseDatabase.getInstance().getReference().child("Users").child(text_author).child("posts");
+                    user.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            int posts = dataSnapshot.getValue(Integer.class);
+                            user.setValue(posts + 1);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             });
             // пост не допущен в общую ленту
