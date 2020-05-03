@@ -95,6 +95,7 @@ public class PostPage extends AppCompatActivity {
         final HashMap<String, Float> rating = new HashMap<>();
         final String text_author = intent.getStringExtra("author");
         final HashMap<String, Comment> comment = new HashMap<>();
+        final int author_posts = intent.getIntExtra("author_posts", 0);
         final String where = intent.getStringExtra("Where");
         final float rate = intent.getFloatExtra("rating", 1);
         final String login = intent.getStringExtra("login");
@@ -207,20 +208,9 @@ public class PostPage extends AppCompatActivity {
                             db.child("Moderate").child(path).removeValue();
                         }
                     });
+                    DatabaseReference posts_num_update = FirebaseDatabase.getInstance().getReference();
+                    posts_num_update.child("Users").child(text_author).child("posts").setValue(author_posts + 1);
 
-                    final DatabaseReference user = FirebaseDatabase.getInstance().getReference().child("Users").child(text_author).child("posts");
-                    user.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            int posts = dataSnapshot.getValue(Integer.class);
-                            user.setValue(posts + 1);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
                 }
             });
             // пост не допущен в общую ленту

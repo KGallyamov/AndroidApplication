@@ -220,6 +220,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         public TextView author;
         public RatingBar ratingBar;
         View v;
+        Intent intent;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -246,7 +247,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(mContext, PostPage.class);
+                    intent = new Intent(mContext, PostPage.class);
                     intent.putExtra("title", listItems.get(pos).getTitle());
                     intent.putExtra("description", listItems.get(pos).getDescription());
                     intent.putExtra("image link", listItems.get(pos).getImage());
@@ -261,6 +262,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     if(paths.size() > 0) {
                         intent.putExtra("post path", paths.get(pos));
                     }
+                    DatabaseReference author_posts = FirebaseDatabase.getInstance().getReference().child("Users").child(author.getText().toString());
+                    author_posts.child("posts").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            intent.putExtra("author_posts", dataSnapshot.getValue(Integer.TYPE));
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
 
                     mContext.startActivity(intent);
                 }
