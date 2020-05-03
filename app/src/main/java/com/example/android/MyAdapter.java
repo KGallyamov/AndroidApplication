@@ -3,6 +3,7 @@ package com.example.android;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +69,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         holder.txtTitle.setText(itemList.getTitle());
         String s;
         try{
-            s = itemList.getDescription().substring(0, 37) + "...";
+            s = itemList.getDescription().substring(0, 57) + "...";
         }catch (Exception e){
             s = itemList.getDescription();
         }
@@ -77,6 +78,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         }
         holder.txtDescription.setText(s);
         holder.heading.setText(itemList.getHeading());
+        holder.author.setText(itemList.getAuthor());
         DatabaseReference db = FirebaseDatabase.getInstance().getReference().child(where).child(paths.get(position)).child("rating");
         rate = new HashMap<>();
         db.addValueEventListener(new ValueEventListener() {
@@ -120,6 +122,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         });
 
         Glide.with(mContext).load(itemList.getImage()).into(holder.picture);
+        DatabaseReference avatar_ref = FirebaseDatabase.getInstance().getReference().child("Users").child(login);
+        avatar_ref.child("avatar").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Glide.with(mContext).load(dataSnapshot.getValue().toString()).into(holder.author_avatar);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         if(where.equals("Favorite")){
             holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
@@ -201,8 +215,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         public TextView txtDescription;
         public TextView txtSave;
         public TextView middle_rating;
-        public ImageView picture;
-        public Button heading;
+        public ImageView picture, author_avatar;
+        public TextView heading;
+        public TextView author;
         public RatingBar ratingBar;
         View v;
 
@@ -217,6 +232,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             middle_rating = itemView.findViewById(R.id.middle_rating);
             picture = itemView.findViewById(R.id.picture);
             heading = itemView.findViewById(R.id.heading);
+            author = itemView.findViewById(R.id.author);
+            author_avatar = itemView.findViewById(R.id.author_avatar);
 
 
         }
@@ -238,6 +255,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     intent.putExtra("Where", where);
                     intent.putExtra("login", login);
                     intent.putExtra("position", pos);
+                    intent.putExtra("author", listItems.get(pos).getAuthor());
                     intent.putExtra("tags", listItems.get(pos).getTags());
                     intent.putExtra("rating", listItems.get(pos).getRating().get(login));
                     if(paths.size() > 0) {

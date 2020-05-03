@@ -192,7 +192,25 @@ public class Profile extends Fragment {
         avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                chooseImage();
+                final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
+                ask.setMessage("Do you want to change your avatar?").setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                chooseImage();
+
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                AlertDialog alertDialog = ask.create();
+                alertDialog.setTitle("Change avatar");
+                alertDialog.show();
+
             }
         });
 
@@ -204,8 +222,6 @@ public class Profile extends Fragment {
         Uri filePath;
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == -1 && data != null && data.getData() != null ) {
             filePath = data.getData();
-            //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
-            //avatar.setImageBitmap(bitmap);
             uploadImage(filePath);
 
 

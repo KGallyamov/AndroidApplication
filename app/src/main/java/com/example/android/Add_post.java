@@ -229,7 +229,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
         HashMap<String, Comment> comments = new HashMap<>();
         rating.put("zero", (float) 0);
         comments.put("zero", new Comment("nothing", "interesting", "in here"));
-        RecyclerItem data = new RecyclerItem(txtTitle, txtDescription, image, heading, tags_db, rating, comments);
+        RecyclerItem data = new RecyclerItem(txtTitle, txtDescription, image, heading, tags_db, rating, comments, login);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         String wh = "Moderate";
 

@@ -109,7 +109,7 @@ public class NewAccount extends AppCompatActivity {
                                             "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/sigma.jpg?alt=media&token=328187a2-65a5-4623-885f-1d19c12d72d2",
                                             "System message",
                                             t,
-                                            rating, comments));
+                                            rating, comments, "kgalliamov"));
                                     finish();
                                 }
                             });

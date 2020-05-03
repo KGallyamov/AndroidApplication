@@ -40,9 +40,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class PostPage extends AppCompatActivity {
-    TextView title, description, middle;
-    ImageView imageView;
-    Button close, ok, refuse, heading, send;
+    TextView title, description, middle, heading, author;
+    ImageView imageView, author_avatar;
+    Button close, ok, refuse, send;
     Context getActivity = this;
     String role = "", path;
     Context context = this;
@@ -74,12 +74,14 @@ public class PostPage extends AppCompatActivity {
         title = (TextView) findViewById(R.id.txtTitle);
         description = (TextView) findViewById(R.id.txtDescription);
         imageView = (ImageView) findViewById(R.id.picture);
+        author = (TextView) findViewById(R.id.author);
+        author_avatar = (ImageView) findViewById(R.id.author_avatar);
         close = (Button) findViewById(R.id.close);
         ok = (Button) findViewById(R.id.ok);
         send = (Button) findViewById(R.id.send_comment);
         leave_a_comment = (EditText) findViewById(R.id.leave_a_comment);
         comments_list = findViewById(R.id.comments);
-        heading = (Button) findViewById(R.id.heading);
+        heading = (TextView) findViewById(R.id.heading);
         refuse = (Button) findViewById(R.id.reject);
         ratingBar = (RatingBar) findViewById(R.id.rating);
         middle = (TextView) findViewById(R.id.middle_rating);
@@ -91,6 +93,7 @@ public class PostPage extends AppCompatActivity {
         final String image_link = intent.getStringExtra("image link");
         final String txt_heading = intent.getStringExtra("heading");
         final HashMap<String, Float> rating = new HashMap<>();
+        final String text_author = intent.getStringExtra("author");
         final HashMap<String, Comment> comment = new HashMap<>();
         final String where = intent.getStringExtra("Where");
         final float rate = intent.getFloatExtra("rating", 1);
@@ -101,6 +104,7 @@ public class PostPage extends AppCompatActivity {
         role = intent.getStringExtra("role");
         path = intent.getStringExtra("post path");
         ratingBar.setRating(rate);
+        author.setText(text_author);
 
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
         // средний рейтинг поста
@@ -127,6 +131,18 @@ public class PostPage extends AppCompatActivity {
             }
         });
 
+        DatabaseReference avatar_ref = FirebaseDatabase.getInstance().getReference().child("Users").child(login);
+        avatar_ref.child("avatar").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Glide.with(getActivity).load(dataSnapshot.getValue().toString()).into(author_avatar);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         // подсветка ссылок и хэштегов
         autoLinkTextView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG, AutoLinkMode.MODE_URL);
         autoLinkTextView.setHashtagModeColor(ContextCompat.getColor(this, R.color.colorAccent));
@@ -180,7 +196,8 @@ public class PostPage extends AppCompatActivity {
                 public void onClick(View v) {
                     rating.put("zero", (float) 0);
                     comment.put("zero", new Comment("nothing", "interesting", "in here"));
-                    RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link, txt_heading, tags, rating, comment);
+                    RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link,
+                            txt_heading, tags, rating, comment, text_author);
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("Data").push().setValue(post, new DatabaseReference.CompletionListener() {
                         @Override
