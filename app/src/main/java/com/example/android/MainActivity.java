@@ -44,11 +44,13 @@ public class MainActivity extends AppCompatActivity {
         btn_profile = (ImageButton) findViewById(R.id.profile);
         Intent intent = getIntent();
         String password = intent.getStringExtra("password");
+        int posts = intent.getIntExtra("posts", 0);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         nf = new NewsFeed(intent.getStringExtra("role"), intent.getStringExtra("Login"));
         add = new Add_post(intent.getStringExtra("role"), intent.getStringExtra("Login"));
-        profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"), password, intent.getStringExtra("avatar"));
+        profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"),
+                password, intent.getStringExtra("avatar"), posts);
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
 

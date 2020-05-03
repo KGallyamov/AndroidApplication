@@ -8,6 +8,7 @@ public class RecyclerItem {
 
     private String title;
     private String description;
+    private String author;
 
     private String image;
     private String heading;
@@ -23,7 +24,9 @@ public class RecyclerItem {
     }
 
 
-    public RecyclerItem(String title, String description, String image, String heading, ArrayList<String> tags, HashMap<String, Float> rating, HashMap<String, Comment> comments) {
+    public RecyclerItem(String title, String description, String image, String heading,
+                        ArrayList<String> tags, HashMap<String, Float> rating, HashMap<String,
+                        Comment> comments, String author) {
         this.title = title;
         this.description = description;
         this.image = image;
@@ -31,6 +34,15 @@ public class RecyclerItem {
         this.tags = tags;
         this.rating = rating;
         this.comments = comments;
+        this.author = author;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public HashMap<String, Comment> getComments() {

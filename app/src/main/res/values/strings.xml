@@ -42,6 +42,7 @@
     <string name="enteryourtags">#enteryourtags</string>
     <string name="email">Email</string>
     <string name="favorite">Favorite</string>
+    <string name="posts_send">Posts send:</string>
 
     <string-array name="saved">
         <item>2</item>
