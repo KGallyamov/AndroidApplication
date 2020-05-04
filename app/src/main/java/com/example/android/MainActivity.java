@@ -11,12 +11,16 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
-    ImageButton btn_add, btn_main, btn_profile;
+    ImageButton btn_add, btn_main, btn_profile, btn_message;
     SharedPreferences sPref;
     NewsFeed nf;
     Add_post add;
     Profile profile;
+    Chat chat;
     FragmentTransaction fragmentTransaction;
 
 
@@ -42,15 +46,17 @@ public class MainActivity extends AppCompatActivity {
         btn_add = (ImageButton) findViewById(R.id.add);
         btn_main = (ImageButton) findViewById(R.id.main);
         btn_profile = (ImageButton) findViewById(R.id.profile);
+        btn_message = (ImageButton) findViewById(R.id.messages);
         Intent intent = getIntent();
         String password = intent.getStringExtra("password");
-        int posts = intent.getIntExtra("posts", 0);
+        ArrayList<String> posts = intent.getStringArrayListExtra("posts");
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         nf = new NewsFeed(intent.getStringExtra("role"), intent.getStringExtra("Login"));
         add = new Add_post(intent.getStringExtra("role"), intent.getStringExtra("Login"));
         profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"),
                 password, intent.getStringExtra("avatar"), posts);
+        chat = new Chat();
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
 
@@ -76,6 +82,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frgmCont, add);
+                fragmentTransaction.commit();
+            }
+        });
+        btn_message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frgmCont, chat);
                 fragmentTransaction.commit();
             }
         });

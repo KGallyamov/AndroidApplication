@@ -16,6 +16,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class splash extends AppCompatActivity {
     public SharedPreferences preferences;
     int notifyId = 100;
@@ -50,17 +53,28 @@ public class splash extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Intent intent = new Intent(context, MainActivity.class);
-                    String[] data = new String[4];
-                    int k = 0;
+                    String role="", password="", avatar="";
+                    ArrayList<String> map = new ArrayList<>();
                     for(DataSnapshot i:dataSnapshot.getChildren()){
-                        data[k] = i.getValue().toString();
-                        k++;
+                        if(i.getKey().equals("password")){
+                            password = i.getValue().toString();
+                        }else if(i.getKey().equals("avatar")){
+                            avatar = i.getValue().toString();
+                        }else if(i.getKey().equals("role")){
+                            role = i.getValue().toString();
+                        }else{
+                            for(DataSnapshot j:i.getChildren()){
+                                if(!j.getKey().equals("zero")) {
+                                    map.add(j.getValue().toString());
+                                }
+                            }
+                        }
                     }
-                    intent.putExtra("role", data[3]);
+                    intent.putExtra("role", role);
                     intent.putExtra("Login", username);
-                    intent.putExtra("password", data[1]);
-                    intent.putExtra("posts", Integer.parseInt(data[2]));
-                    intent.putExtra("avatar", data[0]);
+                    intent.putExtra("password", password);
+                    intent.putExtra("posts", map);
+                    intent.putExtra("avatar", avatar);
                     Toast.makeText(context,"Signed In successfully",Toast.LENGTH_LONG).show();
                     startActivity(intent);
                 }

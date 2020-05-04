@@ -23,13 +23,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -38,6 +43,8 @@ import com.google.firebase.storage.UploadTask;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.UUID;
 
 public class Profile extends Fragment {
@@ -45,15 +52,16 @@ public class Profile extends Fragment {
     TextView change, tv_posts;
     Button look_password, confirm, exit;
     EditText new_password;
+    RecyclerView user_posts;
     String updated = "";
     ImageView avatar;
     boolean is = true;
-    int posts;
+    ArrayList<String> posts;
     private TextView tv_login, tv_password, tv_role;
     private final int PICK_IMAGE_REQUEST = 71;
 
 
-    Profile(String role, String login, String password, String text_avatar, int posts){
+    Profile(String role, String login, String password, String text_avatar, ArrayList<String> posts){
         this.role = role;
         this.login = login;
         this.password = "Password: " + password;
@@ -77,6 +85,7 @@ public class Profile extends Fragment {
         tv_role  =(TextView) getActivity().findViewById(R.id.role);
         tv_password = (TextView) getActivity().findViewById(R.id.password);
         tv_posts = (TextView) getActivity().findViewById(R.id.posts);
+        user_posts = (RecyclerView) getActivity().findViewById(R.id.users_posts);
         look_password = (Button) getActivity().findViewById(R.id.look_password);
         change = (TextView) getActivity().findViewById(R.id.change);
         confirm  =(Button) getActivity().findViewById(R.id.confirm);
@@ -86,8 +95,26 @@ public class Profile extends Fragment {
 
         tv_role.setText(role);
         tv_login.setText(login);
-        tv_posts.setText(Integer.toString(posts));
+        tv_posts.setText(Integer.toString(posts.size()));
         Glide.with(getActivity()).load(text_avatar).into(avatar);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        reference.child("Users").child(login).child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<String> user_links = new ArrayList<>();
+                for(DataSnapshot i: dataSnapshot.getChildren()) {
+                    if (!i.getKey().equals("zero")) {
+                        user_links.add(i.getValue().toString());
+                    }
+                }
+                fill(user_links);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         fake_password = "Password: ";
         for(int i=0;i<password.length() - "Password: ".length();i++){
@@ -277,5 +304,35 @@ public class Profile extends Fragment {
                         progressDialog.setMessage("Uploaded "+(int)progress+"%");
                     }
                 });
+    }
+    private void fill(final ArrayList<String> links){
+        user_posts = (RecyclerView) getActivity().findViewById(R.id.users_posts);
+        DatabaseReference data = FirebaseDatabase.getInstance().getReference().child("Data");
+        data.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<RecyclerItem> listItems = new ArrayList<>();
+                ArrayList<String> pt = new ArrayList<>();
+                LinearLayoutManager manager = new LinearLayoutManager(getContext());
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
+                    if(links.contains(dataSnapshot1.getKey())) {
+                        RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
+                        listItems.add(p);
+                        pt.add(dataSnapshot1.getKey());
+                    }
+                }
+                Collections.reverse(listItems);
+                Collections.reverse(pt);
+                MyAdapter adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
+                user_posts.setAdapter(adapter);
+
+                user_posts.setLayoutManager(manager);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

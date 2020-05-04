@@ -235,12 +235,17 @@ public class Add_post extends Fragment implements View.OnClickListener {
 
             if (role.equals("admin")) {
                 wh = "Data";
+
             }
 
             databaseReference.child(wh).push().setValue(data, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     Toast.makeText(getActivity(), "Post added.", Toast.LENGTH_SHORT).show();
+                    if(role.equals("admin")){
+                        DatabaseReference posts_num_update = FirebaseDatabase.getInstance().getReference();
+                        posts_num_update.child("Users").child(login).child("posts").push().setValue(databaseReference.getKey());
+                    }
                     title.setText("");
                     description.setText("");
                     imageView.setImageResource(android.R.color.transparent);
