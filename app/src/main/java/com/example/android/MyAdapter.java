@@ -281,7 +281,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     author_posts.child("posts").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            intent.putExtra("author_posts", dataSnapshot.getValue(Integer.TYPE));
+                            ArrayList<String> posts = new ArrayList<>();
+                            for(DataSnapshot i:dataSnapshot.getChildren()){
+                                if(!i.getKey().equals("zero")){
+                                    posts.add(i.getValue().toString());
+                                }
+                            }
+                            intent.putExtra("author_posts", posts);
                         }
 
                         @Override

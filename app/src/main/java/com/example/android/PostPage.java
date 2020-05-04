@@ -95,7 +95,7 @@ public class PostPage extends AppCompatActivity {
         final HashMap<String, Float> rating = new HashMap<>();
         final String text_author = intent.getStringExtra("author");
         final HashMap<String, Comment> comment = new HashMap<>();
-        final int author_posts = intent.getIntExtra("author_posts", 0);
+        final ArrayList<String> author_posts = intent.getStringArrayListExtra("author_posts");
         final String where = intent.getStringExtra("Where");
         final float rate = intent.getFloatExtra("rating", 1);
         final String login = intent.getStringExtra("login");
@@ -203,13 +203,13 @@ public class PostPage extends AppCompatActivity {
                     databaseReference.child("Data").push().setValue(post, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            DatabaseReference posts_num_update = FirebaseDatabase.getInstance().getReference();
+                            posts_num_update.child("Users").child(text_author).child("posts").push().setValue(databaseReference.getKey());
                             Toast.makeText(context, "Post added", Toast.LENGTH_SHORT).show();
                             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
                             db.child("Moderate").child(path).removeValue();
                         }
                     });
-                    DatabaseReference posts_num_update = FirebaseDatabase.getInstance().getReference();
-                    posts_num_update.child("Users").child(text_author).child("posts").setValue(author_posts + 1);
 
                 }
             });

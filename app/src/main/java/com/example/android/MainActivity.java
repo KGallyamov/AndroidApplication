@@ -11,6 +11,9 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
     ImageButton btn_add, btn_main, btn_profile;
     SharedPreferences sPref;
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         btn_profile = (ImageButton) findViewById(R.id.profile);
         Intent intent = getIntent();
         String password = intent.getStringExtra("password");
-        int posts = intent.getIntExtra("posts", 0);
+        ArrayList<String> posts = intent.getStringArrayListExtra("posts");
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         nf = new NewsFeed(intent.getStringExtra("role"), intent.getStringExtra("Login"));

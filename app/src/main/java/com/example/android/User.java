@@ -1,25 +1,27 @@
 package com.example.android;
 
+import java.util.HashMap;
+
 public class User {
     private String password;
     private String role;
     private String avatar;
-    private int posts;
+    private HashMap<String, String> posts;
     User(){
     }
 
-    User(String password, String role, String avatar, int posts){
+    User(String password, String role, String avatar, HashMap<String, String> posts){
         this.password = password;
         this.role = role;
         this.avatar = avatar;
         this.posts = posts;
     }
 
-    public int getPosts() {
+    public HashMap<String, String> getPosts() {
         return posts;
     }
 
-    public void setPosts(int posts) {
+    public void setPosts(HashMap<String, String> posts) {
         this.posts = posts;
     }
 
