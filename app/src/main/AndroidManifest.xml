@@ -63,6 +63,8 @@
             android:label="Profile">
 
         </activity>
+        <activity android:name=".OneChatActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

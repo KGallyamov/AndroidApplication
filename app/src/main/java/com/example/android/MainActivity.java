@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         add = new Add_post(intent.getStringExtra("role"), intent.getStringExtra("Login"));
         profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"),
                 password, intent.getStringExtra("avatar"), posts);
-        chat = new Chat();
+        chat = new Chat(intent.getStringExtra("Login"));
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
 
