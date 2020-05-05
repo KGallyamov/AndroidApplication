@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 public class OneChatActivity extends AppCompatActivity {
     ListView messages;
-    TextView another_user;
+    TextView another_user, title;
     TextView exit;
     Context context = this;
 
@@ -38,6 +38,7 @@ public class OneChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String another_user_name = intent.getStringExtra("Another_person");
         String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+        another_user.setText(another_user_name);
         String[] arr = new String[]{login, another_user_name};
         Arrays.sort(arr);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Messages");
