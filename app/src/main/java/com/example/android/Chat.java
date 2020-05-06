@@ -30,11 +30,11 @@ public class Chat extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View myView = inflater.inflate(R.layout.chat_fragment, container, false);
         chats = (ListView) myView.findViewById(R.id.chats);
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("Messages").addValueEventListener(new ValueEventListener() {
-            ArrayList<String> ch = new ArrayList<>();
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<String> ch = new ArrayList<>();
                 for(DataSnapshot i:dataSnapshot.getChildren()){
                     String[] arr = i.getKey().split("_");
                     if(arr[1].equals(login)){
@@ -52,6 +52,7 @@ public class Chat extends Fragment {
 
             }
         });
+
         return myView;
     }
 }

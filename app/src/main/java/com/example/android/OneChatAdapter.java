@@ -12,6 +12,9 @@ import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class OneChatAdapter extends ArrayAdapter<Message> {
     String avatar;
     String another_user;
@@ -30,7 +33,17 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_item, null);
         }
         ((TextView) convertView.findViewById(R.id.text)).setText(message.getText());
-        ((TextView) convertView.findViewById(R.id.time)).setText(message.getTime());
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd.MMMM.yyyy");
+        String now = dateformat.format(c.getTime());
+        String message_time = message.getTime();
+        TextView message_tv = (TextView) convertView.findViewById(R.id.time);
+        // отправили сегодня
+        if(now.equals(message_time.split(" ")[1])){
+            message_tv.setText(message.getTime().split(" ")[0]);
+        }else{
+            message_tv.setText(message.getTime());
+        }
         return convertView;
     }
 }

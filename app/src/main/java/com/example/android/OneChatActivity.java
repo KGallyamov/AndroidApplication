@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,13 +21,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
 public class OneChatActivity extends AppCompatActivity {
     ListView messages;
     TextView another_user, title;
     TextView exit;
+    EditText write_message;
+    Button send;
     Context context = this;
 
     @Override
@@ -35,9 +41,11 @@ public class OneChatActivity extends AppCompatActivity {
         messages = (ListView) findViewById(R.id.messages_list);
         another_user = (TextView) findViewById(R.id.title);
         exit = (TextView) findViewById(R.id.exit);
+        send = (Button) findViewById(R.id.send_comment);
+        write_message = findViewById(R.id.write_message);
         Intent intent = getIntent();
-        String another_user_name = intent.getStringExtra("Another_person");
-        String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+        final String another_user_name = intent.getStringExtra("Another_person");
+        final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         another_user.setText(another_user_name);
         String[] arr = new String[]{login, another_user_name};
         Arrays.sort(arr);
@@ -58,11 +66,30 @@ public class OneChatActivity extends AppCompatActivity {
 
             }
         });
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!write_message.getText().toString().equals("")){
+                    String[] arr = new String[]{login, another_user_name};
+                    Arrays.sort(arr);
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                    String now = dateformat.format(c.getTime());
+                    Message message = new Message(write_message.getText().toString(),
+                            login,
+                            now);
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                    ref.child("Messages").child(arr[0] + "_" + arr[1]).push().setValue(message);
+                    write_message.setText("");
+                }
+            }
+        });
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+
     }
 }
