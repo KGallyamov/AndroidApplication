@@ -44,7 +44,28 @@
     <ListView
         android:id="@+id/messages_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="600dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <EditText
+            android:layout_weight="5"
+            android:hint="Write message"
+            android:textColorHint="#C4B7B7"
+            android:textColor="#C4B7B7"
+            android:textSize="20sp"
+            android:id="@+id/write_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/send_comment"
+            android:background="@drawable/ic_send_black_24dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
+    </LinearLayout>
 
 
 </LinearLayout>
