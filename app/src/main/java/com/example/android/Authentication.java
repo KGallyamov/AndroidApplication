@@ -101,15 +101,18 @@ public class Authentication extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Intent intent = new Intent(getContext, MainActivity.class);
-                                    String[] data = new String[2];
-                                    int k = 0;
-                                    for(DataSnapshot i:dataSnapshot.getChildren()){
-                                        data[k] = i.getValue().toString();
-                                        k++;
+                                    User user = dataSnapshot.getValue(User.class);
+                                    ArrayList<String> p = new ArrayList<>();
+                                    for(String i:user.getPosts().values()){
+                                        if(!i.equals("nothing")) {
+                                            p.add(i);
+                                        }
                                     }
-                                    intent.putExtra("role", data[1]);
+                                    intent.putExtra("role", user.getRole());
                                     intent.putExtra("Login", username);
-                                    intent.putExtra("password", data[0]);
+                                    intent.putExtra("password", user.getPassword());
+                                    intent.putExtra("avatar", user.getAvatar());
+                                    intent.putExtra("posts", p);
                                     Toast.makeText(getContext,"Signed In successfully",Toast.LENGTH_LONG).show();
                                     startActivity(intent);
                                 }
