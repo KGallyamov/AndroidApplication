@@ -13,11 +13,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 
 public class ChatListAdapter extends ArrayAdapter<String> {
     ChatListAdapter(@NonNull Context context, int resource, String[] arr) {
@@ -31,6 +37,10 @@ public class ChatListAdapter extends ArrayAdapter<String> {
         if(convertView == null){
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.chat_item, null);
         }
+        final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+        String[] arr = new String[]{login, chat};
+        Arrays.sort(arr);
+        final TextView last_message = (TextView) convertView.findViewById(R.id.last_message);
         ((TextView) convertView.findViewById(R.id.name)).setText(chat);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         final View finalConvertView = convertView;
@@ -38,6 +48,32 @@ public class ChatListAdapter extends ArrayAdapter<String> {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Glide.with(getContext()).load(dataSnapshot.getValue().toString()).into((ImageView) finalConvertView.findViewById(R.id.avatar));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        DatabaseReference get_last = FirebaseDatabase.getInstance().getReference();
+        final View finalConvertView1 = convertView;
+        get_last.child("Messages").child(arr[0] + "_" + arr[1]).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Message> arrayList = new ArrayList<>();
+                for(DataSnapshot i:dataSnapshot.getChildren()){
+                    arrayList.add(i.getValue(Message.class));
+                }
+                TextView time = (TextView) finalConvertView1.findViewById(R.id.time);
+                last_message.setText(arrayList.get(arrayList.size() - 1).getText());
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat dateformat = new SimpleDateFormat("dd.MMMM.yyyy");
+                String now = dateformat.format(c.getTime());
+                if(now.equals(arrayList.get(arrayList.size()-1).getTime().split(" ")[1])){
+                    time.setText(arrayList.get(arrayList.size()-1).getTime().split(" ")[0]);
+                }else {
+                    time.setText(arrayList.get(arrayList.size()-1).getTime());
+                }
             }
 
             @Override
