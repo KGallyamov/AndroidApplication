@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,10 +44,7 @@ public class NewsFeed extends Fragment {
     private LinearLayoutManager manager;
     public static String tag = "";
     private String wh = "Moderate";
-    NewsFeed(String role, String login){
-        this.role = role;
-        this.login = login;
-    }
+    public NewsFeed(){}
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,7 +56,9 @@ public class NewsFeed extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+        SharedPreferences pref = getActivity().getSharedPreferences("User_data", Context.MODE_PRIVATE);
+        role = pref.getString("Role", "user");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override

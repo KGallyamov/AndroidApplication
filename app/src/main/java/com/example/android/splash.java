@@ -3,6 +3,8 @@ package com.example.android;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,6 +35,14 @@ public class splash extends AppCompatActivity {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        boolean isLarge =  (getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+        if(isLarge){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
         try {

@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
+    android:background="#353E4f"
+
     android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/time"
         android:text="time"
-        android:layout_weight="1"
+        android:padding="3dp"
         android:textColor="#C4B7B7"
         android:fontFamily="monospace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/text"
-        android:layout_weight="5"
-        android:textColor="#C4B7B7"
         android:text="text"
+        android:padding="5dp"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/message_out"
         android:fontFamily="monospace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-</LinearLayout>
+</RelativeLayout>
