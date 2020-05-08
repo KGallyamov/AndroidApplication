@@ -22,6 +22,7 @@
 
 
         <activity android:name=".splash"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,14 +32,17 @@
 
         </activity>
         <activity android:name=".PostPage"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity android:name=".AnotherUserPage"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
@@ -47,22 +51,26 @@
 
         </activity>
         <activity android:name=".Authentication"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Authentication">
 
         </activity>
 
         <activity android:name=".NewAccount"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="New account">
 
         </activity>
         <activity android:name=".Profile"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Profile">
 
         </activity>
         <activity android:name=".OneChatActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

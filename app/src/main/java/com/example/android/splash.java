@@ -36,14 +36,7 @@ public class splash extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        boolean isLarge =  (getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK)
-                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
-        if(isLarge){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }else{
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+
 
         try {
             FirebaseUser currentUser = mAuth.getCurrentUser();

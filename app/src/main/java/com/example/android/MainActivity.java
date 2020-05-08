@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     ImageButton btn_add, btn_main, btn_profile, btn_message;
+    SharedPreferences sPref;
     NewsFeed nf;
     Add_post add;
     Profile profile;
@@ -30,19 +31,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        boolean isLarge =  (getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK)
-                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
-        if(isLarge){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }else{
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        nf = new NewsFeed();
-        fragmentTransaction.add(R.id.frgmCont, nf);
-        fragmentTransaction.commit();
     }
 
     @Override
@@ -61,13 +49,9 @@ public class MainActivity extends AppCompatActivity {
         text_login = intent.getStringExtra("Login");
         posts = intent.getStringArrayListExtra("posts");
         text_avatar = intent.getStringExtra("avatar");
-        SharedPreferences preferences = getSharedPreferences("User_data", MODE_PRIVATE);
-        SharedPreferences.Editor ed = preferences.edit();
-        ed.putString("Role", text_role);
-        ed.apply();
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        nf = new NewsFeed();
+        nf = new NewsFeed(text_role, text_login);
         add = new Add_post(text_role, text_login);
         profile = new Profile(text_role, text_login,
                 text_password, text_avatar, posts);
@@ -108,26 +92,5 @@ public class MainActivity extends AppCompatActivity {
                 fragmentTransaction.commit();
             }
         });
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        outState.putString("login", text_login);
-        outState.putString("password", text_password);
-        outState.putString("role", text_role);
-        outState.putString("avatar", text_avatar);
-        outState.putStringArrayList("posts", posts);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        text_role = savedInstanceState.getString("role");
-        text_password = savedInstanceState.getString("password");
-        text_avatar = savedInstanceState.getString("avatar");
-        text_login = savedInstanceState.getString("login");
-        posts = savedInstanceState.getStringArrayList("posts");
-
     }
 }

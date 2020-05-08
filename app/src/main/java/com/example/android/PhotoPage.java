@@ -16,18 +16,7 @@ import com.github.chrisbanes.photoview.PhotoViewAttacher;
 
 public class PhotoPage extends AppCompatActivity {
     PhotoViewAttacher attacher;
-    @Override
-    protected void onStart() {
-        super.onStart();
-        boolean isLarge =  (getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK)
-                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
-        if(isLarge){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }else{
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
