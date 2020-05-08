@@ -42,7 +42,10 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
         if(now.equals(message_time.split(" ")[1])){
             message_tv.setText(message.getTime().split(" ")[0]);
         }else{
-            message_tv.setText(message.getTime());
+            String moment = (message.getTime().split(" ")[1]);
+            moment = moment.substring(0, moment.length() - 5);
+            String[] clock = message.getTime().split(" ")[0].split(":");
+            message_tv.setText(clock[0] +":"+ clock[1] + "  " + moment);
         }
         return convertView;
     }

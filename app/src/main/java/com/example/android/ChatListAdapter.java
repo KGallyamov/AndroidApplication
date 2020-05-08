@@ -2,6 +2,7 @@ package com.example.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,7 +73,10 @@ public class ChatListAdapter extends ArrayAdapter<String> {
                 if(now.equals(arrayList.get(arrayList.size()-1).getTime().split(" ")[1])){
                     time.setText(arrayList.get(arrayList.size()-1).getTime().split(" ")[0]);
                 }else {
-                    time.setText(arrayList.get(arrayList.size()-1).getTime());
+                    String moment = (arrayList.get(arrayList.size()-1).getTime().split(" ")[1]);
+                    moment = moment.substring(0, moment.length() - 5);
+                    String[] clock = arrayList.get(arrayList.size()-1).getTime().split(" ")[0].split(":");
+                    time.setText(clock[0] +":"+ clock[1] + "  " + moment);
                 }
             }
 

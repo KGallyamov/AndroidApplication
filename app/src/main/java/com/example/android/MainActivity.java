@@ -5,9 +5,11 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -21,20 +23,14 @@ public class MainActivity extends AppCompatActivity {
     Add_post add;
     Profile profile;
     Chat chat;
+    String text_login, text_role, text_password, text_avatar;
+    ArrayList<String> posts;
     FragmentTransaction fragmentTransaction;
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        boolean isLarge =  (getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK)
-                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
-        if(isLarge){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }else{
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
     }
 
     @Override
@@ -48,15 +44,18 @@ public class MainActivity extends AppCompatActivity {
         btn_profile = (ImageButton) findViewById(R.id.profile);
         btn_message = (ImageButton) findViewById(R.id.messages);
         Intent intent = getIntent();
-        String password = intent.getStringExtra("password");
-        ArrayList<String> posts = intent.getStringArrayListExtra("posts");
+        text_password = intent.getStringExtra("password");
+        text_role = intent.getStringExtra("role");
+        text_login = intent.getStringExtra("Login");
+        posts = intent.getStringArrayListExtra("posts");
+        text_avatar = intent.getStringExtra("avatar");
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        nf = new NewsFeed(intent.getStringExtra("role"), intent.getStringExtra("Login"));
-        add = new Add_post(intent.getStringExtra("role"), intent.getStringExtra("Login"));
-        profile = new Profile(intent.getStringExtra("role"), intent.getStringExtra("Login"),
-                password, intent.getStringExtra("avatar"), posts);
-        chat = new Chat(intent.getStringExtra("Login"));
+        nf = new NewsFeed(text_role, text_login);
+        add = new Add_post(text_role, text_login);
+        profile = new Profile(text_role, text_login,
+                text_password, text_avatar, posts);
+        chat = new Chat(text_login);
         fragmentTransaction.add(R.id.frgmCont, nf);
         fragmentTransaction.commit();
 
@@ -94,5 +93,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 }
