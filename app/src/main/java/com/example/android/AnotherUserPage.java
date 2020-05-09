@@ -21,7 +21,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 
 public class AnotherUserPage extends AppCompatActivity {
@@ -59,6 +61,21 @@ public class AnotherUserPage extends AppCompatActivity {
                             if (!j.getKey().equals("zero")) {
                                 k++;
                                 user_links.add(j.getValue().toString());
+                            }
+                        }
+                    } else if(i.getKey().equals("lastSeen")){
+                        Calendar c = Calendar.getInstance();
+                        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                        String[] now = dateformat.format(c.getTime()).split(" ");
+                        String time = i.getValue().toString();
+                        if(time.equals("online")){
+                            ((TextView) findViewById(R.id.lastSeen)).setText(i.getValue().toString());
+                        }else {
+                            if (now[1].equals(i.getValue().toString().split(" ")[1])) {
+                                String[] refactor = time.split(" ")[0].split(":");
+                                ((TextView) findViewById(R.id.lastSeen)).setText(refactor[0] + ":" + refactor[1]);
+                            } else {
+                                ((TextView) findViewById(R.id.lastSeen)).setText(i.getValue().toString());
                             }
                         }
                     }

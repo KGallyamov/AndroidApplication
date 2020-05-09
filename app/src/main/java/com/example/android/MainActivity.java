@@ -13,7 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,20 +32,13 @@ public class MainActivity extends AppCompatActivity {
     Add_post add;
     Profile profile;
     Chat chat;
-    String text_login, text_role, text_password, text_avatar;
-    ArrayList<String> posts;
+    String text_login;
     FragmentTransaction fragmentTransaction;
 
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-
 
         setContentView(R.layout.activity_main);
         btn_add = (ImageButton) findViewById(R.id.add);
@@ -44,53 +46,62 @@ public class MainActivity extends AppCompatActivity {
         btn_profile = (ImageButton) findViewById(R.id.profile);
         btn_message = (ImageButton) findViewById(R.id.messages);
         Intent intent = getIntent();
-        text_password = intent.getStringExtra("password");
-        text_role = intent.getStringExtra("role");
         text_login = intent.getStringExtra("Login");
-        posts = intent.getStringArrayListExtra("posts");
-        text_avatar = intent.getStringExtra("avatar");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(text_login);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                nf = new NewsFeed(user.getRole(), text_login);
+                add = new Add_post(user.getRole(), text_login);
+                profile = new Profile(user.getRole(), text_login,
+                        user.getPassword(), user.getAvatar(), new ArrayList<String>(user.getPosts().values()));
+                chat = new Chat(text_login);
+                fragmentTransaction.add(R.id.frgmCont, nf);
+                fragmentTransaction.commit();
 
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        nf = new NewsFeed(text_role, text_login);
-        add = new Add_post(text_role, text_login);
-        profile = new Profile(text_role, text_login,
-                text_password, text_avatar, posts);
-        chat = new Chat(text_login);
-        fragmentTransaction.add(R.id.frgmCont, nf);
-        fragmentTransaction.commit();
+                //Переключение между экранами - фрагментами
+                btn_profile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.frgmCont, profile);
+                        fragmentTransaction.commit();
+                    }
+                });
+                btn_main.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.frgmCont, nf);
+                        fragmentTransaction.commit();
+                    }
+                });
+                btn_add.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.frgmCont, add);
+                        fragmentTransaction.commit();
+                    }
+                });
+                btn_message.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.frgmCont, chat);
+                        fragmentTransaction.commit();
+                    }
+                });
+            }
 
-        //Переключение между экранами - фрагментами
-        btn_profile.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frgmCont, profile);
-                fragmentTransaction.commit();
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
-        btn_main.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frgmCont, nf);
-                fragmentTransaction.commit();
-            }
-        });
-        btn_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frgmCont, add);
-                fragmentTransaction.commit();
-            }
-        });
-        btn_message.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frgmCont, chat);
-                fragmentTransaction.commit();
-            }
-        });
+        reference.child("lastSeen").setValue("online");
+
     }
 }
