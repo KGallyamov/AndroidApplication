@@ -4,10 +4,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -40,10 +38,9 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -206,6 +203,15 @@ public class Profile extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         FirebaseAuth auth = FirebaseAuth.getInstance();
                         auth.signOut();
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                        Calendar c = Calendar.getInstance();
+                        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                        String now = dateformat.format(c.getTime());
+                        reference.child("Users").child(login).child("lastSeen").setValue(now).addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+                        });
                         getActivity().finish();
 
                     }
@@ -247,6 +253,24 @@ public class Profile extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        correctTime();
+    }
+
+    private void correctTime() {
+        DatabaseReference time = FirebaseDatabase.getInstance().getReference();
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+        String now = dateformat.format(c.getTime());
+        time.child("Users").child(login).child("lastSeen").setValue(now).addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+            }
+        });
     }
 
     @Override

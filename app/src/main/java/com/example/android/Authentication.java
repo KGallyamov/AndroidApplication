@@ -96,32 +96,9 @@ public class Authentication extends AppCompatActivity {
                             final String username = text_login.split("@")[0];
                             password.setText("");
                             login.setText("");
-                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(username);
-                            ref.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    Intent intent = new Intent(getContext, MainActivity.class);
-                                    User user = dataSnapshot.getValue(User.class);
-                                    ArrayList<String> p = new ArrayList<>();
-                                    for(String i:user.getPosts().values()){
-                                        if(!i.equals("nothing")) {
-                                            p.add(i);
-                                        }
-                                    }
-                                    intent.putExtra("role", user.getRole());
-                                    intent.putExtra("Login", username);
-                                    intent.putExtra("password", user.getPassword());
-                                    intent.putExtra("avatar", user.getAvatar());
-                                    intent.putExtra("posts", p);
-                                    Toast.makeText(getContext,"Signed In successfully",Toast.LENGTH_LONG).show();
-                                    startActivity(intent);
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Toast.makeText(getContext, "Check connection", Toast.LENGTH_LONG).show();
-                                }
-                            });
+                            Intent intent = new Intent(getContext, MainActivity.class);
+                            intent.putExtra("Login", username);
+                            startActivity(intent);
                         }else{
                             Toast.makeText(getContext, "Wrong login/password", Toast.LENGTH_LONG).show();
                         }

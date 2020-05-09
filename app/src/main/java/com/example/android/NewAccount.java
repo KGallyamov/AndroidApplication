@@ -27,7 +27,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class NewAccount extends AppCompatActivity {
@@ -79,10 +81,13 @@ public class NewAccount extends AppCompatActivity {
                             final String db_login = text_login.split("@")[0];
                             HashMap<String, String> posts = new HashMap<>();
                             posts.put("zero", "nothing");
+                            Calendar c = Calendar.getInstance();
+                            SimpleDateFormat dateformat = new SimpleDateFormat("dd MMMM yyyy");
+                            String now = dateformat.format(c.getTime());
                             databaseReference.child(db_login).setValue(new User(text_password,
                                                                                 "user",
                                     "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2Fdefault_avatar.png?alt=media&token=7807ba53-1240-41d1-8f63-70f2e3e38cec",
-                                            posts),
+                                            posts, now),
                                     new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
