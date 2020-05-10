@@ -93,7 +93,7 @@ public class Profile extends Fragment {
         tv_role.setText(role);
         tv_login.setText(login);
 
-        tv_posts.setText(Integer.toString(posts.size()));
+        tv_posts.setText(Integer.toString(posts.size() - 1));
 
         Glide.with(getActivity()).load(text_avatar).into(avatar);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();

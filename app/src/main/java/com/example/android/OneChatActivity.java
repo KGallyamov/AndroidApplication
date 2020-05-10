@@ -30,6 +30,7 @@ public class OneChatActivity extends AppCompatActivity {
     ListView messages;
     TextView another_user;
     TextView exit;
+    String[] arr;
     EditText write_message;
     Button send;
     Context context = this;
@@ -47,17 +48,20 @@ public class OneChatActivity extends AppCompatActivity {
         final String another_user_name = intent.getStringExtra("Another_person");
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         another_user.setText(another_user_name);
-        String[] arr = new String[]{login, another_user_name};
+        arr = new String[]{login, another_user_name};
         Arrays.sort(arr);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Messages");
         reference.child(arr[0] + "_" + arr[1]).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Message> list = new ArrayList<>();
+                ArrayList<String> paths = new ArrayList<>();
                 for(DataSnapshot i:dataSnapshot.getChildren()){
                     list.add(i.getValue(Message.class));
+                    paths.add(i.getKey());
                 }
-                OneChatAdapter adapter = new OneChatAdapter(context, R.layout.message_out_item, list.toArray(new Message[0]));
+                OneChatAdapter adapter = new OneChatAdapter(context, R.layout.message_out_item, list.toArray(new Message[0]),
+                        arr[0] + "_" + arr[1], paths);
                 messages.setAdapter(adapter);
             }
 
