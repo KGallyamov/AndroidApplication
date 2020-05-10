@@ -28,7 +28,7 @@ import java.util.Calendar;
 
 public class OneChatActivity extends AppCompatActivity {
     ListView messages;
-    TextView another_user, title;
+    TextView another_user;
     TextView exit;
     EditText write_message;
     Button send;
@@ -82,6 +82,14 @@ public class OneChatActivity extends AppCompatActivity {
                     ref.child("Messages").child(arr[0] + "_" + arr[1]).push().setValue(message);
                     write_message.setText("");
                 }
+            }
+        });
+        another_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent user_page = new Intent(OneChatActivity.this, AnotherUserPage.class);
+                user_page.putExtra("author", another_user_name);
+                startActivity(user_page);
             }
         });
         exit.setOnClickListener(new View.OnClickListener() {

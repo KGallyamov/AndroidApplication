@@ -63,7 +63,7 @@
                     android:layout_marginTop="5sp"
                     android:layout_weight="1"
                     android:textColor="#C4B7B7"
-                    android:textSize="30sp"/>
+                    android:textSize="20sp"/>
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -94,6 +94,19 @@
                         android:textColor="#03A9F4"
                         android:textSize="25sp" />
                 </LinearLayout>
+                <Button
+                    android:id="@+id/start_converstaion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Message"
+                    android:padding="3dp"
+                    android:background="@drawable/write_message_button"
+                    android:layout_marginStart="10dp"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="5sp"
+                    android:layout_weight="1"
+                    android:textColor="#FFFEFE"
+                    android:textSize="15sp"/>
 
 
 
