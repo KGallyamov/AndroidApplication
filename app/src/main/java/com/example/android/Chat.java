@@ -102,7 +102,7 @@ public class Chat extends Fragment {
                                         final String name = arr[0] + "_" + arr[1];
                                         DatabaseReference chat = FirebaseDatabase.getInstance().getReference().child("Messages");
                                         Calendar c = Calendar.getInstance();
-                                        SimpleDateFormat dateformat = new SimpleDateFormat("dd MMMM yyyy");
+                                        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                                         String now = dateformat.format(c.getTime());
                                         Message mes = new Message(message.getText().toString(), login, now);
                                         chat.child(name).push().setValue(mes);
