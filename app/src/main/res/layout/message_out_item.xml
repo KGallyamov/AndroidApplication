@@ -13,7 +13,8 @@
         android:fontFamily="monospace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-    <TextView
+
+    <com.luseen.autolinklibrary.AutoLinkTextView
         android:id="@+id/text"
         android:text="text"
         android:padding="5dp"

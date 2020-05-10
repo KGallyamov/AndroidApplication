@@ -4,7 +4,7 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:background="#353E4f"
     android:layout_height="match_parent">
-    <TextView
+    <com.luseen.autolinklibrary.AutoLinkTextView
         android:id="@+id/text"
         android:text="Text"
         android:textSize="15sp"
