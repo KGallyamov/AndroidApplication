@@ -13,12 +13,12 @@
             android:layout_weight="1"
             android:id="@+id/avatar"
             android:src="@drawable/sigma"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
         <TextView
             android:id="@+id/author"
             android:text="Author"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:layout_weight="4"
             android:paddingTop="4dp"
             android:fontFamily="monospace"

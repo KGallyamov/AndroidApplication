@@ -1,29 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:background="#353E4f"
+
     android:layout_height="match_parent">
-    <com.luseen.autolinklibrary.AutoLinkTextView
-        android:id="@+id/text"
-        android:text="Text"
-        android:textSize="15sp"
-        android:background="@drawable/message_in"
-        android:fontFamily="monospace"
-        android:padding="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/time"
+        android:id="@+id/day_month"
         android:text="time"
-        android:layout_alignParentRight="true"
-        android:textColor="#C4B7B7"
-        android:textAlignment="center"
         android:padding="3dp"
+        android:layout_alignParentEnd="true"
+        android:textColor="#C4B7B7"
         android:fontFamily="monospace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_alignParentStart="true"
+        android:orientation="vertical"
+        android:padding="4dp"
+        android:background="@drawable/message_in"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <com.luseen.autolinklibrary.AutoLinkTextView
+            android:id="@+id/text"
+            android:text="text"
+            android:padding="5dp"
+            android:textSize="16sp"
+            android:fontFamily="monospace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/hour_min"
+            android:text="time"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
 
 

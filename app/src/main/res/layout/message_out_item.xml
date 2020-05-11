@@ -6,22 +6,37 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/time"
+        android:id="@+id/day_month"
         android:text="time"
         android:padding="3dp"
         android:textColor="#C4B7B7"
         android:fontFamily="monospace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-
-    <com.luseen.autolinklibrary.AutoLinkTextView
-        android:id="@+id/text"
-        android:text="text"
-        android:padding="5dp"
+    <LinearLayout
         android:layout_alignParentEnd="true"
+        android:orientation="vertical"
         android:background="@drawable/message_out"
-        android:fontFamily="monospace"
+        android:padding="4dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
+        <com.luseen.autolinklibrary.AutoLinkTextView
+            android:id="@+id/text"
+            android:text="text"
+            android:padding="5dp"
+            android:textSize="16sp"
+            android:fontFamily="monospace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/hour_min"
+            android:text="time"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
 
 </RelativeLayout>

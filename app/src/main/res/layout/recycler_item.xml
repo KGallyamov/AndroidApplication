@@ -4,10 +4,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    android:layout_marginTop="2dp"
     android:elevation="4dp"
-    app:cardCornerRadius="10dp"
-    android:background="#1F3872"
+    app:cardCornerRadius="2dp"
+    app:cardBackgroundColor="#455470"
 
     app:cardUseCompatPadding="true">
     <LinearLayout
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:padding="16dp">
+        android:padding="3dp">
         <RelativeLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                 android:layout_marginLeft="55dp"
                 android:fontFamily="monospace"
                 android:padding="3sp"
-                android:textColor="#000000"
+                android:textColor="#C4B7B7"
                 android:layout_marginBottom="7sp"
                 android:layout_marginTop="5dp"
                 android:layout_height="wrap_content"/>
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/save_to_favorite"
                 android:layout_marginTop="7sp"
-                android:layout_marginRight="10sp"
+                android:layout_marginRight="2sp"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/ic_star_border_black_24dp"
                 android:textAppearance="@android:style/TextAppearance.Large"
@@ -76,11 +76,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/txtTitle"
-
             android:fontFamily="monospace"
-
             android:layout_below="@+id/heading"
             android:text="Title"
+            android:textColor="#C4B7B7"
+            android:textSize="20dp"
             android:textAppearance="@android:style/TextAppearance.Large">
 
         </TextView>
@@ -90,7 +90,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/txtDescription"
             android:text="Description"
-
+            android:textSize="15dp"
+            android:textColor="#C4B7B7"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:layout_below="@id/picture">
         </TextView>
@@ -129,7 +130,7 @@
 
             <TextView
                 android:id="@+id/middle_rating"
-                android:textColor="@color/black"
+                android:textColor="#C4B7B7"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

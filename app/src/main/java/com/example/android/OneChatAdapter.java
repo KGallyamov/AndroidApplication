@@ -83,15 +83,15 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
         SimpleDateFormat dateformat = new SimpleDateFormat("dd.MMMM.yyyy");
         String now = dateformat.format(c.getTime());
         String message_time = message.getTime();
-        TextView message_tv = (TextView) convertView.findViewById(R.id.time);
-        // отправили сегодня
-        if(now.equals(message_time.split(" ")[1])){
-            message_tv.setText(message.getTime().split(" ")[0]);
-        }else{
-            String moment = (message.getTime().split(" ")[1]);
-            moment = moment.substring(0, moment.length() - 5);
-            String[] clock = message.getTime().split(" ")[0].split(":");
-            message_tv.setText(clock[0] +":"+ clock[1] + "  " + moment);
+        TextView hour_minute = (TextView) convertView.findViewById(R.id.hour_min);
+        TextView day_month = (TextView) convertView.findViewById(R.id.day_month);
+        String[] h = message_time.split(" ")[0].split(":");
+        hour_minute.setText(h[0] + ":" + h[1]);
+        // отправили не сегодня
+        if(!now.equals(message_time.split(" ")[1])){
+            String dm = message_time.split(" ")[1];
+            dm = dm.substring(0, dm.length() - 5);
+            day_month.setText(dm);
         }
 
         convertView.setLongClickable(true);
