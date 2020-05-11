@@ -58,8 +58,15 @@ public class MainActivity extends AppCompatActivity {
                 profile = new Profile(user.getRole(), text_login,
                         user.getPassword(), user.getAvatar(), new ArrayList<String>(user.getPosts().values()));
                 chat = new Chat(text_login);
-                fragmentTransaction.add(R.id.frgmCont, nf);
-                fragmentTransaction.commit();
+                SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+                boolean first = preferences.getBoolean("first", true);
+                if(first) {
+                    fragmentTransaction.add(R.id.frgmCont, nf);
+                    fragmentTransaction.commit();
+                    SharedPreferences.Editor ed = preferences.edit();
+                    ed.putBoolean("first", false);
+                    ed.apply();
+                }
 
                 //Переключение между экранами - фрагментами
                 btn_profile.setOnClickListener(new View.OnClickListener() {
@@ -103,5 +110,14 @@ public class MainActivity extends AppCompatActivity {
         });
         reference.child("lastSeen").setValue("online");
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("first");
+        editor.apply();
     }
 }

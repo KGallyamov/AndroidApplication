@@ -77,14 +77,19 @@ public class AnotherUserPage extends AppCompatActivity {
                         SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                         String[] now = dateformat.format(c.getTime()).split(" ");
                         String time = i.getValue().toString();
+                        TextView lastSeen = findViewById(R.id.lastSeen);
                         if(time.equals("online")){
-                            ((TextView) findViewById(R.id.lastSeen)).setText(i.getValue().toString());
+                            lastSeen.setTextColor(getResources().getColor(R.color.active_blue));
+                            lastSeen.setText(i.getValue().toString());
                         }else {
                             if (now[1].equals(i.getValue().toString().split(" ")[1])) {
                                 String[] refactor = time.split(" ")[0].split(":");
-                                ((TextView) findViewById(R.id.lastSeen)).setText(refactor[0] + ":" + refactor[1]);
+                                lastSeen.setText(refactor[0] + ":" + refactor[1]);
                             } else {
-                                ((TextView) findViewById(R.id.lastSeen)).setText(i.getValue().toString());
+                                String[] refactor = time.split(" ");
+                                String day_month = refactor[1].substring(0, refactor[1].length() - 5);
+                                String hour_minute = refactor[0].substring(0, refactor[0].length() - 3);
+                                lastSeen.setText("Was online at " + hour_minute + " " + day_month);
                             }
                         }
                     }

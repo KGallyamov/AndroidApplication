@@ -168,7 +168,7 @@ public class Profile extends Fragment {
                     });
                 }else{
                     is = true;
-                    change.setTextColor(getActivity().getResources().getColor(R.color.bzzzz));
+                    change.setTextColor(getActivity().getResources().getColor(R.color.active_blue));
                     change.setText("Change password");
                     look_password.setVisibility(View.VISIBLE);
                     confirm.setVisibility(View.GONE);
