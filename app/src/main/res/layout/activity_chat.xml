@@ -11,7 +11,7 @@
         android:layout_height="70sp">
         <TextView
             android:id="@+id/exit"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:fontFamily="monospace"
             android:gravity="center_vertical"
             android:paddingTop="5dp"
@@ -23,22 +23,39 @@
             android:layout_height="match_parent">
 
         </TextView>
-        <TextView
-            android:id="@+id/title"
-            android:text="Чат с n-ым пользователем"
-            android:textSize="25sp"
-            android:layout_weight="15"
-            android:fontFamily="monospace"
-            android:gravity="center_vertical"
-            android:paddingTop="5dp"
-            android:textAlignment="center"
-            android:textColor="#C4B7B7"
-            android:paddingStart="10dp"
-            android:paddingBottom="5dp"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/title"
+                android:text="Чат с n-ым пользователем"
+                android:textSize="18sp"
+                android:layout_weight="15"
+                android:fontFamily="monospace"
+                android:gravity="center_vertical"
+                android:paddingTop="5dp"
+                android:textAlignment="center"
+                android:textColor="#C4B7B7"
+                android:paddingStart="10dp"
+                android:paddingBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/lastSeen"
+                android:text="Был в сети в 18:23"
+                android:textSize="18sp"
+                android:layout_weight="15"
+                android:fontFamily="monospace"
+                android:paddingTop="5dp"
+                android:textAlignment="center"
+                android:textColor="#C4B7B7"
+                android:paddingBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
 
-        </TextView>
+
     </LinearLayout>
 
     <ListView

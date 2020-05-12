@@ -30,6 +30,7 @@ public class OneChatActivity extends AppCompatActivity {
     ListView messages;
     TextView another_user;
     TextView exit;
+    TextView lastSeen;
     String[] arr;
     EditText write_message;
     Button send;
@@ -41,6 +42,7 @@ public class OneChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         messages = (ListView) findViewById(R.id.messages_list);
         another_user = (TextView) findViewById(R.id.title);
+        lastSeen = (TextView) findViewById(R.id.lastSeen);
         exit = (TextView) findViewById(R.id.exit);
         send = (Button) findViewById(R.id.send_comment);
         write_message = findViewById(R.id.write_message);
@@ -63,6 +65,29 @@ public class OneChatActivity extends AppCompatActivity {
                 OneChatAdapter adapter = new OneChatAdapter(context, R.layout.message_out_item, list.toArray(new Message[0]),
                         arr[0] + "_" + arr[1], paths);
                 messages.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        DatabaseReference userTime = FirebaseDatabase.getInstance().getReference();
+        userTime.child("Users").child(another_user_name).child("lastSeen").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String time = dataSnapshot.getValue().toString();
+                if(time.equals("online")){
+                    lastSeen.setTextColor(getResources().getColor(R.color.active_blue));
+                }
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat dateformat = new SimpleDateFormat("dd.MMMM.yyyy");
+                String now = dateformat.format(c.getTime());
+                if(now.equals(time.split(" ")[1])){
+                    lastSeen.setText(time.split(" ")[0]);
+                }else{
+                    lastSeen.setText(time);
+                }
             }
 
             @Override
