@@ -62,7 +62,6 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
         SimpleDateFormat dateformat = new SimpleDateFormat("dd MMMM yyyy");
         String now = dateformat.format(c.getTime());
         String time = db.getTime().split("/")[0];
-        Log.d("Look", now);
 
         // если отправили не сегодня, а раньше
         if(now.equals(time)) {

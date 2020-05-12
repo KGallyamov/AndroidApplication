@@ -74,7 +74,10 @@ public class ChatListAdapter extends ArrayAdapter<String> {
                     time.setText(arrayList.get(arrayList.size()-1).getTime().split(" ")[0]);
                 }else {
                     String moment = (arrayList.get(arrayList.size()-1).getTime().split(" ")[1]);
-                    moment = moment.substring(0, moment.length() - 5);
+                    SimpleDateFormat year = new SimpleDateFormat("yyyy");
+                    if(year.format(c.getTime()).equals(moment.substring(moment.length() - 4))) {
+                        moment = moment.substring(0, moment.length() - 5);
+                    }
                     String[] clock = arrayList.get(arrayList.size()-1).getTime().split(" ")[0].split(":");
                     time.setText(clock[0] +":"+ clock[1] + "  " + moment);
                 }
