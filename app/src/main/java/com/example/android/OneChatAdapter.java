@@ -81,6 +81,7 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
 
         Calendar c = Calendar.getInstance();
         SimpleDateFormat dateformat = new SimpleDateFormat("dd.MMMM.yyyy");
+        SimpleDateFormat year = new SimpleDateFormat("yyyy");
         String now = dateformat.format(c.getTime());
         String message_time = message.getTime();
         TextView hour_minute = (TextView) convertView.findViewById(R.id.hour_min);
@@ -90,7 +91,9 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
         // отправили не сегодня
         if(!now.equals(message_time.split(" ")[1])){
             String dm = message_time.split(" ")[1];
-            dm = dm.substring(0, dm.length() - 5);
+            if(year.format(c.getTime()).equals(dm.substring(dm.length() - 4))) {
+                dm = dm.substring(0, dm.length() - 5);
+            }
             day_month.setText(dm);
         }
 
