@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         btn_message = (ImageButton) findViewById(R.id.messages);
         Intent intent = getIntent();
         text_login = intent.getStringExtra("Login");
+        DatabaseReference online = FirebaseDatabase.getInstance().getReference();
+        online.child("Users").child(text_login).child("lastSeen").setValue("online");
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(text_login);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frgmCont, nf);
                         fragmentTransaction.commit();
+
                     }
                 });
                 btn_add.setOnClickListener(new View.OnClickListener() {
@@ -108,8 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        DatabaseReference online = FirebaseDatabase.getInstance().getReference();
-        online.child("Users").child(text_login).child("lastSeen").setValue("online");
     }
 
     @Override
@@ -120,6 +122,4 @@ public class MainActivity extends AppCompatActivity {
         editor.remove("first");
         editor.apply();
     }
-
-
 }
