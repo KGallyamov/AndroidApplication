@@ -2,6 +2,7 @@ package com.example.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,16 +16,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.commons.net.time.TimeTCPClient;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class OneChatActivity extends AppCompatActivity {
     ListView messages;
@@ -99,17 +105,7 @@ public class OneChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!write_message.getText().toString().equals("")){
-                    String[] arr = new String[]{login, another_user_name};
-                    Arrays.sort(arr);
-                    Calendar c = Calendar.getInstance();
-                    SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
-                    String now = dateformat.format(c.getTime());
-                    Message message = new Message(write_message.getText().toString(),
-                            login,
-                            now);
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                    ref.child("Messages").child(arr[0] + "_" + arr[1]).push().setValue(message);
-                    write_message.setText("");
+                    new AsyncRequest().execute();
                 }
             }
         });
@@ -128,5 +124,63 @@ public class OneChatActivity extends AppCompatActivity {
             }
         });
 
+    }
+    class AsyncRequest extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... arg) {
+            String time = "failed";
+            try {
+                TimeTCPClient client = new TimeTCPClient();
+                try {
+                    client.setDefaultTimeout(10000);
+                    client.connect("time.nist.gov");
+                    time =  client.getDate().toString();
+                } finally {
+                    client.disconnect();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return time;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+            String[] arr = new String[]{login,
+                    another_user.getText().toString()};
+            Arrays.sort(arr);
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
+            HashMap<String, String> months = new HashMap<>();
+            months.put("May", "мая");
+            months.put("June", "июня");
+            months.put("July", "июля");
+            months.put("August", "августа");
+
+            months.put("September", "сентября");
+            months.put("October", "октября");
+            months.put("November", "ноября");
+            months.put("December", "декабря");
+
+            months.put("January", "января");
+            months.put("February", "февраля");
+            months.put("March", "марта");
+            months.put("April", "апреля");
+
+            String[] time_data = s.split(" ");
+            String time_for_database = time_data[3] + " " + time_data[2] +
+                    "." + months.get(time_data[1]) + "." + time_data[5];
+
+
+            Message message = new Message(write_message.getText().toString(),
+                    login,
+                    time_for_database);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+            ref.child("Messages").child(arr[0] + "_" + arr[1]).push().setValue(message);
+            write_message.setText("");
+
+        }
     }
 }

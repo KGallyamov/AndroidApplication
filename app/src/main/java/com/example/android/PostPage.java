@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,9 @@ import com.luseen.autolinklibrary.AutoLinkMode;
 import com.luseen.autolinklibrary.AutoLinkOnClickListener;
 import com.luseen.autolinklibrary.AutoLinkTextView;
 
+import org.apache.commons.net.time.TimeTCPClient;
+
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -283,25 +288,64 @@ public class PostPage extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // если у пользователя стоит неправильное время
-                String timeSettings = android.provider.Settings.System.getString(
-                        getContentResolver(),
-                        android.provider.Settings.System.AUTO_TIME);
-                if (timeSettings.contentEquals("0")) {
-                    android.provider.Settings.System.putString(
-                            getContentResolver(),
-                            android.provider.Settings.System.AUTO_TIME, "1");
-                }
-                // время отправки комментария
-                Calendar c = Calendar.getInstance();
-                SimpleDateFormat dateformat = new SimpleDateFormat("dd MMMM yyyy/HH:mm:ss");
-                String datetime = dateformat.format(c.getTime());
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
-                reference.child(path).child("comments").push().setValue(new Comment(login,
-                        leave_a_comment.getText().toString(), datetime));
-                leave_a_comment.setText("");
+
+                new AsyncRequest().execute();
             }
         });
+    }
+    class AsyncRequest extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... arg) {
+            String time = "failed";
+            try {
+                TimeTCPClient client = new TimeTCPClient();
+                try {
+                    client.setDefaultTimeout(10000);
+                    client.connect("time.nist.gov");
+                    time =  client.getDate().toString();
+                } finally {
+                    client.disconnect();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return time;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
+            HashMap<String, String> months = new HashMap<>();
+            months.put("May", "мая");
+            months.put("June", "июня");
+            months.put("July", "июля");
+            months.put("August", "августа");
+
+            months.put("September", "сентября");
+            months.put("October", "октября");
+            months.put("November", "ноября");
+            months.put("December", "декабря");
+
+            months.put("January", "января");
+            months.put("February", "февраля");
+            months.put("March", "марта");
+            months.put("April", "апреля");
+
+            String[] time_data = s.split(" ");
+            String time_for_database = time_data[3] + " " + time_data[2] +
+                    "." + months.get(time_data[1]) + "." + time_data[5];
+
+
+            reference.child(path).child("comments").push().setValue(
+                    new Comment(FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0],
+                    leave_a_comment.getText().toString(),
+                            time_for_database));
+            leave_a_comment.setText("");
+
+        }
     }
 
 

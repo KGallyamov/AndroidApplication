@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/heading"
                 android:fontFamily="monospace"
-                android:textColor="#464C4E"
+                android:textColor="#C4B7B7"
                 android:padding="3sp"
                 android:layout_marginRight="35dp"
                 android:text="Programming"

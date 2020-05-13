@@ -95,6 +95,8 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                 dm = dm.substring(0, dm.length() - 5);
             }
             day_month.setText(dm);
+        }else{
+            day_month.setText("today");
         }
 
         convertView.setLongClickable(true);
