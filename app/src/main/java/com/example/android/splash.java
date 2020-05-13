@@ -55,6 +55,7 @@ public class splash extends AppCompatActivity {
         super.onDestroy();
         new AsyncRequest().execute();
     }
+
     class AsyncRequest extends AsyncTask<String, Integer, String> {
 
         @Override

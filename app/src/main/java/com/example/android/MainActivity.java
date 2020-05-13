@@ -108,7 +108,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        reference.child("lastSeen").setValue("online");
+        DatabaseReference online = FirebaseDatabase.getInstance().getReference();
+        online.child("Users").child(text_login).child("lastSeen").setValue("online");
     }
 
     @Override
