@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,10 +39,14 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.apache.commons.net.time.TimeTCPClient;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class Profile extends Fragment {
@@ -201,17 +206,7 @@ public class Profile extends Fragment {
                 .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        FirebaseAuth auth = FirebaseAuth.getInstance();
-                        auth.signOut();
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                        Calendar c = Calendar.getInstance();
-                        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
-                        String now = dateformat.format(c.getTime());
-                        reference.child("Users").child(login).child("lastSeen").setValue(now).addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                            }
-                        });
+                        new AsyncRequest().execute();
                         getActivity().finish();
 
                     }
@@ -254,23 +249,56 @@ public class Profile extends Fragment {
         });
 
     }
+    class AsyncRequest extends AsyncTask<String, Integer, String> {
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        correctTime();
-    }
-
-    private void correctTime() {
-        DatabaseReference time = FirebaseDatabase.getInstance().getReference();
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
-        String now = dateformat.format(c.getTime());
-        time.child("Users").child(login).child("lastSeen").setValue(now).addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
+        @Override
+        protected String doInBackground(String... arg) {
+            String time = "failed";
+            try {
+                TimeTCPClient client = new TimeTCPClient();
+                try {
+                    client.setDefaultTimeout(10000);
+                    client.connect("time.nist.gov");
+                    time =  client.getDate().toString();
+                } finally {
+                    client.disconnect();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
+            return time;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+
+            HashMap<String, String> months = new HashMap<>();
+            months.put("May", "мая");
+            months.put("June", "июня");
+            months.put("July", "июля");
+            months.put("August", "августа");
+
+            months.put("September", "сентября");
+            months.put("October", "октября");
+            months.put("November", "ноября");
+            months.put("December", "декабря");
+
+            months.put("January", "января");
+            months.put("February", "февраля");
+            months.put("March", "марта");
+            months.put("April", "апреля");
+
+            String[] time_data = s.split(" ");
+            String time_for_database = time_data[3] + " " + time_data[2] +
+                    "." + months.get(time_data[1]) + "." + time_data[5];
+
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            auth.signOut();
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+            reference.child("Users").child(login).child("lastSeen").setValue(time_for_database);
+        }
     }
 
     @Override
@@ -361,4 +389,5 @@ public class Profile extends Fragment {
             }
         });
     }
+
 }
