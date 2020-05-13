@@ -24,6 +24,7 @@ import org.apache.commons.net.time.TimeTCPClient;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     ImageButton btn_add, btn_main, btn_profile, btn_message;
@@ -108,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         reference.child("lastSeen").setValue("online");
-        new AsyncRequest().execute();
     }
 
     @Override
@@ -120,32 +120,5 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    class AsyncRequest extends AsyncTask<String, Integer, String> {
 
-        @Override
-        protected String doInBackground(String... arg) {
-            String time = "failed";
-            try {
-                TimeTCPClient client = new TimeTCPClient();
-                try {
-                    client.setDefaultTimeout(10000);
-                    client.connect("time.nist.gov");
-                    time =  client.getDate().toString();
-                } finally {
-                    client.disconnect();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return time;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-            reference.child("TIME_FROM_NIST").setValue(s);
-        }
-    }
 }
