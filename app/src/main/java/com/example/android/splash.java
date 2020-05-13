@@ -48,6 +48,7 @@ public class splash extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Calendar c = Calendar.getInstance();
         SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");

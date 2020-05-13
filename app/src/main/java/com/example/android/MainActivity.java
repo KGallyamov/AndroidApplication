@@ -2,32 +2,31 @@ package com.example.android;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
+import org.apache.commons.net.time.TimeTCPClient;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     ImageButton btn_add, btn_main, btn_profile, btn_message;
-    SharedPreferences sPref;
     NewsFeed nf;
     Add_post add;
     Profile profile;
@@ -109,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         reference.child("lastSeen").setValue("online");
-
+        new AsyncRequest().execute();
     }
 
     @Override
@@ -119,5 +118,34 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("first");
         editor.apply();
+    }
+
+    class AsyncRequest extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... arg) {
+            String time = "failed";
+            try {
+                TimeTCPClient client = new TimeTCPClient();
+                try {
+                    client.setDefaultTimeout(10000);
+                    client.connect("time.nist.gov");
+                    time =  client.getDate().toString();
+                } finally {
+                    client.disconnect();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return time;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+            reference.child("TIME_FROM_NIST").setValue(s);
+        }
     }
 }

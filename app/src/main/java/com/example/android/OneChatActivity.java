@@ -102,6 +102,7 @@ public class OneChatActivity extends AppCompatActivity {
                     String[] arr = new String[]{login, another_user_name};
                     Arrays.sort(arr);
                     Calendar c = Calendar.getInstance();
+
                     SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                     String now = dateformat.format(c.getTime());
                     Message message = new Message(write_message.getText().toString(),

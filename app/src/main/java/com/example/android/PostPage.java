@@ -293,6 +293,7 @@ public class PostPage extends AppCompatActivity {
                             android.provider.Settings.System.AUTO_TIME, "1");
                 }
                 // время отправки комментария
+
                 Calendar c = Calendar.getInstance();
                 SimpleDateFormat dateformat = new SimpleDateFormat("dd MMMM yyyy/HH:mm:ss");
                 String datetime = dateformat.format(c.getTime());

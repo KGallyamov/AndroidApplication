@@ -187,6 +187,7 @@
             android:id="@+id/comments"
             android:layout_width="match_parent"
             android:layout_height="150dp" />
+
         <RelativeLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
