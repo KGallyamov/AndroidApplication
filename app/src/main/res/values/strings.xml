@@ -40,7 +40,7 @@
     <string name="close">Close</string>
     <string name="authorisation">Authorisation</string>
     <string name="enteryourtags">#enteryourtags</string>
-    <string name="email">Email</string>
+    <string name="email">Enter gmail email</string>
     <string name="favorite">Favorite</string>
     <string name="posts_send">Posts send:</string>
 

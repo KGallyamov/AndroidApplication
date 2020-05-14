@@ -207,7 +207,6 @@ public class Profile extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         new AsyncRequest().execute();
-                        getActivity().finish();
 
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -272,32 +271,51 @@ public class Profile extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+            if(!(FirebaseAuth.getInstance().getCurrentUser()==null)) {
+                login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
 
-            HashMap<String, String> months = new HashMap<>();
-            months.put("May", "мая");
-            months.put("June", "июня");
-            months.put("July", "июля");
-            months.put("August", "августа");
+                HashMap<String, String> months = new HashMap<>();
+                months.put("May", "мая");
+                months.put("June", "июня");
+                months.put("July", "июля");
+                months.put("August", "августа");
 
-            months.put("September", "сентября");
-            months.put("October", "октября");
-            months.put("November", "ноября");
-            months.put("December", "декабря");
+                months.put("September", "сентября");
+                months.put("October", "октября");
+                months.put("November", "ноября");
+                months.put("December", "декабря");
 
-            months.put("January", "января");
-            months.put("February", "февраля");
-            months.put("March", "марта");
-            months.put("April", "апреля");
+                months.put("January", "января");
+                months.put("February", "февраля");
+                months.put("March", "марта");
+                months.put("April", "апреля");
+                String time_for_database;
+                if(!s.equals("failed")) {
+                    String[] time_data = s.split(" ");
+                    for (String i : time_data) {
+                        Log.d("Look", i);
+                    }
 
-            String[] time_data = s.split(" ");
-            String time_for_database = time_data[3] + " " + time_data[2] +
-                    "." + months.get(time_data[1]) + "." + time_data[5];
+                    time_for_database = time_data[3] + " " + time_data[2] +
+                            "." + months.get(time_data[1]) + "." + time_data[5];
 
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            auth.signOut();
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-            reference.child("Users").child(login).child("lastSeen").setValue(time_for_database);
+                }
+                // если не получилось взять время с сервера
+                else{
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                    time_for_database = dateformat.format(c.getTime());
+                }
+                Log.d("Look", time_for_database);
+
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                reference.child("Users").child(login).child("lastSeen").setValue(time_for_database);
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                auth.signOut();
+                Intent intent = new Intent(getContext(), Authentication.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }
     }
 
