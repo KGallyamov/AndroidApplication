@@ -2,26 +2,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.android">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
-        android:label="@string/app_name"
         android:icon="@drawable/sigma6"
+        android:label="@string/app_name"
         android:roundIcon="@drawable/sigma"
         android:supportsRtl="true"
-
         android:theme="@style/AppTheme">
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="label" />
 
-
-
-
-        <activity android:name=".splash"
+        <activity
+            android:name=".splash"
             android:screenOrientation="portrait"
             android:theme="@style/SplashScreen">
             <intent-filter>
@@ -29,49 +26,42 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".PostPage"
+        <activity
+            android:name=".PostPage"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity android:name=".AnotherUserPage"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AnotherUserPage"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-        <activity android:name=".PhotoPage"
-            android:label="Photo">
-
-        </activity>
-        <activity android:name=".Authentication"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".PhotoPage"
+            android:label="Photo"></activity>
+        <activity
+            android:name=".Authentication"
+            android:label="Authentication"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="Authentication">
-
-        </activity>
-
-        <activity android:name=".NewAccount"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".NewAccount"
+            android:label="New account"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="New account">
-
-        </activity>
-        <activity android:name=".Profile"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".Profile"
+            android:label="Profile"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="Profile">
-
-        </activity>
-        <activity android:name=".OneChatActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".OneChatActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

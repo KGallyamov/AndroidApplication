@@ -31,6 +31,7 @@ public class Chat extends Fragment {
     ListView chats;
     String login;
     ImageButton start_conv;
+    public Chat(){}
     Chat(String login){
         this.login = login;
     }
