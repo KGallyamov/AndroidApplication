@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -169,9 +170,23 @@ public class OneChatActivity extends AppCompatActivity {
             months.put("March", "марта");
             months.put("April", "апреля");
 
-            String[] time_data = s.split(" ");
-            String time_for_database = time_data[3] + " " + time_data[2] +
-                    "." + months.get(time_data[1]) + "." + time_data[5];
+            String time_for_database;
+            if(!s.equals("failed")) {
+                String[] time_data = s.split(" ");
+                for (String i : time_data) {
+                    Log.d("Look", i);
+                }
+
+                time_for_database = time_data[3] + " " + time_data[2] +
+                        "." + months.get(time_data[1]) + "." + time_data[5];
+
+            }
+            // если не получилось взять время с сервера
+            else{
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                time_for_database = dateformat.format(c.getTime());
+            }
 
 
             Message message = new Message(write_message.getText().toString(),
