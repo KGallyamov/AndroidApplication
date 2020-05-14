@@ -50,6 +50,7 @@ public class PostPage extends AppCompatActivity {
     Button close, ok, refuse, send;
     Context getActivity = this;
     String role = "", path;
+    TextView tvTime;
     Context context = this;
     ListView comments_list;
     EditText leave_a_comment;
@@ -72,6 +73,7 @@ public class PostPage extends AppCompatActivity {
         author_avatar = (ImageView) findViewById(R.id.author_avatar);
         close = (Button) findViewById(R.id.close);
         ok = (Button) findViewById(R.id.ok);
+        tvTime = (TextView) findViewById(R.id.time);
         send = (Button) findViewById(R.id.send_comment);
         leave_a_comment = (EditText) findViewById(R.id.leave_a_comment);
         comments_list = findViewById(R.id.comments);
@@ -93,12 +95,14 @@ public class PostPage extends AppCompatActivity {
         final String where = intent.getStringExtra("Where");
         final float rate = intent.getFloatExtra("rating", 1);
         final String login = intent.getStringExtra("login");
+        final String text_time = intent.getStringExtra("time");
         final DecimalFormat df = new DecimalFormat("#.##");
         pos = intent.getIntExtra("position", 0);
         tags = intent.getStringArrayListExtra("tags");
         role = intent.getStringExtra("role");
         path = intent.getStringExtra("post path");
         ratingBar.setRating(rate);
+        tvTime.setText(text_time);
         author.setText(text_author);
 
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
@@ -192,7 +196,7 @@ public class PostPage extends AppCompatActivity {
                     rating.put("zero", (float) 0);
                     comment.put("zero", new Comment("nothing", "interesting", "in here"));
                     RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link,
-                            txt_heading, tags, rating, comment, text_author);
+                            txt_heading, tags, rating, comment, text_author, text_time);
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("Data").push().setValue(post, new DatabaseReference.CompletionListener() {
                         @Override

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -42,6 +43,9 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.apache.commons.net.time.TimeTCPClient;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,6 +71,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
     StorageReference storageReference;
     ArrayAdapter<String> adapter;
     String heading = "", login;
+    String image_link = "";
     String [] text_tags;
     ArrayList<String> tags_db = new ArrayList<>();
     static List<String> headings = new ArrayList<>();
@@ -207,49 +212,8 @@ public class Add_post extends Fragment implements View.OnClickListener {
     }
 
     private void uploadPost(String image) {
-        for(String i:text_tags){
-            tags_db.add(i);
-        }
-
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMMM-yyyy HH:mm:ss");
-        String[] datetime = dateformat.format(c.getTime()).split(" ")[0].split("-");
-
-        tags_db.add("#" + datetime[0] + datetime[1]);
-        tags_db.add("#" + datetime[2]);
-        tags_db.add("#" + role);
-        tags_db.add("#" + login);
-        SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
-        String tag = preferences.getString("TAG", "");
-
-        tags_db.add("#" + tag);
-        HashMap<String, Float> rating = new HashMap<>();
-        HashMap<String, Comment> comments = new HashMap<>();
-        rating.put("zero", (float) 0);
-        comments.put("zero", new Comment("nothing", "interesting", "in here"));
-        RecyclerItem data = new RecyclerItem(txtTitle, txtDescription, image, heading, tags_db, rating, comments, login);
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        String wh = "Moderate";
-
-            if (role.equals("admin")) {
-                wh = "Data";
-
-            }
-
-            databaseReference.child(wh).push().setValue(data, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    Toast.makeText(getActivity(), "Post added.", Toast.LENGTH_SHORT).show();
-                    if(role.equals("admin")){
-                        DatabaseReference posts_num_update = FirebaseDatabase.getInstance().getReference();
-                        posts_num_update.child("Users").child(login).child("posts").push().setValue(databaseReference.getKey());
-                    }
-                    title.setText("");
-                    description.setText("");
-                    imageView.setImageResource(android.R.color.transparent);
-                    tags.setText("");
-                }
-            });
+        image_link = image;
+        new AsyncRequest().execute();
         
     }
 
@@ -349,6 +313,104 @@ public class Add_post extends Fragment implements View.OnClickListener {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+    class AsyncRequest extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... arg) {
+            String time = "failed";
+            try {
+                TimeTCPClient client = new TimeTCPClient();
+                try {
+                    client.setDefaultTimeout(30000);
+                    client.connect("time-a-b.nist.gov");
+                    time =  client.getDate().toString();
+                } finally {
+                    client.disconnect();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return time;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+
+            HashMap<String, String> months = new HashMap<>();
+            months.put("May", "мая");
+            months.put("June", "июня");
+            months.put("July", "июля");
+            months.put("August", "августа");
+
+            months.put("September", "сентября");
+            months.put("October", "октября");
+            months.put("November", "ноября");
+            months.put("December", "декабря");
+
+            months.put("January", "января");
+            months.put("February", "февраля");
+            months.put("March", "марта");
+            months.put("April", "апреля");
+            // успешное соединение с сервером
+            String time_for_database;
+            if(!s.equals("failed")) {
+                String[] time_data = s.split(" ");
+                for (String i : time_data) {
+                    Log.d("Look", i);
+                }
+
+                time_for_database = time_data[3] + " " + time_data[2] +
+                        "." + months.get(time_data[1]) + "." + time_data[5];
+
+            }
+            // если не получилось взять время с сервера
+            else{
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                time_for_database = dateformat.format(c.getTime());
+            }
+            for(String i:text_tags){
+                tags_db.add(i);
+            }
+
+            tags_db.add("#" + role);
+            tags_db.add("#" + login);
+            SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
+            String tag = preferences.getString("TAG", "");
+
+            tags_db.add("#" + tag);
+            HashMap<String, Float> rating = new HashMap<>();
+            HashMap<String, Comment> comments = new HashMap<>();
+            rating.put("zero", (float) 0);
+            comments.put("zero", new Comment("nothing", "interesting", "in here"));
+            RecyclerItem data = new RecyclerItem(txtTitle, txtDescription, image_link, heading, tags_db, rating, comments, login, time_for_database);
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            String wh = "Moderate";
+
+            if (role.equals("admin")) {
+                wh = "Data";
+
+            }
+
+            databaseReference.child(wh).push().setValue(data, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    if(role.equals("admin")){
+                        DatabaseReference posts_num_update = FirebaseDatabase.getInstance().getReference();
+                        posts_num_update.child("Users").child(login).child("posts").push().setValue(databaseReference.getKey());
+                    }
+                    title.setText("");
+                    description.setText("");
+                    imageView.setImageResource(android.R.color.transparent);
+                    tags.setText("");
+                }
+            });
+
+
+        }
     }
 
 
