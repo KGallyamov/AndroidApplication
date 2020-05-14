@@ -1,7 +1,10 @@
 package com.example.android;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,6 +32,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,6 +66,7 @@ public class Profile extends Fragment {
     private TextView tv_login, tv_password, tv_role;
     private final int PICK_IMAGE_REQUEST = 71;
 
+    public Profile(){}
 
     Profile(String role, String login, String password, String text_avatar, ArrayList<String> posts){
         this.role = role;
@@ -206,6 +211,8 @@ public class Profile extends Fragment {
                 .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        FirebaseAuth auth = FirebaseAuth.getInstance();
+                        auth.signOut();
                         new AsyncRequest().execute();
 
                     }
@@ -271,9 +278,6 @@ public class Profile extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            if(!(FirebaseAuth.getInstance().getCurrentUser()==null)) {
-                login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
-
                 HashMap<String, String> months = new HashMap<>();
                 months.put("May", "мая");
                 months.put("June", "июня");
@@ -310,12 +314,14 @@ public class Profile extends Fragment {
 
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
                 reference.child("Users").child(login).child("lastSeen").setValue(time_for_database);
-                FirebaseAuth auth = FirebaseAuth.getInstance();
-                auth.signOut();
-                Intent intent = new Intent(getContext(), Authentication.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-            }
+            Intent mStartActivity = new Intent(getContext(), Authentication.class);
+            int mPendingIntentId = 123456;
+            PendingIntent mPendingIntent = PendingIntent.getActivity(getContext(), mPendingIntentId, mStartActivity,
+                    PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager mgr = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+            System.exit(0);
+
         }
     }
 

@@ -82,6 +82,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
         this.role = role;
         this.login = login;
     }
+    public Add_post(){}
 
 
     @Override

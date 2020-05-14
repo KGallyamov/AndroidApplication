@@ -47,8 +47,8 @@ public class NewsFeed extends Fragment {
         this.role = role;
         this.login = login;
     }
-    public NewsFeed(){}
 
+    public NewsFeed(){}
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
