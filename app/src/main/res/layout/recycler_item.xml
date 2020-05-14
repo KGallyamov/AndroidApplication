@@ -27,19 +27,34 @@
                 android:src="@drawable/sigma"
                 android:layout_width="50dp"
                 android:layout_height="50dp"/>
+            <LinearLayout
+                android:layout_marginStart="60dp"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/author"
+                    android:text="mirakpjcppr"
+                    android:layout_width="wrap_content"
+                    android:textSize="15sp"
+                    android:fontFamily="monospace"
+                    android:padding="3sp"
+                    android:textColor="#F8F6F6"
+                    android:layout_marginTop="5dp"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/time"
+                    android:text="13:28:32 29.мая.2020"
+                    android:layout_width="wrap_content"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:padding="3sp"
+                    android:textColor="#C2B3B3"
+                    android:layout_height="wrap_content"/>
 
-            <TextView
-                android:id="@+id/author"
-                android:text="mirakpjcppr"
-                android:layout_width="150dp"
-                android:textSize="15sp"
-                android:layout_marginLeft="55dp"
-                android:fontFamily="monospace"
-                android:padding="3sp"
-                android:textColor="#C4B7B7"
-                android:layout_marginBottom="7sp"
-                android:layout_marginTop="5dp"
-                android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -47,7 +62,7 @@
                 android:fontFamily="monospace"
                 android:textColor="#C4B7B7"
                 android:padding="3sp"
-                android:layout_marginRight="35dp"
+                android:layout_marginRight="55dp"
                 android:text="Programming"
                 android:layout_alignParentRight="true"
                 android:textAlignment="textEnd"
@@ -56,18 +71,35 @@
                 android:textSize="15sp">
 
             </TextView>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/save_to_favorite"
-                android:layout_marginTop="7sp"
-                android:layout_marginRight="2sp"
+            <LinearLayout
                 android:layout_alignParentRight="true"
-                android:background="@drawable/ic_star_border_black_24dp"
-                android:textAppearance="@android:style/TextAppearance.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/save_to_favorite"
+                    android:layout_marginTop="7sp"
+                    android:layout_marginEnd="2sp"
+                    android:background="@drawable/ic_star_border_black_24dp"
+                    android:textAppearance="@android:style/TextAppearance.Large"
 
-                android:paddingLeft="10dp">
-            </TextView>
+                    android:paddingStart="10dp"/>
+                <TextView
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/delete_post"
+                    android:layout_marginTop="7sp"
+                    android:layout_marginRight="4sp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/ic_delete_24dp"
+                    android:textAppearance="@android:style/TextAppearance.Large"
+
+                    android:paddingLeft="10dp"/>
+            </LinearLayout>
+
+
 
         </RelativeLayout>
 

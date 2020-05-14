@@ -80,7 +80,7 @@ public class splash extends AppCompatActivity {
                 TimeTCPClient client = new TimeTCPClient();
                 try {
                     client.setDefaultTimeout(30000);
-                    client.connect("time.nist.gov");
+                    client.connect("time-a-b.nist.gov");
                     time =  client.getDate().toString();
                 } finally {
                     client.disconnect();
@@ -111,6 +111,7 @@ public class splash extends AppCompatActivity {
             months.put("February", "февраля");
             months.put("March", "марта");
             months.put("April", "апреля");
+            // успешное соединение с сервером
             if(!s.equals("failed")) {
                 String[] time_data = s.split(" ");
                 for (String i : time_data) {
@@ -119,7 +120,10 @@ public class splash extends AppCompatActivity {
 
                 time_for_database = time_data[3] + " " + time_data[2] +
                         "." + months.get(time_data[1]) + "." + time_data[5];
-            }else{
+
+            }
+            // если не получилось взять время с сервера
+            else{
                 Calendar c = Calendar.getInstance();
                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                 time_for_database = dateformat.format(c.getTime());

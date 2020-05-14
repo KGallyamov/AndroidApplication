@@ -1,6 +1,8 @@
 package com.example.android;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -79,6 +81,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         holder.txtDescription.setText(s);
         holder.heading.setText(itemList.getHeading());
         holder.author.setText(itemList.getAuthor());
+        holder.tvTime.setText(itemList.getTime());
         DatabaseReference db = FirebaseDatabase.getInstance().getReference().child(where).child(paths.get(position)).child("rating");
         rate = new HashMap<>();
         db.addValueEventListener(new ValueEventListener() {
@@ -98,6 +101,32 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
             }
         });
+        if(role.equals("admin") || itemList.getAuthor().equals(login)){
+            holder.delete_post.setVisibility(View.VISIBLE);
+            holder.delete_post.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final AlertDialog.Builder ask = new AlertDialog.Builder(mContext, R.style.MyAlertDialogStyle);
+                    ask.setMessage("Are you sure you want to delete this post?").setCancelable(false)
+                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                                    reference.child(where).child(paths.get(position)).removeValue();
+                                }
+                            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    AlertDialog alertDialog = ask.create();
+                    alertDialog.setTitle("Delete post");
+                    alertDialog.show();
+                }
+            });
+        }
 
 
 
@@ -228,12 +257,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView txtTitle;
+        public TextView tvTime;
         public TextView txtDescription;
         public TextView txtSave;
         public TextView middle_rating;
         public ImageView picture, author_avatar;
         public TextView heading;
         public TextView author;
+        public TextView delete_post;
         public RatingBar ratingBar;
         View v;
         Intent intent;
@@ -246,6 +277,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             txtDescription = itemView.findViewById(R.id.txtDescription);
             txtSave = itemView.findViewById(R.id.save_to_favorite);
             ratingBar  =itemView.findViewById(R.id.rating);
+            tvTime = itemView.findViewById(R.id.time);
+            delete_post = itemView.findViewById(R.id.delete_post);
             middle_rating = itemView.findViewById(R.id.middle_rating);
             picture = itemView.findViewById(R.id.picture);
             heading = itemView.findViewById(R.id.heading);
@@ -271,6 +304,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     intent.putExtra("Where", where);
                     intent.putExtra("login", login);
                     intent.putExtra("position", pos);
+                    intent.putExtra("time", listItems.get(pos).getTime());
                     intent.putExtra("author", listItems.get(pos).getAuthor());
                     intent.putExtra("tags", listItems.get(pos).getTags());
                     intent.putExtra("rating", listItems.get(pos).getRating().get(login));

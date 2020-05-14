@@ -257,7 +257,7 @@ public class Profile extends Fragment {
             try {
                 TimeTCPClient client = new TimeTCPClient();
                 try {
-                    client.setDefaultTimeout(10000);
+                    client.setDefaultTimeout(30000);
                     client.connect("time.nist.gov");
                     time =  client.getDate().toString();
                 } finally {
