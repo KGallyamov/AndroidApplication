@@ -115,7 +115,7 @@ public class NewAccount extends AppCompatActivity {
                         }
                         else if(text_login.length() == 0){
                             Toast.makeText(getContext, "Enter the login", Toast.LENGTH_LONG).show();
-                        }else{
+                        }else if(already_exists){
                             Toast.makeText(getContext, "Login is already used", Toast.LENGTH_LONG).show();
                             login.setText("");
                             text_login = "";
@@ -166,10 +166,6 @@ public class NewAccount extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.toString().length() < 8){
-                    Toast.makeText(getContext, "Create stronger password", Toast.LENGTH_SHORT).show();
-
-                }
             }
         });
 
