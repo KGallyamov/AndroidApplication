@@ -51,6 +51,7 @@ public class PostPage extends AppCompatActivity {
     Context getActivity = this;
     String role = "", path;
     TextView tvTime;
+    String reply;
     Context context = this;
     ListView comments_list;
     EditText leave_a_comment;
@@ -194,7 +195,9 @@ public class PostPage extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     rating.put("zero", (float) 0);
-                    comment.put("zero", new Comment("nothing", "interesting", "in here"));
+                    HashMap<String, String> likes = new HashMap<>();
+                    likes.put("zero", "nothing");
+                    comment.put("zero", new Comment("nothing", "interesting", "in here", likes));
                     RecyclerItem post = new RecyclerItem(txt_title, txt_description, image_link,
                             txt_heading, tags, rating, comment, text_author, text_time);
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -229,12 +232,14 @@ public class PostPage extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Comment> opinion = new ArrayList<>();
-                for(DataSnapshot i:dataSnapshot.getChildren()){
+                ArrayList<String> comment_paths = new ArrayList<>();
+                 for(DataSnapshot i:dataSnapshot.getChildren()){
                     if(!i.getKey().equals("zero")) {
                         opinion.add(i.getValue(Comment.class));
+                        comment_paths.add(i.getKey());
                     }
                 }
-                CommentAdapter adapter = new CommentAdapter(context, R.layout.comment_item, opinion.toArray(new Comment[0]));
+                CommentAdapter adapter = new CommentAdapter(context, R.layout.comment_item, opinion.toArray(new Comment[0]), where, path, comment_paths);
                 comments_list.setAdapter(adapter);
 
             }
@@ -292,7 +297,6 @@ public class PostPage extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 new AsyncRequest().execute();
             }
         });
@@ -342,11 +346,12 @@ public class PostPage extends AppCompatActivity {
             String time_for_database = time_data[3] + " " + time_data[2] +
                     "." + months.get(time_data[1]) + "." + time_data[5];
 
-
+            HashMap<String, String> likes = new HashMap<>();
+            likes.put("zero", "nothing");
             reference.child(path).child("comments").push().setValue(
                     new Comment(FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0],
                     leave_a_comment.getText().toString(),
-                            time_for_database));
+                            time_for_database, likes));
             leave_a_comment.setText("");
 
         }
