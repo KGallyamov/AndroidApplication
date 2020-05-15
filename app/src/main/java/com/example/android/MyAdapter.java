@@ -20,6 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -112,7 +114,25 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                                    DatabaseReference del = FirebaseDatabase.getInstance().getReference();
                                     reference.child(where).child(paths.get(position)).removeValue();
+                                    del.child("Users").child(login).child("posts").addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            for(DataSnapshot i:dataSnapshot.getChildren()){
+                                                if(i.getValue().toString().equals(paths.get(position))){
+                                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                                                            .child("Users").child(login).child("posts").child(i.getKey());
+                                                    ref.removeValue();
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
                                 }
                             }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
