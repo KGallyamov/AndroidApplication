@@ -103,6 +103,37 @@ public class PostPage extends AppCompatActivity {
         path = intent.getStringExtra("post path");
         tvTime.setText(text_time);
         author.setText(text_author);
+        DatabaseReference user_rating = FirebaseDatabase.getInstance().getReference();
+        user_rating.child("Users").child(login).child("rating").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                SharedPreferences preferences = getSharedPreferences("User_rating", MODE_PRIVATE);
+                SharedPreferences.Editor ed = preferences.edit();
+                ed.putFloat("current_user", dataSnapshot.getValue(Float.TYPE));
+                ed.apply();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        DatabaseReference author_rating = FirebaseDatabase.getInstance().getReference();
+        author_rating.child("Users").child(text_author).child("rating").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                float rating = dataSnapshot.getValue(Float.TYPE);
+                SharedPreferences preferences = getSharedPreferences("Author_rating", MODE_PRIVATE);
+                SharedPreferences.Editor ed = preferences.edit();
+                ed.putFloat("rating", rating);
+                ed.apply();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
         //рейтинг поста
@@ -116,6 +147,7 @@ public class PostPage extends AppCompatActivity {
                         result = i.getValue().toString().equals("up") ? result + 1 : result - 1;
                     }
                     if(i.getKey().equals(login)){
+                        final float author_rating = getSharedPreferences("Author_rating", MODE_PRIVATE).getFloat("rating", 0);
                         is_here = true;
                         if(i.getValue().toString().equals("up")){
                             upvote.setBackground(getResources().getDrawable(R.drawable.ic_thumb_up_activated_24dp));
@@ -125,7 +157,9 @@ public class PostPage extends AppCompatActivity {
                                     upvote.setBackground(getResources().getDrawable(R.drawable.ic_thumb_up_24dp));
                                     DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
                                     vote.child(where).child(path).child("rating").child(login).removeValue();
-                                    //TODO: убрать из кармы
+                                    DatabaseReference update_author_rating = FirebaseDatabase.getInstance().getReference();
+                                    update_author_rating.child("Users").child(text_author).child("rating").
+                                            setValue(author_rating);
                                 }
                             });
 
@@ -137,7 +171,13 @@ public class PostPage extends AppCompatActivity {
                                     downvote.setBackground(getResources().getDrawable(R.drawable.ic_thumb_up_24dp));
                                     DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
                                     vote.child(where).child(path).child("rating").child(login).removeValue();
-                                    //TODO: добавить в карму
+                                    DatabaseReference update_author_rating = FirebaseDatabase.getInstance().getReference();
+                                    update_author_rating.child("Users").child(text_author).child("rating").
+                                            setValue(author_rating + 1);
+                                    DatabaseReference update_user_rating = FirebaseDatabase.getInstance().getReference();
+                                    update_user_rating.child("Users").child(login).child("rating").
+                                            setValue(getSharedPreferences("User_rating", MODE_PRIVATE).
+                                                    getFloat("current_user", 0) + 1);
                                 }
                             });
                         }
@@ -150,7 +190,10 @@ public class PostPage extends AppCompatActivity {
                             public void onClick(View v) {
                                 DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
                                 vote.child(where).child(path).child("rating").child(login).setValue("up");
-                                //TODO: добавить в кармУ
+                                final float author_rating = getSharedPreferences("Author_rating", MODE_PRIVATE).getFloat("rating", 0);
+                                DatabaseReference update_author_rating = FirebaseDatabase.getInstance().getReference();
+                                update_author_rating.child("Users").child(text_author).child("rating").
+                                        setValue(author_rating + 1);
                             }
                         });
                         downvote.setOnClickListener(new View.OnClickListener() {
@@ -158,7 +201,14 @@ public class PostPage extends AppCompatActivity {
                             public void onClick(View v) {
                                 DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
                                 vote.child(where).child(path).child("rating").child(login).setValue("down");
-                                //TODO: убрать из карм
+                                final float author_rating = getSharedPreferences("Author_rating", MODE_PRIVATE).getFloat("rating", 0);
+                                DatabaseReference update_author_rating = FirebaseDatabase.getInstance().getReference();
+                                update_author_rating.child("Users").child(text_author).child("rating").
+                                        setValue(author_rating - 1);
+                                DatabaseReference update_user_rating = FirebaseDatabase.getInstance().getReference();
+                                update_user_rating.child("Users").child(login).child("rating").
+                                        setValue(getSharedPreferences("User_rating", MODE_PRIVATE).
+                                                getFloat("current_user", 0) - 1);
                             }
                         });
                     }

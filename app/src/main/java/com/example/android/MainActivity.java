@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                nf = new NewsFeed(user.getRole(), text_login);
+                nf = new NewsFeed(user.getRole(), text_login, user.getRating());
                 add = new Add_post(user.getRole(), text_login);
                 profile = new Profile(user.getRole(), text_login,
                         user.getPassword(), user.getAvatar(), new ArrayList<String>(user.getPosts().values()),

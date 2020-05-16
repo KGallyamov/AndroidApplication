@@ -402,9 +402,9 @@ public class Profile extends Fragment {
         data.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<RecyclerItem> listItems = new ArrayList<>();
-                ArrayList<String> pt = new ArrayList<>();
-                LinearLayoutManager manager = new LinearLayoutManager(getContext());
+                final ArrayList<RecyclerItem> listItems = new ArrayList<>();
+                final ArrayList<String> pt = new ArrayList<>();
+                final LinearLayoutManager manager = new LinearLayoutManager(getContext());
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
                     if(links.contains(dataSnapshot1.getKey())) {
                         RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
@@ -414,10 +414,23 @@ public class Profile extends Fragment {
                 }
                 Collections.reverse(listItems);
                 Collections.reverse(pt);
-                MyAdapter adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
-                user_posts.setAdapter(adapter);
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                reference.child("Users").child(login).
+                        child("rating").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        float rating = dataSnapshot.getValue(Float.TYPE);
+                        MyAdapter adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login, rating);
+                        user_posts.setAdapter(adapter);
 
-                user_posts.setLayoutManager(manager);
+                        user_posts.setLayoutManager(manager);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override

@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,9 +44,11 @@ public class NewsFeed extends Fragment {
     private LinearLayoutManager manager;
     public static String tag = "";
     private String wh = "Moderate";
-    NewsFeed(String role, String login){
+    private float rating;
+    NewsFeed(String role, String login, float rating){
         this.role = role;
         this.login = login;
+        this.rating = rating;
     }
 
     public NewsFeed(){}
@@ -63,7 +66,7 @@ public class NewsFeed extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listItems = new ArrayList<RecyclerItem>();
-                ArrayList<String> pt = new ArrayList<>();
+                final ArrayList<String> pt = new ArrayList<>();
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
                 {
                     RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
@@ -72,18 +75,35 @@ public class NewsFeed extends Fragment {
                 }
                 Collections.reverse(listItems);
                 Collections.reverse(pt);
-                adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
-                try {
-                    SharedPreferences preferences = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
-                    int pos = preferences.getInt("position", 0);
-                    manager.scrollToPosition(pos);
-                    SharedPreferences.Editor ed = preferences.edit();
-                    ed.remove("position");
-                    ed.apply();
-                }catch(NullPointerException e){
-                    Log.d("Error", e.toString());
-                }
-                recyclerView.setAdapter(adapter);
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                reference.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0]).
+                        child("rating").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        float rating = dataSnapshot.getValue(Float.TYPE);
+                        adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login, rating);
+                        try {
+                            SharedPreferences preferences = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
+                            int pos = preferences.getInt("position", 0);
+                            manager.scrollToPosition(pos);
+                            SharedPreferences.Editor ed = preferences.edit();
+                            ed.remove("position");
+                            ed.apply();
+                        }catch(NullPointerException e){
+                            Log.d("Error", e.toString());
+                        } try{
+                        recyclerView.setAdapter(adapter);
+                        } catch (NullPointerException e){
+                            Log.d("ERR", e.toString());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
 
             @Override
@@ -132,7 +152,7 @@ public class NewsFeed extends Fragment {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         listItems = new ArrayList<RecyclerItem>();
-                                        ArrayList<String> pt = new ArrayList<>();
+                                        final ArrayList<String> pt = new ArrayList<>();
                                         for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
                                         {
                                             RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
@@ -141,8 +161,21 @@ public class NewsFeed extends Fragment {
                                         }
                                         Collections.reverse(listItems);
                                         Collections.reverse(pt);
-                                        adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
-                                        recyclerView.setAdapter(adapter);
+                                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                                        reference.child("Users").child(login).
+                                                child("rating").addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                float rating = dataSnapshot.getValue(Float.TYPE);
+                                                adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login, rating);
+                                                recyclerView.setAdapter(adapter);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
                                     }
 
                                     @Override
@@ -167,7 +200,7 @@ public class NewsFeed extends Fragment {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         listItems = new ArrayList<RecyclerItem>();
-                                        ArrayList<String> paths = new ArrayList<>();
+                                        final ArrayList<String> paths = new ArrayList<>();
                                         for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                                             RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
                                             listItems.add(p);
@@ -180,9 +213,23 @@ public class NewsFeed extends Fragment {
 
                                         Collections.reverse(listItems);
                                         Collections.reverse(paths);
+                                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                                        reference.child("Users").child(login).
+                                                child("rating").addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                float rating = dataSnapshot.getValue(Float.TYPE);
+                                                adapter = new MyAdapter(listItems, getContext(), "Moderate", role, paths, login, rating);
+                                                recyclerView.setAdapter(adapter);
+                                            }
 
-                                        adapter = new MyAdapter(listItems, getContext(), "Moderate", role, paths, login);
-                                        recyclerView.setAdapter(adapter);
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+
                                     }
 
                                     @Override
@@ -198,7 +245,7 @@ public class NewsFeed extends Fragment {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         listItems = new ArrayList<RecyclerItem>();
-                                        ArrayList<String> paths = new ArrayList<>();
+                                        final ArrayList<String> paths = new ArrayList<>();
                                         for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                                             RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
                                             listItems.add(p);
@@ -209,8 +256,21 @@ public class NewsFeed extends Fragment {
                                         Collections.reverse(listItems);
                                         Collections.reverse(paths);
 
-                                        adapter = new MyAdapter(listItems, getContext(), "Favorite", "user", paths, login);
-                                        recyclerView.setAdapter(adapter);
+                                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                                        reference.child("Users").child(login).
+                                                child("rating").addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                float rating = dataSnapshot.getValue(Float.TYPE);
+                                                adapter = new MyAdapter(listItems, getContext(), "Moderate", role, paths, login, rating);
+                                                recyclerView.setAdapter(adapter);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
                                     }
 
                                     @Override
@@ -260,7 +320,7 @@ public class NewsFeed extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         listItems = new ArrayList<RecyclerItem>();
-                        ArrayList<String> pt = new ArrayList<>();
+                        final ArrayList<String> pt = new ArrayList<>();
                         for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
                         {
                             RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
@@ -271,8 +331,21 @@ public class NewsFeed extends Fragment {
                         }
                         Collections.reverse(listItems);
                         Collections.reverse(pt);
-                        adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
-                        recyclerView.setAdapter(adapter);
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                        reference.child("Users").child(login).
+                                child("rating").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                float rating = dataSnapshot.getValue(Float.TYPE);
+                                adapter = new MyAdapter(listItems, getContext(), "Moderate", role, pt, login, rating);
+                                recyclerView.setAdapter(adapter);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
                     }
 
                     @Override

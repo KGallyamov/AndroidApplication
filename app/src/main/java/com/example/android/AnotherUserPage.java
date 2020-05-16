@@ -191,9 +191,9 @@ public class AnotherUserPage extends AppCompatActivity {
         data.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<RecyclerItem> listItems = new ArrayList<>();
-                ArrayList<String> pt = new ArrayList<>();
-                LinearLayoutManager manager = new LinearLayoutManager(context);
+                final ArrayList<RecyclerItem> listItems = new ArrayList<>();
+                final ArrayList<String> pt = new ArrayList<>();
+                final LinearLayoutManager manager = new LinearLayoutManager(context);
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
                     if(links.contains(dataSnapshot1.getKey())) {
                         RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
@@ -203,10 +203,24 @@ public class AnotherUserPage extends AppCompatActivity {
                 }
                 Collections.reverse(listItems);
                 Collections.reverse(pt);
-                MyAdapter adapter = new MyAdapter(listItems, context, "Data", "user", pt, login.getText().toString());
-                user_posts.setAdapter(adapter);
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                reference.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0]).
+                        child("rating").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        float rating = dataSnapshot.getValue(Float.TYPE);
+                        MyAdapter adapter = new MyAdapter(listItems, context, "Data", "user", pt, login.getText().toString(), rating);
+                        user_posts.setAdapter(adapter);
 
-                user_posts.setLayoutManager(manager);
+                        user_posts.setLayoutManager(manager);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
 
             @Override
