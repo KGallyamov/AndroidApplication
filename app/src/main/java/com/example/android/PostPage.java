@@ -45,7 +45,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class PostPage extends AppCompatActivity {
-    TextView title, description, middle, heading, author;
+    TextView title, description, heading, author;
     ImageView imageView, author_avatar;
     Button close, ok, refuse, send;
     Context getActivity = this;
@@ -57,7 +57,6 @@ public class PostPage extends AppCompatActivity {
     EditText leave_a_comment;
     ArrayList<String> tags;
     AutoLinkTextView autoLinkTextView;
-    RatingBar ratingBar;
     float midValue = 0;
     int pos;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -80,8 +79,6 @@ public class PostPage extends AppCompatActivity {
         comments_list = findViewById(R.id.comments);
         heading = (TextView) findViewById(R.id.heading);
         refuse = (Button) findViewById(R.id.reject);
-        ratingBar = (RatingBar) findViewById(R.id.rating);
-        middle = (TextView) findViewById(R.id.middle_rating);
         autoLinkTextView = (AutoLinkTextView) findViewById(R.id.tags);
 
         Intent intent = getIntent();
@@ -89,12 +86,11 @@ public class PostPage extends AppCompatActivity {
         final String txt_description = intent.getStringExtra("description");
         final String image_link = intent.getStringExtra("image link");
         final String txt_heading = intent.getStringExtra("heading");
-        final HashMap<String, Float> rating = new HashMap<>();
+        final HashMap<String, String> rating = new HashMap<>();
         final String text_author = intent.getStringExtra("author");
         final HashMap<String, Comment> comment = new HashMap<>();
         final ArrayList<String> author_posts = intent.getStringArrayListExtra("author_posts");
         final String where = intent.getStringExtra("Where");
-        final float rate = intent.getFloatExtra("rating", 1);
         final String login = intent.getStringExtra("login");
         final String text_time = intent.getStringExtra("time");
         final DecimalFormat df = new DecimalFormat("#.##");
@@ -102,7 +98,6 @@ public class PostPage extends AppCompatActivity {
         tags = intent.getStringArrayListExtra("tags");
         role = intent.getStringExtra("role");
         path = intent.getStringExtra("post path");
-        ratingBar.setRating(rate);
         tvTime.setText(text_time);
         author.setText(text_author);
 
@@ -111,18 +106,7 @@ public class PostPage extends AppCompatActivity {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int i=0;
-                for(DataSnapshot ds:dataSnapshot.getChildren()){
-                    i++;
-                    midValue += ds.getValue(Float.TYPE);
-                }
-                if(i==1){
-                    middle.setText("0.0");
-                }else{
-                    Float f = midValue/(i-1);
-                    middle.setText(df.format(f));
-                }
-                midValue = 0;
+                //TODO: пересчитать рейтинг
             }
 
             @Override
@@ -170,13 +154,7 @@ public class PostPage extends AppCompatActivity {
 
             }
         });
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                databaseReference.child(where).child(path).child("rating").child(login).setValue(rating);
-                Toast.makeText(context, Float.toString(rating), Toast.LENGTH_SHORT).show();
-            }
-        });
+
         String to_tag = "";
         for(String s:tags){
             to_tag += s + " ";
@@ -188,13 +166,13 @@ public class PostPage extends AppCompatActivity {
             ok.setVisibility(View.VISIBLE);
             refuse.setVisibility(View.VISIBLE);
             comments_list.setVisibility(View.GONE);
-            ratingBar.setVisibility(View.GONE);
-            middle.setVisibility(View.GONE);
+            //TODO: сделать невидимыми лайки дизлайки сумму
+
             // пост допущен в общую ленту
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    rating.put("zero", (float) 0);
+                    rating.put("zero", "nothing");
                     HashMap<String, String> likes = new HashMap<>();
                     likes.put("zero", "nothing");
                     comment.put("zero", new Comment("nothing", "interesting", "in here", likes));

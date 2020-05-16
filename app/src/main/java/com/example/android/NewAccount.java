@@ -97,8 +97,8 @@ public class NewAccount extends AppCompatActivity {
                                     t.add("system");
                                     t.add("greetings");
                                     t.add("admin");
-                                    HashMap<String, Float> rating = new HashMap<>();
-                                    rating.put("zero", (float) 0);
+                                    HashMap<String, String> rating = new HashMap<>();
+                                    rating.put("zero", "nothing");
                                     HashMap<String, Comment> comments = new HashMap<>();
                                     HashMap<String, String> likes = new HashMap<>();
                                     likes.put("zero", "nothing");

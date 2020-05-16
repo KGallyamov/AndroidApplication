@@ -383,9 +383,9 @@ public class Add_post extends Fragment implements View.OnClickListener {
             String tag = preferences.getString("TAG", "");
 
             tags_db.add("#" + tag);
-            HashMap<String, Float> rating = new HashMap<>();
+            HashMap<String, String> rating = new HashMap<>();
             HashMap<String, Comment> comments = new HashMap<>();
-            rating.put("zero", (float) 0);
+            rating.put("zero", "nothing");
             HashMap<String, String> likes = new HashMap<>();
             likes.put("zero", "nothing");
             comments.put("zero", new Comment("nothing", "interesting", "in here", likes));
