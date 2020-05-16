@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,15 +67,17 @@ public class Profile extends Fragment {
     ArrayList<String> posts;
     private TextView tv_login, tv_password, tv_role;
     private final int PICK_IMAGE_REQUEST = 71;
+    float rating;
 
     public Profile(){}
 
-    Profile(String role, String login, String password, String text_avatar, ArrayList<String> posts){
+    Profile(String role, String login, String password, String text_avatar, ArrayList<String> posts, float rating){
         this.role = role;
         this.login = login;
         this.password = "Password: " + password;
         this.text_avatar = text_avatar;
         this.posts = posts;
+        this.rating = rating;
     }
 
 
@@ -85,6 +89,7 @@ public class Profile extends Fragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onStart() {
         super.onStart();
@@ -124,6 +129,14 @@ public class Profile extends Fragment {
 
             }
         });
+        TextView tv_rating = (TextView) getActivity().findViewById(R.id.rating);
+        tv_rating.setText(Float.toString(rating));
+        if(rating > 0){
+            tv_rating.setTextColor(getActivity().getColor(R.color.rating_green));
+        }else if(rating < 0){
+            tv_rating.setTextColor(getActivity().getColor(R.color.colorAccent));
+        }
+
 
         fake_password = "Password: ";
         for(int i=0;i<password.length() - "Password: ".length();i++){
@@ -389,9 +402,9 @@ public class Profile extends Fragment {
         data.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<RecyclerItem> listItems = new ArrayList<>();
-                ArrayList<String> pt = new ArrayList<>();
-                LinearLayoutManager manager = new LinearLayoutManager(getContext());
+                final ArrayList<RecyclerItem> listItems = new ArrayList<>();
+                final ArrayList<String> pt = new ArrayList<>();
+                final LinearLayoutManager manager = new LinearLayoutManager(getContext());
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
                     if(links.contains(dataSnapshot1.getKey())) {
                         RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
@@ -401,10 +414,23 @@ public class Profile extends Fragment {
                 }
                 Collections.reverse(listItems);
                 Collections.reverse(pt);
-                MyAdapter adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login);
-                user_posts.setAdapter(adapter);
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                reference.child("Users").child(login).
+                        child("rating").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        float rating = dataSnapshot.getValue(Float.TYPE);
+                        MyAdapter adapter = new MyAdapter(listItems, getContext(), "Data", "user", pt, login, rating);
+                        user_posts.setAdapter(adapter);
 
-                user_posts.setLayoutManager(manager);
+                        user_posts.setLayoutManager(manager);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override

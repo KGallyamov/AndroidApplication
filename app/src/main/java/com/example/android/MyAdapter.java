@@ -39,22 +39,22 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     public List<RecyclerItem> listItems;
     private Context mContext;
     public String where = "";
-    public float midValue;
     private String role;
-    HashMap<String, Float> rate;
     public String login = "";
     ArrayList<String> paths = new ArrayList<>();
     boolean remove = false;
+    float current_user_rating;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
 
-    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, ArrayList<String> paths, String login) {
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, ArrayList<String> paths, String login, float current_user_rating) {
         this.listItems = listItems;
         this.mContext = mContext;
         this.where = s;
         this.role = role;
         this.paths = paths;
         this.login = login;
+        this.current_user_rating = current_user_rating;
     }
 
 
@@ -77,25 +77,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         }catch (Exception e){
             s = itemList.getDescription();
         }
-        for(float i:itemList.getRating().values()){
-            middle += i;
-        }
-        holder.txtDescription.setText(s);
-        holder.heading.setText(itemList.getHeading());
-        holder.author.setText(itemList.getAuthor());
-        holder.tvTime.setText(itemList.getTime());
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child(where).child(paths.get(position)).child("rating");
-        rate = new HashMap<>();
-        db.addValueEventListener(new ValueEventListener() {
+        DatabaseReference author_rating = FirebaseDatabase.getInstance().getReference();
+        author_rating.child("Users").child(itemList.getAuthor()).child("rating").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds:dataSnapshot.getChildren()){
-                    if(ds.getKey().equals(login)){
-                        float f =  ds.getValue(Float.TYPE);
-                        holder.ratingBar.setRating(f);
-
-                    }
-                }
+                float rating = dataSnapshot.getValue(Float.TYPE);
+                SharedPreferences preferences = mContext.getSharedPreferences("Author_rating", MODE_PRIVATE);
+                SharedPreferences.Editor ed = preferences.edit();
+                ed.putFloat("rating", rating);
+                ed.apply();
             }
 
             @Override
@@ -103,6 +93,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
             }
         });
+
+        holder.txtDescription.setText(s);
+        holder.heading.setText(itemList.getHeading());
+        holder.author.setText(itemList.getAuthor());
+        holder.tvTime.setText(itemList.getTime());
+
         if(role.equals("admin") || itemList.getAuthor().equals(login)){
             holder.delete_post.setVisibility(View.VISIBLE);
             holder.delete_post.setOnClickListener(new View.OnClickListener() {
@@ -150,14 +146,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
 
 
-        if(itemList.getRating().size() == 1){
-            midValue = 0;
-            holder.middle_rating.setText("0.0");
-        }else{
-            midValue = middle/(itemList.getRating().size() - 1);
-            DecimalFormat df = new DecimalFormat("#.##");
-            holder.middle_rating.setText(df.format(midValue));
-        }
         holder.author.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,17 +162,86 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                 mContext.startActivity(intent);
             }
         });
-
-        holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        DatabaseReference likes = FirebaseDatabase.getInstance().getReference();
+        likes.child(where).child(paths.get(position)).child("rating").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                SharedPreferences preferences = mContext.getSharedPreferences("position", MODE_PRIVATE);
-                SharedPreferences.Editor ed = preferences.edit();
-                ed.putInt("position", position);
-                ed.apply();
-                databaseReference.child(where).child(paths.get(position)).child("rating").child(login).setValue(rating);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int result = 0;
+                for(DataSnapshot i:dataSnapshot.getChildren()){
+                    if(!i.getKey().equals("zero")){
+                        result = i.getValue().toString().equals("up") ? result + 1 : result - 1;
+                    }
+                    if(i.getKey().equals(login)){
+                        final float author_rating = mContext.getSharedPreferences("Author_rating", MODE_PRIVATE).getFloat("rating", 0);
+                        if(i.getValue().toString().equals("up")){
+                            holder.upvote.setBackground(mContext.getResources().getDrawable(R.drawable.ic_thumb_up_activated_24dp));
+                            holder.downvote.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
+                                    vote.child(where).child(paths.get(position)).child("rating").child(login).removeValue();
+                                    DatabaseReference update_author_rating = FirebaseDatabase.getInstance().getReference();
+                                    update_author_rating.child("Users").child(itemList.getAuthor()).child("rating").
+                                            setValue(author_rating - 1);
+                                }
+                            });
+
+                        }else{
+                            holder.downvote.setBackground(mContext.getResources().getDrawable(R.drawable.ic_thumb_down_activated_24dp));
+                            holder.upvote.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
+                                    vote.child(where).child(paths.get(position)).child("rating").child(login).removeValue();
+                                    DatabaseReference update_author_rating = FirebaseDatabase.getInstance().getReference();
+                                    update_author_rating.child("Users").child(itemList.getAuthor()).child("rating").
+                                            setValue(author_rating + 1);
+                                    DatabaseReference update_user_rating = FirebaseDatabase.getInstance().getReference();
+                                    update_user_rating.child("Users").child(login).child("rating").
+                                            setValue(current_user_rating + 1);
+
+                                }
+                            });
+                        }
+                    }
+                }
+                holder.result_rating.setText(Integer.toString(result));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
+
+        holder.upvote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
+                vote.child(where).child(paths.get(position)).child("rating").child(login).setValue("up");
+                final float author_rating = mContext.getSharedPreferences("Author_rating", MODE_PRIVATE).getFloat("rating", 0);
+                DatabaseReference update_author_rating = FirebaseDatabase.getInstance().getReference();
+                update_author_rating.child("Users").child(itemList.getAuthor()).child("rating").
+                        setValue(author_rating + 1);
+            }
+        });
+        holder.downvote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
+                vote.child(where).child(paths.get(position)).child("rating").child(login).setValue("down");
+                final float author_rating = mContext.getSharedPreferences("Author_rating", MODE_PRIVATE).getFloat("rating", 0);
+                DatabaseReference update_author_rating = FirebaseDatabase.getInstance().getReference();
+                update_author_rating.child("Users").child(itemList.getAuthor()).child("rating").
+                        setValue(author_rating - 1);
+                DatabaseReference update_user_rating = FirebaseDatabase.getInstance().getReference();
+                update_user_rating.child("Users").child(login).child("rating").
+                        setValue(current_user_rating - 1);
+            }
+        });
+
+
+
 
         Glide.with(mContext).load(itemList.getImage()).into(holder.picture);
         DatabaseReference avatar_ref = FirebaseDatabase.getInstance().getReference().child("Users").child(login);
@@ -280,12 +337,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         public TextView tvTime;
         public TextView txtDescription;
         public TextView txtSave;
-        public TextView middle_rating;
         public ImageView picture, author_avatar;
         public TextView heading;
         public TextView author;
         public TextView delete_post;
-        public RatingBar ratingBar;
+        public TextView upvote, downvote, result_rating;
         View v;
         Intent intent;
 
@@ -294,12 +350,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             super(itemView);
             v = itemView;
             txtTitle = itemView.findViewById(R.id.txtTitle);
+            result_rating = itemView.findViewById(R.id.result_likes);
+            upvote = itemView.findViewById(R.id.up);
+            downvote = itemView.findViewById(R.id.down);
             txtDescription = itemView.findViewById(R.id.txtDescription);
             txtSave = itemView.findViewById(R.id.save_to_favorite);
-            ratingBar  =itemView.findViewById(R.id.rating);
             tvTime = itemView.findViewById(R.id.time);
             delete_post = itemView.findViewById(R.id.delete_post);
-            middle_rating = itemView.findViewById(R.id.middle_rating);
             picture = itemView.findViewById(R.id.picture);
             heading = itemView.findViewById(R.id.heading);
             author = itemView.findViewById(R.id.author);
@@ -327,7 +384,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     intent.putExtra("time", listItems.get(pos).getTime());
                     intent.putExtra("author", listItems.get(pos).getAuthor());
                     intent.putExtra("tags", listItems.get(pos).getTags());
-                    intent.putExtra("rating", listItems.get(pos).getRating().get(login));
                     if(paths.size() > 0) {
                         intent.putExtra("post path", paths.get(pos));
                     }

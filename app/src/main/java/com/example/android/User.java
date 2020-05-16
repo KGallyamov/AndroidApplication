@@ -8,15 +8,25 @@ public class User {
     private String avatar;
     private HashMap<String, String> posts;
     private String lastSeen;
+    private float rating;
     User(){
     }
 
-    User(String password, String role, String avatar, HashMap<String, String> posts, String lastSeen){
+    User(String password, String role, String avatar, HashMap<String, String> posts, String lastSeen, float rating){
         this.password = password;
         this.role = role;
         this.avatar = avatar;
         this.posts = posts;
         this.lastSeen = lastSeen;
+        this.rating = rating;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
     public String getLastSeen() {

@@ -139,30 +139,44 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <RelativeLayout
+        <LinearLayout
+            android:layout_alignParentEnd="true"
             android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_marginTop="5sp"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="5dp"
             android:layout_height="wrap_content">
-
-            <RatingBar
-                android:id="@+id/rating"
-                style="?android:attr/ratingBarStyle"
-                android:theme="@style/PostPageRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
             <TextView
-                android:id="@+id/middle_rating"
+                android:id="@+id/down"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:layout_marginEnd="10sp"
-                android:layout_alignParentEnd="true">
+                android:fontFamily="monospace"
+                android:background="@drawable/ic_thumb_down_24dp"
+                android:textAlignment="textStart"
+                android:textColor="#C4B7B7"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/result_likes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:text="20"
+                android:textAlignment="textStart"
+                android:textColor="#C4B7B7"
+                android:textSize="20sp" />
 
-            </TextView>
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:background="@drawable/ic_thumb_up_24dp"
+                android:textAlignment="textStart"
+                android:textColor="#C4B7B7"
+                android:textSize="20sp" />
+
+        </LinearLayout>
 
 
 

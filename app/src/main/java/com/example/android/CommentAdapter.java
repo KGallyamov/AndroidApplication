@@ -79,10 +79,29 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
                             if(i.getValue().equals("up")){
                                 ((TextView) finalConvertView.findViewById(R.id.up)).
                                         setBackground(finalConvertView.getResources().getDrawable(R.drawable.ic_thumb_up_activated_24dp));
+
+                                ((TextView) finalConvertView.findViewById(R.id.down)).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
+                                        vote.child(where).child(pos_path).child("comments").child(comment_paths.get(position)).
+                                                child("likes").child(login).removeValue();
+                                    }
+                                });
                             }else{
                                 ((TextView) finalConvertView.findViewById(R.id.down)).
                                         setBackground(finalConvertView.getResources().getDrawable(R.drawable.ic_thumb_down_activated_24dp));
+
+                                ((TextView) finalConvertView.findViewById(R.id.up)).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
+                                        vote.child(where).child(pos_path).child("comments").child(comment_paths.get(position)).
+                                                child("likes").child(login).removeValue();
+                                    }
+                                });
                             }
+
                         }
                     }
                 }

@@ -64,7 +64,7 @@ public class AnotherUserPage extends AppCompatActivity {
                     if (i.getKey().equals("role")) {
                         role.setText(i.getValue().toString());
                     } else if (i.getKey().equals("avatar")) {
-                        Glide.with(AnotherUserPage.this).load(i.getValue().toString()).into(avatar);
+                        Glide.with(context).load(i.getValue().toString()).into(avatar);
                     } else if (i.getKey().equals("posts")) {
                         for (DataSnapshot j : i.getChildren()) {
                             if (!j.getKey().equals("zero")) {
@@ -91,6 +91,15 @@ public class AnotherUserPage extends AppCompatActivity {
                                 String hour_minute = refactor[0].substring(0, refactor[0].length() - 3);
                                 lastSeen.setText("Was online at " + hour_minute + " " + day_month);
                             }
+                        }
+                    } else if(i.getKey().equals("rating")){
+                        float rating = i.getValue(Float.TYPE);
+                        TextView tv_rating = (TextView) findViewById(R.id.rating);
+                        tv_rating.setText(i.getValue().toString());
+                        if(rating > 0){
+                            tv_rating.setTextColor(getResources().getColor(R.color.rating_green));
+                        }else if(rating < 0){
+                            tv_rating.setTextColor(getResources().getColor(R.color.colorAccent));
                         }
                     }
                 }
@@ -182,9 +191,9 @@ public class AnotherUserPage extends AppCompatActivity {
         data.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<RecyclerItem> listItems = new ArrayList<>();
-                ArrayList<String> pt = new ArrayList<>();
-                LinearLayoutManager manager = new LinearLayoutManager(context);
+                final ArrayList<RecyclerItem> listItems = new ArrayList<>();
+                final ArrayList<String> pt = new ArrayList<>();
+                final LinearLayoutManager manager = new LinearLayoutManager(context);
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
                     if(links.contains(dataSnapshot1.getKey())) {
                         RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
@@ -194,10 +203,24 @@ public class AnotherUserPage extends AppCompatActivity {
                 }
                 Collections.reverse(listItems);
                 Collections.reverse(pt);
-                MyAdapter adapter = new MyAdapter(listItems, context, "Data", "user", pt, login.getText().toString());
-                user_posts.setAdapter(adapter);
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                reference.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0]).
+                        child("rating").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        float rating = dataSnapshot.getValue(Float.TYPE);
+                        MyAdapter adapter = new MyAdapter(listItems, context, "Data", "user", pt, login.getText().toString(), rating);
+                        user_posts.setAdapter(adapter);
 
-                user_posts.setLayoutManager(manager);
+                        user_posts.setLayoutManager(manager);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
 
             @Override
