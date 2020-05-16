@@ -45,7 +45,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class PostPage extends AppCompatActivity {
-    TextView title, description, heading, author;
+    TextView title, description, heading, author, upvote, downvote, result_rating;
     ImageView imageView, author_avatar;
     Button close, ok, refuse, send;
     Context getActivity = this;
@@ -72,6 +72,9 @@ public class PostPage extends AppCompatActivity {
         author = (TextView) findViewById(R.id.author);
         author_avatar = (ImageView) findViewById(R.id.author_avatar);
         close = (Button) findViewById(R.id.close);
+        upvote = (TextView) findViewById(R.id.up);
+        downvote = (TextView) findViewById(R.id.down);
+        result_rating = (TextView) findViewById(R.id.result_likes);
         ok = (Button) findViewById(R.id.ok);
         tvTime = (TextView) findViewById(R.id.time);
         send = (Button) findViewById(R.id.send_comment);
@@ -102,11 +105,65 @@ public class PostPage extends AppCompatActivity {
         author.setText(text_author);
 
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(where).child(path).child("rating");
-        // средний рейтинг поста
+        //рейтинг поста
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //TODO: пересчитать рейтинг
+                int result = 0;
+                boolean is_here = false;
+                for(DataSnapshot i:dataSnapshot.getChildren()){
+                    if(!i.getKey().equals("zero")){
+                        result = i.getValue().toString().equals("up") ? result + 1 : result - 1;
+                    }
+                    if(i.getKey().equals(login)){
+                        is_here = true;
+                        if(i.getValue().toString().equals("up")){
+                            upvote.setBackground(getResources().getDrawable(R.drawable.ic_thumb_up_activated_24dp));
+                            downvote.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    upvote.setBackground(getResources().getDrawable(R.drawable.ic_thumb_up_24dp));
+                                    DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
+                                    vote.child(where).child(path).child("rating").child(login).removeValue();
+                                    //TODO: убрать из кармы
+                                }
+                            });
+
+                        }else{
+                            downvote.setBackground(getResources().getDrawable(R.drawable.ic_thumb_down_activated_24dp));
+                            upvote.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    downvote.setBackground(getResources().getDrawable(R.drawable.ic_thumb_up_24dp));
+                                    DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
+                                    vote.child(where).child(path).child("rating").child(login).removeValue();
+                                    //TODO: добавить в карму
+                                }
+                            });
+                        }
+                    }
+                    if(!is_here){
+                        upvote.setBackground(getResources().getDrawable(R.drawable.ic_thumb_up_24dp));
+                        downvote.setBackground(getResources().getDrawable(R.drawable.ic_thumb_down_24dp));
+                        upvote.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
+                                vote.child(where).child(path).child("rating").child(login).setValue("up");
+                                //TODO: добавить в кармУ
+                            }
+                        });
+                        downvote.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
+                                vote.child(where).child(path).child("rating").child(login).setValue("down");
+                                //TODO: убрать из карм
+                            }
+                        });
+                    }
+                }
+                result_rating.setText(Integer.toString(result));
             }
 
             @Override

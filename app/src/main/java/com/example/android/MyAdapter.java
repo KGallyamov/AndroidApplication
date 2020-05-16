@@ -161,6 +161,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                                 public void onClick(View v) {
                                     DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
                                     vote.child(where).child(paths.get(position)).child("rating").child(login).removeValue();
+                                    //TODO: убрать из кармы
                                 }
                             });
 
@@ -171,6 +172,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                                 public void onClick(View v) {
                                     DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
                                     vote.child(where).child(paths.get(position)).child("rating").child(login).removeValue();
+                                    //TODO: добавить в карму
                                 }
                             });
                         }
@@ -190,6 +192,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             public void onClick(View v) {
                 DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
                 vote.child(where).child(paths.get(position)).child("rating").child(login).setValue("up");
+                //TODO: добавить в кармУ
             }
         });
         holder.downvote.setOnClickListener(new View.OnClickListener() {
@@ -197,6 +200,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             public void onClick(View v) {
                 DatabaseReference vote = FirebaseDatabase.getInstance().getReference();
                 vote.child(where).child(paths.get(position)).child("rating").child(login).setValue("down");
+                //TODO: убрать из карм
             }
         });
 
