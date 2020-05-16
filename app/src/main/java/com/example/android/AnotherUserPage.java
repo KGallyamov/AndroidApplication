@@ -64,7 +64,7 @@ public class AnotherUserPage extends AppCompatActivity {
                     if (i.getKey().equals("role")) {
                         role.setText(i.getValue().toString());
                     } else if (i.getKey().equals("avatar")) {
-                        Glide.with(AnotherUserPage.this).load(i.getValue().toString()).into(avatar);
+                        Glide.with(context).load(i.getValue().toString()).into(avatar);
                     } else if (i.getKey().equals("posts")) {
                         for (DataSnapshot j : i.getChildren()) {
                             if (!j.getKey().equals("zero")) {
@@ -91,6 +91,15 @@ public class AnotherUserPage extends AppCompatActivity {
                                 String hour_minute = refactor[0].substring(0, refactor[0].length() - 3);
                                 lastSeen.setText("Was online at " + hour_minute + " " + day_month);
                             }
+                        }
+                    } else if(i.getKey().equals("rating")){
+                        float rating = i.getValue(Float.TYPE);
+                        TextView tv_rating = (TextView) findViewById(R.id.rating);
+                        tv_rating.setText(i.getValue().toString());
+                        if(rating > 0){
+                            tv_rating.setTextColor(getResources().getColor(R.color.rating_green));
+                        }else if(rating < 0){
+                            tv_rating.setTextColor(getResources().getColor(R.color.colorAccent));
                         }
                     }
                 }

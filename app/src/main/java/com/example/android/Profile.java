@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,15 +67,17 @@ public class Profile extends Fragment {
     ArrayList<String> posts;
     private TextView tv_login, tv_password, tv_role;
     private final int PICK_IMAGE_REQUEST = 71;
+    float rating;
 
     public Profile(){}
 
-    Profile(String role, String login, String password, String text_avatar, ArrayList<String> posts){
+    Profile(String role, String login, String password, String text_avatar, ArrayList<String> posts, float rating){
         this.role = role;
         this.login = login;
         this.password = "Password: " + password;
         this.text_avatar = text_avatar;
         this.posts = posts;
+        this.rating = rating;
     }
 
 
@@ -85,6 +89,7 @@ public class Profile extends Fragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onStart() {
         super.onStart();
@@ -124,6 +129,14 @@ public class Profile extends Fragment {
 
             }
         });
+        TextView tv_rating = (TextView) getActivity().findViewById(R.id.rating);
+        tv_rating.setText(Float.toString(rating));
+        if(rating > 0){
+            tv_rating.setTextColor(getActivity().getColor(R.color.rating_green));
+        }else if(rating < 0){
+            tv_rating.setTextColor(getActivity().getColor(R.color.colorAccent));
+        }
+
 
         fake_password = "Password: ";
         for(int i=0;i<password.length() - "Password: ".length();i++){
