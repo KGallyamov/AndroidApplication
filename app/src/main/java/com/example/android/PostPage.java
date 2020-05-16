@@ -148,6 +148,7 @@ public class PostPage extends AppCompatActivity {
                     }
                     if(i.getKey().equals(login)){
                         final float author_rating = getSharedPreferences("Author_rating", MODE_PRIVATE).getFloat("rating", 0);
+
                         is_here = true;
                         if(i.getValue().toString().equals("up")){
                             upvote.setBackground(getResources().getDrawable(R.drawable.ic_thumb_up_activated_24dp));
