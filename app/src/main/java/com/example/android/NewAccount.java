@@ -84,10 +84,12 @@ public class NewAccount extends AppCompatActivity {
                             Calendar c = Calendar.getInstance();
                             SimpleDateFormat dateformat = new SimpleDateFormat("dd MMMM yyyy");
                             String now = dateformat.format(c.getTime());
+                            HashMap<String, String> chats = new HashMap<>();
+                            chats.put("zero", "nothing");
                             databaseReference.child(db_login).setValue(new User(text_password,
                                                                                 "user",
                                     "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2Fdefault_avatar.png?alt=media&token=7807ba53-1240-41d1-8f63-70f2e3e38cec",
-                                            posts, now, 0),
+                                            posts, now, 0, chats),
                                     new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {

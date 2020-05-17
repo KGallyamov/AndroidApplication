@@ -1,12 +1,14 @@
 package com.example.android;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,7 +16,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,6 +36,7 @@ public class Chat extends Fragment {
     ListView chats;
     String login;
     ImageButton start_conv;
+    RecyclerView group_chats;
     public Chat(){}
     Chat(String login){
         this.login = login;
@@ -40,6 +46,28 @@ public class Chat extends Fragment {
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View myView = inflater.inflate(R.layout.chat_fragment, container, false);
         chats = (ListView) myView.findViewById(R.id.chats);
+        group_chats = (RecyclerView) myView.findViewById(R.id.group_chats);
+        DatabaseReference user_chats = FirebaseDatabase.getInstance().getReference();
+        user_chats.child("Users").child(login).child("chats").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<String> chats = new ArrayList<>();
+                for(DataSnapshot i:dataSnapshot.getChildren()){
+                    if(!i.getKey().equals("zero")){
+                        chats.add(i.getValue().toString());
+                    }
+                }
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                group_chats.setAdapter(new GroupChatAdapter(chats));
+                group_chats.setLayoutManager(layoutManager);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         start_conv = (ImageButton) myView.findViewById(R.id.start_converstaion);
         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("Messages").addValueEventListener(new ValueEventListener() {
@@ -129,5 +157,63 @@ public class Chat extends Fragment {
         });
 
         return myView;
+    }
+    public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.ViewHolder>{
+        ArrayList<String> chats;
+        GroupChatAdapter(ArrayList<String> chats){
+            this.chats = chats;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item, parent, false);
+            return new ViewHolder(v);
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            View v;
+            public ImageView avatar;
+            public TextView title;
+
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                v = itemView;
+                title = v.findViewById(R.id.title);
+                avatar = v.findViewById(R.id.chat_avatar);
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), GroupChatActivity.class);
+                        intent.putExtra("path", chats.get(getAdapterPosition()));
+                        startActivity(intent);
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+            DatabaseReference group_chat = FirebaseDatabase.getInstance().getReference();
+            group_chat.child("GroupChats").child(chats.get(position)).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    GroupChat chat = dataSnapshot.getValue(GroupChat.class);
+                    holder.title.setText(chat.getTitle());
+                    Glide.with(getContext()).load(chat.getChat_avatar()).into(holder.avatar);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return chats.size();
+        }
     }
 }

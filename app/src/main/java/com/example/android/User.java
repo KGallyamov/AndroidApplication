@@ -7,18 +7,28 @@ public class User {
     private String role;
     private String avatar;
     private HashMap<String, String> posts;
+    private HashMap<String, String> chats;
     private String lastSeen;
     private float rating;
     User(){
     }
 
-    User(String password, String role, String avatar, HashMap<String, String> posts, String lastSeen, float rating){
+    User(String password, String role, String avatar, HashMap<String, String> posts, String lastSeen, float rating, HashMap<String, String> chats){
         this.password = password;
         this.role = role;
         this.avatar = avatar;
         this.posts = posts;
         this.lastSeen = lastSeen;
         this.rating = rating;
+        this.chats = chats;
+    }
+
+    public HashMap<String, String> getChats() {
+        return chats;
+    }
+
+    public void setChats(HashMap<String, String> chats) {
+        this.chats = chats;
     }
 
     public float getRating() {

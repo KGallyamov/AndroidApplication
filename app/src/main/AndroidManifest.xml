@@ -12,6 +12,9 @@
         android:roundIcon="@drawable/sigma"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".GroupChatActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"></activity>
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
@@ -39,25 +42,25 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".PhotoPage"
-            android:label="Photo"></activity>
+            android:label="Photo" />
         <activity
             android:name=".Authentication"
             android:label="Authentication"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".NewAccount"
             android:label="New account"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Profile"
             android:label="Profile"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".OneChatActivity"
             android:screenOrientation="portrait"

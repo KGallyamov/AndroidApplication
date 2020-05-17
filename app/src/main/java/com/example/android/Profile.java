@@ -111,6 +111,28 @@ public class Profile extends Fragment {
         tv_posts.setText(Integer.toString(posts.size() - 1));
 
         Glide.with(getActivity()).load(text_avatar).into(avatar);
+        DatabaseReference update_role = FirebaseDatabase.getInstance().getReference();
+        update_role.child("Users").child(login).child("rating").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                float user_rating = dataSnapshot.getValue(Float.TYPE);
+                String new_role = "user";
+                DatabaseReference update = FirebaseDatabase.getInstance().getReference().child("Users").child(login).child("role");
+                if(!role.equals("admin")) {
+                    if (user_rating >= 120) {
+                        new_role = "moderator";
+                        update.setValue(new_role);
+                    } else if (rating < 120 && role.equals("moderator")) {
+                        update.setValue(new_role);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("Users").child(login).child("posts").addValueEventListener(new ValueEventListener() {
             @Override
