@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#353E4f">
 
@@ -32,6 +34,21 @@
             android:layout_width="72dp"
             android:layout_height="match_parent"/>
     </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="5dp"
+        android:id="@+id/group_chats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        />
+    <TextView
+        android:text="@string/messages"
+        android:layout_width="match_parent"
+        android:textColor="@color/active_blue"
+        android:layout_marginLeft="10dp"
+        android:layout_height="wrap_content"/>
+
 
     <ListView
         android:id="@+id/chats"
