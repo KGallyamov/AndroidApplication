@@ -48,6 +48,15 @@ public class GroupChatActivity extends AppCompatActivity {
         exit = (TextView) findViewById(R.id.exit);
         send = (Button) findViewById(R.id.send_comment);
         write_message = (EditText) findViewById(R.id.write_message);
+
+        (findViewById(R.id.chat_info)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GroupChatActivity.this, GroupChatInfo.class);
+                intent.putExtra("path", path);
+                startActivity(intent);
+            }
+        });
         Intent intent = getIntent();
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         DatabaseReference db_chat_title = FirebaseDatabase.getInstance().getReference();

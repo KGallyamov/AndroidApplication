@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#353E4f"
+    tools:context=".GroupChatInfo">
+    <LinearLayout
+        android:id="@+id/title_top"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:background="@drawable/toolbar"
+        android:layout_height="70sp">
+        <TextView
+            android:id="@+id/exit"
+            android:textSize="20sp"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:paddingTop="5dp"
+            android:textColor="#C4B7B7"
+            android:background="@drawable/ic_arrow_back_black_24dp"
+            android:paddingStart="10dp"
+            android:paddingBottom="5dp"
+            android:layout_width="90dp"
+            android:layout_height="match_parent">
+
+        </TextView>
+        <TextView
+            android:id="@+id/title"
+            android:text="Чат"
+            android:textSize="18sp"
+            android:layout_weight="15"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:paddingTop="5dp"
+            android:textAlignment="center"
+            android:textColor="#C4B7B7"
+            android:paddingStart="10dp"
+            android:paddingBottom="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/chat_info"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/chat_avatar"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="20dp"
+            android:src="@drawable/sigma5"
+            android:layout_width="60dp"
+            android:layout_height="60dp"/>
+        <Button
+            android:id="@+id/add_member"
+            android:layout_alignParentEnd="true"
+            android:text="@string/add_member"
+            android:background="@drawable/fields"
+            android:padding="3dp"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/member_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="100dp"
+            android:fontFamily="monospace"
+
+            android:textColor="#C4B7B7"
+            android:textColorHint="#C4B7B7"
+            android:hint="@string/enter_login"
+            android:inputType="textMultiLine|text" />
+
+    </RelativeLayout>
+
+
+    <ListView
+        android:id="@+id/members"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
