@@ -44,6 +44,9 @@
     <string name="favorite">Favorite</string>
     <string name="posts_send">Posts send:</string>
     <string name="messages">Messages</string>
+    <string name="group_chat">Group chat</string>
+    <string name="start_conversation">Start conversation</string>
+    <string name="dialog">Dialog</string>
 
     <string-array name="saved">
         <item>2</item>

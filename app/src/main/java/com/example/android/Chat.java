@@ -1,8 +1,11 @@
 package com.example.android;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +34,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Chat extends Fragment {
     ListView chats;
@@ -38,6 +44,7 @@ public class Chat extends Fragment {
     ImageButton start_conv;
     RecyclerView group_chats;
     public Chat(){}
+    LayoutInflater inf;
     Chat(String login){
         this.login = login;
     }
@@ -46,6 +53,7 @@ public class Chat extends Fragment {
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View myView = inflater.inflate(R.layout.chat_fragment, container, false);
         chats = (ListView) myView.findViewById(R.id.chats);
+        inf = inflater;
         group_chats = (RecyclerView) myView.findViewById(R.id.group_chats);
         DatabaseReference user_chats = FirebaseDatabase.getInstance().getReference();
         user_chats.child("Users").child(login).child("chats").addValueEventListener(new ValueEventListener() {
@@ -94,11 +102,11 @@ public class Chat extends Fragment {
             @Override
             public void onClick(View v) {
                 final AlertDialog dialogBuilder = new AlertDialog.Builder(getContext()).create();
-                View dialogView = inflater.inflate(R.layout.start_dialog, null);
+                View dialogView = inflater.inflate(R.layout.choose_conversation_type, null);
 
-                final EditText message = (EditText) dialogView.findViewById(R.id.edt_comment);
-                final EditText another_user = (EditText) dialogView.findViewById(R.id.address);
-                TextView send = (TextView) dialogView.findViewById(R.id.Submit);
+
+                TextView dialog = (TextView) dialogView.findViewById(R.id.dialog);
+                TextView chat = (TextView) dialogView.findViewById(R.id.group_chat);
                 TextView cancel = (TextView) dialogView.findViewById(R.id.Cancel);
 
                 cancel.setOnClickListener(new View.OnClickListener() {
@@ -107,50 +115,21 @@ public class Chat extends Fragment {
                         dialogBuilder.dismiss();
                     }
                 });
-                send.setOnClickListener(new View.OnClickListener() {
+                dialog.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View view) {
-                        if(!message.getText().toString().equals("") && !another_user.getText().toString().equals("")){
-                            final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
-                            final String recevier = another_user.getText().toString();
-                            DatabaseReference users = FirebaseDatabase.getInstance().getReference().child("Users");
-                            users.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    boolean user_exists = false;
-                                    for(DataSnapshot i:dataSnapshot.getChildren()){
-                                        if(i.getKey().equals(recevier)){
-                                            user_exists = true;
-                                        }
-                                    }
-                                    if(!user_exists){
-                                        Toast.makeText(getContext(), "Specified user doesn't exist", Toast.LENGTH_SHORT).show();
-                                    }else{
-                                        String[] arr = new String[]{login, recevier};
-                                        Arrays.sort(arr);
-                                        final String name = arr[0] + "_" + arr[1];
-                                        DatabaseReference chat = FirebaseDatabase.getInstance().getReference().child("Messages");
-                                        Calendar c = Calendar.getInstance();
-                                        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
-                                        String now = dateformat.format(c.getTime());
-                                        Message mes = new Message(message.getText().toString(), login, now);
-                                        chat.child(name).push().setValue(mes);
-                                        dialogBuilder.dismiss();
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Toast.makeText(getContext(), "Please check your connection", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                        }else{
-                            Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
-                        }
-
+                    public void onClick(View v) {
+                        dialogBuilder.dismiss();
+                        startDialog();
                     }
                 });
+                chat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogBuilder.dismiss();
+                        startChat();
+                    }
+                });
+
                 dialogBuilder.setView(dialogView);
                 dialogBuilder.show();
             }
@@ -158,6 +137,133 @@ public class Chat extends Fragment {
 
         return myView;
     }
+    public void startDialog(){
+        final AlertDialog dialogBuilder = new AlertDialog.Builder(getContext()).create();
+        View dialogView = inf.inflate(R.layout.start_dialog, null);
+
+        final EditText message = (EditText) dialogView.findViewById(R.id.edt_comment);
+        final EditText another_user = (EditText) dialogView.findViewById(R.id.address);
+        TextView send = (TextView) dialogView.findViewById(R.id.Submit);
+        TextView cancel = (TextView) dialogView.findViewById(R.id.Cancel);
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogBuilder.dismiss();
+            }
+        });
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!message.getText().toString().equals("") && !another_user.getText().toString().equals("")){
+                    final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+                    final String recevier = another_user.getText().toString();
+                    DatabaseReference users = FirebaseDatabase.getInstance().getReference().child("Users");
+                    users.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            boolean user_exists = false;
+                            for(DataSnapshot i:dataSnapshot.getChildren()){
+                                if(i.getKey().equals(recevier)){
+                                    user_exists = true;
+                                }
+                            }
+                            if(!user_exists){
+                                Toast.makeText(getContext(), "Specified user doesn't exist", Toast.LENGTH_SHORT).show();
+                            }else{
+                                String[] arr = new String[]{login, recevier};
+                                Arrays.sort(arr);
+                                final String name = arr[0] + "_" + arr[1];
+                                DatabaseReference chat = FirebaseDatabase.getInstance().getReference().child("Messages");
+                                Calendar c = Calendar.getInstance();
+                                SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                                String now = dateformat.format(c.getTime());
+                                Message mes = new Message(message.getText().toString(), login, now);
+                                chat.child(name).push().setValue(mes);
+                                dialogBuilder.dismiss();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Toast.makeText(getContext(), "Please check your connection", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }else{
+                    Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.show();
+    }
+
+    public void startChat(){
+        final AlertDialog dialogBuilder = new AlertDialog.Builder(getContext()).create();
+        View dialogView = inf.inflate(R.layout.start_group_chat, null);
+
+        final EditText message = (EditText) dialogView.findViewById(R.id.edt_comment);
+        final EditText members = (EditText) dialogView.findViewById(R.id.address);
+        final EditText groupTitle = (EditText) dialogView.findViewById(R.id.title);
+        TextView send = (TextView) dialogView.findViewById(R.id.Submit);
+        TextView cancel = (TextView) dialogView.findViewById(R.id.Cancel);
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogBuilder.dismiss();
+            }
+        });
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!message.getText().toString().equals("") && !members.getText().toString().equals("") && !groupTitle.getText().toString().equals("")){
+                    final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+                    final String[] receviers = members.getText().toString().split(" ");
+                    try{
+                        final HashMap<String, String> members_map = new HashMap<>();
+                        for(String i:receviers){
+                            members_map.put(i, i);
+                        }
+                        HashMap<String, Message> messages = new HashMap<>();
+                        Calendar c = Calendar.getInstance();
+                        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                        String now = dateformat.format(c.getTime());
+                        messages.put("-M0t3jq9g", new Message(message.getText().toString(), login, now));
+
+                        final DatabaseReference new_chat = FirebaseDatabase.getInstance().getReference();
+                        new_chat.child("GroupChats").push().setValue(new GroupChat("https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2Fc4532654-30e0-4cd7-af65-8e005c5df653?alt=media&token=48875487-fa98-48d7-a6d3-fa9dcd63a3a7",
+                                members_map, messages, groupTitle.getText().toString()), new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                updateUsers(receviers, databaseReference.getKey());
+                                dialogBuilder.dismiss();
+                            }
+                        });
+                    }catch(NullPointerException | ArrayIndexOutOfBoundsException e){
+                        Toast.makeText(getContext(), "Put spaces between names", Toast.LENGTH_SHORT).show();
+                    }
+
+                }else{
+                    Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.show();
+    }
+
+    private void updateUsers(String[] receviers, String key) {
+        Log.d("Look", key);
+        for (String recevier : receviers) {
+            DatabaseReference update = FirebaseDatabase.getInstance().getReference();
+            update.child("Users").child(recevier).child("chats").push().setValue(key);
+        }
+    }
+
     public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.ViewHolder>{
         ArrayList<String> chats;
         GroupChatAdapter(ArrayList<String> chats){
