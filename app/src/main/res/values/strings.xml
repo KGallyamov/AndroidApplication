@@ -47,6 +47,8 @@
     <string name="group_chat">Group chat</string>
     <string name="start_conversation">Start conversation</string>
     <string name="dialog">Dialog</string>
+    <string name="add_member">Add member</string>
+    <string name="enter_login">Enter login</string>
 
     <string-array name="saved">
         <item>2</item>
