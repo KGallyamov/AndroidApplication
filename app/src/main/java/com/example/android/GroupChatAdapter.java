@@ -52,7 +52,6 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final Message message = getItem(position);
-        Log.d("Look", "...");
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         if(message.getAuthor().equals(login)){
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
@@ -69,6 +68,14 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                }
+            });
+            ((ImageView) finalConvertView.findViewById(R.id.avatar)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), AnotherUserPage.class);
+                    intent.putExtra("author", message.getAuthor());
+                    getContext().startActivity(intent);
                 }
             });
         }
