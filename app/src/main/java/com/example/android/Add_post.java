@@ -64,7 +64,6 @@ public class Add_post extends Fragment implements View.OnClickListener {
     EditText tags;
     Button photo, post;
     Spinner spinner;
-    String picture_descr;
     private Uri filePath;
     public String txtTitle="Title", txtDescription="Description", txtImage = "0-0", role;
     FirebaseStorage storage;
