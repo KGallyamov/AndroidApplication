@@ -411,7 +411,7 @@ public class Chat extends Fragment {
                     try {
                         Glide.with(Objects.requireNonNull(getContext())).load(chat.getChat_avatar()).into(holder.avatar);
                     }catch (NullPointerException e){
-                        Log.d("Err", e.toString());
+
                     }
 
                 }
