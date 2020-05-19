@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +50,7 @@ public class GroupChatInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_chat_info);
         path = getIntent().getStringExtra("path");
+        Button exit = (Button) findViewById(R.id.exit123456);
         final EditText new_member_name = (EditText) findViewById(R.id.member_name);
         final ListView members = (ListView) findViewById(R.id.members);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -134,6 +138,49 @@ public class GroupChatInfo extends AppCompatActivity {
                     });
 
                 }
+            }
+        });
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder ask = new AlertDialog.Builder(GroupChatInfo.this, R.style.MyAlertDialogStyle);
+                ask.setMessage("Are you sure you want to leave this chat?").setCancelable(false)
+                        .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+                                final DatabaseReference user_update = FirebaseDatabase.getInstance().getReference();
+                                user_update.child("Users").child(login).child("chats").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for(DataSnapshot i:dataSnapshot.getChildren()){
+                                            if(i.getValue().toString().equals(path)){
+                                                final DatabaseReference user_update_2 = FirebaseDatabase.getInstance().getReference();
+                                                user_update_2.child("Users").child(login).child("chats").child(i.getKey()).removeValue();
+                                                finish();
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                                DatabaseReference update_chat = FirebaseDatabase.getInstance().getReference();
+                                update_chat.child("GroupChats").child(path).child("members").child(login).removeValue();
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                AlertDialog alertDialog = ask.create();
+                alertDialog.setTitle("Leave chat");
+                alertDialog.show();
             }
         });
     }
