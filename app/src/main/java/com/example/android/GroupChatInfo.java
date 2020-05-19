@@ -8,10 +8,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +43,21 @@ public class GroupChatInfo extends AppCompatActivity {
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(GroupChatInfo.this, android.R.layout.simple_list_item_1, list_members.toArray(new String[0]));
                 members.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        DatabaseReference chat_title = FirebaseDatabase.getInstance().getReference();
+        chat_title.child("GroupChats").child(path).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                GroupChat chat = dataSnapshot.getValue(GroupChat.class);
+                Glide.with(GroupChatInfo.this).load(chat.getChat_avatar()).into((ImageView) findViewById(R.id.chat_avatar));
+                ((TextView) findViewById(R.id.title)).setText(chat.getTitle());
+
             }
 
             @Override
