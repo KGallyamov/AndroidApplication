@@ -54,6 +54,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -65,6 +66,7 @@ public class Chat extends Fragment {
     View dialogView;
     ImageButton start_conv;
     RecyclerView group_chats;
+    Context context = getContext();
     AlertDialog dialogBuilder = null;
     Uri filePath = null;
     public Chat(){}
@@ -81,6 +83,7 @@ public class Chat extends Fragment {
         inf = inflater;
         group_chats = (RecyclerView) myView.findViewById(R.id.group_chats);
         DatabaseReference user_chats = FirebaseDatabase.getInstance().getReference();
+        login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         user_chats.child("Users").child(login).child("chats").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -405,7 +408,11 @@ public class Chat extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     GroupChat chat = dataSnapshot.getValue(GroupChat.class);
                     holder.title.setText(chat.getTitle());
-                    Glide.with(getContext()).load(chat.getChat_avatar()).into(holder.avatar);
+                    try {
+                        Glide.with(Objects.requireNonNull(getContext())).load(chat.getChat_avatar()).into(holder.avatar);
+                    }catch (NullPointerException e){
+                        Log.d("Err", e.toString());
+                    }
 
                 }
 

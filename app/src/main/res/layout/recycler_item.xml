@@ -169,7 +169,6 @@
                 android:fontFamily="monospace"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:text="20"
                 android:textAlignment="textStart"
                 android:textColor="#C4B7B7"
                 android:textSize="20sp" />
