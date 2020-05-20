@@ -4,9 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -36,11 +34,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
-import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -52,13 +45,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class Chat extends Fragment {
     ListView chats;
@@ -206,7 +194,7 @@ public class Chat extends Fragment {
                                 Calendar c = Calendar.getInstance();
                                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                                 String now = dateformat.format(c.getTime());
-                                Message mes = new Message(message.getText().toString(), login, now);
+                                Message mes = new Message(message.getText().toString(), login, now, false);
                                 chat.child(name).push().setValue(mes);
                                 dialogBuilder.dismiss();
                             }
@@ -315,7 +303,7 @@ public class Chat extends Fragment {
                                 Calendar c = Calendar.getInstance();
                                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                                 String now = dateformat.format(c.getTime());
-                                messages.put("-M0t3jq9g", new Message(message, login, now));
+                                messages.put("-M0t3jq9g", new Message(message, login, now, false));
 
                                 final DatabaseReference new_chat = FirebaseDatabase.getInstance().getReference();
                                 new_chat.child("GroupChats").push().setValue(new GroupChat(image_link,

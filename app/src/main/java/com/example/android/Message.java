@@ -4,12 +4,22 @@ public class Message {
     private String text;
     private String author;
     private String time;
+    private boolean read;
     Message(){}
 
-    public Message(String text, String author, String time) {
+    public Message(String text, String author, String time, boolean read) {
         this.text = text;
         this.author = author;
         this.time = time;
+        this.read = read;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
     }
 
     public String getText() {

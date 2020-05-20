@@ -28,6 +28,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
+import com.google.firebase.ml.naturallanguage.smartreply.FirebaseSmartReply;
+import com.google.firebase.ml.naturallanguage.smartreply.FirebaseTextMessage;
+import com.google.firebase.ml.naturallanguage.smartreply.SmartReplySuggestion;
+import com.google.firebase.ml.naturallanguage.smartreply.SmartReplySuggestionResult;
 import com.luseen.autolinklibrary.AutoLinkMode;
 import com.luseen.autolinklibrary.AutoLinkOnClickListener;
 import com.luseen.autolinklibrary.AutoLinkTextView;
@@ -36,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 public class OneChatAdapter extends ArrayAdapter<Message> {
     String chat;

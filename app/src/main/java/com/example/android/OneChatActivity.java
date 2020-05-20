@@ -16,13 +16,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
+import com.google.firebase.ml.naturallanguage.smartreply.FirebaseSmartReply;
+import com.google.firebase.ml.naturallanguage.smartreply.FirebaseTextMessage;
+import com.google.firebase.ml.naturallanguage.smartreply.SmartReplySuggestion;
+import com.google.firebase.ml.naturallanguage.smartreply.SmartReplySuggestionResult;
 
 import org.apache.commons.net.time.TimeTCPClient;
 
@@ -32,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 public class OneChatActivity extends AppCompatActivity {
     ListView messages;
@@ -39,8 +47,11 @@ public class OneChatActivity extends AppCompatActivity {
     TextView exit;
     TextView lastSeen;
     String[] arr;
+    int click = 0;
+    boolean not_supported = false;
+    ArrayList<String> reply_list;
     EditText write_message;
-    Button send;
+    Button send, quick_reply;
     Context context = this;
 
     @Override
@@ -51,6 +62,7 @@ public class OneChatActivity extends AppCompatActivity {
         another_user = (TextView) findViewById(R.id.title);
         lastSeen = (TextView) findViewById(R.id.lastSeen);
         exit = (TextView) findViewById(R.id.exit);
+        quick_reply = (Button) findViewById(R.id.quick_reply);
         send = (Button) findViewById(R.id.send_comment);
         write_message = findViewById(R.id.write_message);
         Intent intent = getIntent();
@@ -65,13 +77,55 @@ public class OneChatActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Message> list = new ArrayList<>();
                 ArrayList<String> paths = new ArrayList<>();
+                List<FirebaseTextMessage> conversation = new ArrayList<>();
                 for(DataSnapshot i:dataSnapshot.getChildren()){
                     list.add(i.getValue(Message.class));
                     paths.add(i.getKey());
+                    if(login.equals(i.getValue(Message.class).getAuthor())) {
+                        conversation.add(FirebaseTextMessage.createForLocalUser(
+                                i.getValue(Message.class).getText(), System.currentTimeMillis()));
+                    } else{
+                        conversation.add(FirebaseTextMessage.createForRemoteUser(
+                                i.getValue(Message.class).getText(), System.currentTimeMillis(), i.getValue(Message.class).getAuthor()));
+                    }
                 }
                 OneChatAdapter adapter = new OneChatAdapter(context, R.layout.message_out_item, list.toArray(new Message[0]),
                         arr[0] + "_" + arr[1], paths);
                 messages.setAdapter(adapter);
+                FirebaseSmartReply smartReply = FirebaseNaturalLanguage.getInstance().getSmartReply();
+                smartReply.suggestReplies(conversation)
+                        .addOnSuccessListener(new OnSuccessListener<SmartReplySuggestionResult>() {
+                            @Override
+                            public void onSuccess(SmartReplySuggestionResult result) {
+                                reply_list = new ArrayList<>();
+                                not_supported = false;
+                                if (result.getStatus() == SmartReplySuggestionResult.STATUS_NOT_SUPPORTED_LANGUAGE) {
+                                    not_supported = true;
+                                } else if (result.getStatus() == SmartReplySuggestionResult.STATUS_SUCCESS) {
+                                    for (SmartReplySuggestion suggestion : result.getSuggestions()) {
+                                        reply_list.add(suggestion.getText());
+                                    }
+                                }
+
+                                quick_reply.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if(not_supported) {
+                                            Toast.makeText(OneChatActivity.this, "Not supported language. Sorry!", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            write_message.setText(reply_list.get(click % reply_list.size()));
+                                            ++click;
+                                        }
+                                    }
+                                });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
             }
 
             @Override
@@ -191,7 +245,7 @@ public class OneChatActivity extends AppCompatActivity {
 
             Message message = new Message(write_message.getText().toString(),
                     login,
-                    time_for_database);
+                    time_for_database, false);
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("Messages").child(arr[0] + "_" + arr[1]).push().setValue(message);
             write_message.setText("");
