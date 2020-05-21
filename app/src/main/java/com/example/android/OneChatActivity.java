@@ -39,7 +39,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 public class OneChatActivity extends AppCompatActivity {
     ListView messages;
@@ -71,6 +70,35 @@ public class OneChatActivity extends AppCompatActivity {
         another_user.setText(another_user_name);
         arr = new String[]{login, another_user_name};
         Arrays.sort(arr);
+        final DatabaseReference update_read = FirebaseDatabase.getInstance().getReference().child("Messages");
+        update_read.child(arr[0] + "_" + arr[1]).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                    Message message = ds.getValue(Message.class);
+                    if(!message.isRead() && !login.equals(message.getAuthor())){
+                        DatabaseReference update_read_2 = FirebaseDatabase.getInstance().getReference().child("Messages");
+                        update_read_2.child(arr[0] + "_" + arr[1]).child(ds.getKey()).child("read").setValue(true);
+                    }
+                }
+                update_read.removeEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Messages");
         reference.child(arr[0] + "_" + arr[1]).addValueEventListener(new ValueEventListener() {
             @Override

@@ -25,10 +25,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class ChatListAdapter extends ArrayAdapter<String> {
-    ChatListAdapter(@NonNull Context context, int resource, String[] arr) {
+    HashMap<String, Integer> unread;
+    ChatListAdapter(@NonNull Context context, int resource, String[] arr, HashMap<String, Integer> unread) {
         super(context, resource, arr);
+        this.unread = unread;
     }
 
     @NonNull
@@ -39,7 +42,12 @@ public class ChatListAdapter extends ArrayAdapter<String> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.chat_item, null);
         }
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
-        String[] arr = new String[]{login, chat};
+        final String[] arr = new String[]{login, chat};
+        TextView unchecked = (TextView) convertView.findViewById(R.id.unchecked);
+        if(!(unread.get(chat) == 0)){
+            unchecked.setVisibility(View.VISIBLE);
+            unchecked.setText(Integer.toString(unread.get(chat)));
+        }
         Arrays.sort(arr);
         final TextView last_message = (TextView) convertView.findViewById(R.id.last_message);
         ((TextView) convertView.findViewById(R.id.name)).setText(chat);
