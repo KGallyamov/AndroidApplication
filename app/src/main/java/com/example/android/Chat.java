@@ -98,16 +98,26 @@ public class Chat extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<String> ch = new ArrayList<>();
+                HashMap<String, HashMap<String, Message>> messages = new HashMap<>();
                 for(DataSnapshot i:dataSnapshot.getChildren()){
                     String[] arr = i.getKey().split("_");
                     if(arr[1].equals(login)){
                         ch.add(arr[0]);
+                        HashMap<String, Message> oneChat = new HashMap<>();
+                        for(DataSnapshot j:i.getChildren()){
+                            oneChat.put(j.getKey(), j.getValue(Message.class));
+                        }
+                        messages.put(arr[0], oneChat);
                     }else if(arr[0].equals(login)){
                         ch.add(arr[1]);
+                        HashMap<String, Message> oneChat = new HashMap<>();
+                        for(DataSnapshot j:i.getChildren()){
+                            oneChat.put(j.getKey(), j.getValue(Message.class));
+                        }
+                        messages.put(arr[1], oneChat);
                     }
                 }
-                ChatListAdapter adapter = new ChatListAdapter(getContext(), R.layout.chat_item, ch.toArray(new String[0]));
-                chats.setAdapter(adapter);
+                sortByTime(ch.toArray(new String[0]), messages);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -153,6 +163,133 @@ public class Chat extends Fragment {
 
         return myView;
     }
+
+    private void sortByTime(String[] names, HashMap<String, HashMap<String, Message>> messages) {
+        ArrayList<String> lastMessagesTime = new ArrayList<>();
+        HashMap<String, Integer> unread = new HashMap<>();
+        for(HashMap<String, Message> i:messages.values()){
+            for(Message j:i.values()){
+                lastMessagesTime.add(j.getTime());
+                break;
+            }
+        }
+        String[] times = lastMessagesTime.toArray(new String[0]);
+        boolean again = true;
+        while(again){
+            again = false;
+            for(int i=0;i<times.length - 1; i++){
+                String ymd = times[i].split(" ")[1], hms = times[i].split(" ")[0];
+                Log.d(ymd, hms);
+                HashMap<String, Integer> months = new HashMap<>();
+                months.put("мая", 5);
+                months.put("июня", 6);
+                months.put("июля", 7);
+                months.put("августа", 8);
+
+                months.put("сентября", 9);
+                months.put("октября", 10);
+                months.put("ноября", 11);
+                months.put("декабря", 12);
+
+                months.put("января", 1);
+                months.put("февраля", 2);
+                months.put("марта", 3);
+                months.put("апреля", 4);
+                String n_ymd = times[i + 1].split(" ")[1], n_hms = times[i + 1].split(" ")[0];
+                int year = Integer.parseInt(ymd.substring(ymd.length() - 4)),
+                        month = months.get(ymd.substring(3, ymd.length() - 5)),
+                        day = Integer.parseInt(ymd.substring(0, 2)),
+                        hour = Integer.parseInt(hms.substring(0, 2)),
+                        minute = Integer.parseInt(hms.substring(3, 5)),
+                        second = Integer.parseInt(hms.substring(6));
+
+                int n_year = Integer.parseInt(n_ymd.substring(n_ymd.length() - 4)),
+                        n_month = months.get(n_ymd.substring(3, n_ymd.length() - 5)),
+                        n_day = Integer.parseInt(n_ymd.substring(0, 2)),
+                        n_hour = Integer.parseInt(n_hms.substring(0, 2)),
+                        n_minute = Integer.parseInt(n_hms.substring(3, 5)),
+                        n_second = Integer.parseInt(n_hms.substring(6));
+                if(year < n_year){
+                    again = true;
+                    String k = times[i];
+                    times[i] = times[i+1];
+                    times[i+1] = k;
+                    k = names[i];
+                    names[i] = names[i+1];
+                    names[i+1] = k;
+                } else if( year == n_year){
+                    if(month < n_month){
+                        again = true;
+                        String k = times[i];
+                        times[i] = times[i+1];
+                        times[i+1] = k;
+                        k = names[i];
+                        names[i] = names[i+1];
+                        names[i+1] = k;
+                    }else if(month == n_month){
+                        if(day < n_day){
+                            again = true;
+                            String k = times[i];
+                            times[i] = times[i+1];
+                            times[i+1] = k;
+                            k = names[i];
+                            names[i] = names[i+1];
+                            names[i+1] = k;
+                        } else if(n_day == day){
+                            if(hour < n_hour){
+                                again = true;
+                                String k = times[i];
+                                times[i] = times[i+1];
+                                times[i+1] = k;
+                                k = names[i];
+                                names[i] = names[i+1];
+                                names[i+1] = k;
+                            } else if(hour == n_hour){
+                                if(minute < n_minute){
+                                    again = true;
+                                    String k = times[i];
+                                    times[i] = times[i+1];
+                                    times[i+1] = k;
+                                    k = names[i];
+                                    names[i] = names[i+1];
+                                    names[i+1] = k;
+                                } else if(minute == n_minute){
+                                    if(second< n_second){
+                                        again = true;
+                                        String k = times[i];
+                                        times[i] = times[i+1];
+                                        times[i+1] = k;
+                                        k = names[i];
+                                        names[i] = names[i+1];
+                                        names[i+1] = k;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for(String i:messages.keySet()){
+            for(Message j:messages.get(i).values()){
+                if(!j.isRead() && !j.getAuthor().equals(login)){
+                    if(unread.containsKey(i)) {
+                        unread.put(i, unread.get(i) + 1);
+                    }else{
+                        unread.put(i, 1);
+                    }
+                }
+            }
+        }
+        for(String i:names){
+            if(!unread.containsKey(i)){
+                unread.put(i, 0);
+            }
+        }
+        ChatListAdapter adapter = new ChatListAdapter(getContext(), R.layout.chat_item, names, unread);
+        chats.setAdapter(adapter);
+    }
+
     public void startDialog(){
         final AlertDialog dialogBuilder = new AlertDialog.Builder(getContext()).create();
         View dialogView = inf.inflate(R.layout.start_dialog, null);
