@@ -2,8 +2,12 @@ package com.example.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +33,11 @@ import com.google.firebase.ml.naturallanguage.smartreply.FirebaseSmartReply;
 import com.google.firebase.ml.naturallanguage.smartreply.FirebaseTextMessage;
 import com.google.firebase.ml.naturallanguage.smartreply.SmartReplySuggestion;
 import com.google.firebase.ml.naturallanguage.smartreply.SmartReplySuggestionResult;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
+import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
 
 import org.apache.commons.net.time.TimeTCPClient;
 
@@ -50,7 +59,7 @@ public class OneChatActivity extends AppCompatActivity {
     boolean not_supported = false;
     ArrayList<String> reply_list;
     EditText write_message;
-    Button send, quick_reply;
+    Button send, quick_reply, attach_image;
     Context context = this;
 
     @Override
@@ -61,6 +70,7 @@ public class OneChatActivity extends AppCompatActivity {
         another_user = (TextView) findViewById(R.id.title);
         lastSeen = (TextView) findViewById(R.id.lastSeen);
         exit = (TextView) findViewById(R.id.exit);
+        attach_image = (Button) findViewById(R.id.attach_image);
         quick_reply = (Button) findViewById(R.id.quick_reply);
         send = (Button) findViewById(R.id.send_comment);
         write_message = findViewById(R.id.write_message);
@@ -97,6 +107,12 @@ public class OneChatActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+        attach_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseImage();
             }
         });
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Messages");
@@ -270,13 +286,34 @@ public class OneChatActivity extends AppCompatActivity {
                 time_for_database = dateformat.format(c.getTime());
             }
 
-
             Message message = new Message(write_message.getText().toString(),
                     login,
-                    time_for_database, false);
+                    time_for_database, false, "");
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("Messages").child(arr[0] + "_" + arr[1]).push().setValue(message);
             write_message.setText("");
+
+        }
+    }
+    private void chooseImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 71);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 71 && resultCode == -1
+                && data != null && data.getData() != null )
+        {
+            Uri filePath = data.getData();
+            Intent intent = new Intent(OneChatActivity.this, SendMessageWithImage.class);
+            intent.putExtra("path", filePath.toString());
+            intent.putExtra("where", "Messages");
+            intent.putExtra("db_path", arr[0] + "_" + arr[1]);
+            intent.putExtra("message", write_message.getText().toString());
+            startActivity(intent);
 
         }
     }

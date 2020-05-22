@@ -5,13 +5,23 @@ public class Message {
     private String author;
     private String time;
     private boolean read;
+    private String image;
     Message(){}
 
-    public Message(String text, String author, String time, boolean read) {
+    public Message(String text, String author, String time, boolean read, String image) {
         this.text = text;
         this.author = author;
         this.time = time;
         this.read = read;
+        this.image = image;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public boolean isRead() {

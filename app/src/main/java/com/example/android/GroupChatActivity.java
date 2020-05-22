@@ -180,10 +180,10 @@ public class GroupChatActivity extends AppCompatActivity {
                 time_for_database = dateformat.format(c.getTime());
             }
 
-
+            //TODO: проверить картинку
             Message message = new Message(write_message.getText().toString(),
                     login,
-                    time_for_database, false);
+                    time_for_database, false, "");
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("GroupChats").child(path).child("messages").push().setValue(message);
             write_message.setText("");

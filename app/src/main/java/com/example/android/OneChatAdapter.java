@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,6 +63,20 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
         }else{
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_item, null);
+        }
+        if (!(message.getImage().equals("no_image"))){
+            ImageView message_image = convertView.findViewById(R.id.image);
+            message_image.setVisibility(View.VISIBLE);
+            Glide.with(getContext()).load(message.getImage()).into(message_image);
+            message_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent photo_intent = new Intent(getContext(), PhotoPage.class);
+                    photo_intent.putExtra("link", message.getImage());
+                    getContext().startActivity(photo_intent);
+                }
+            });
+
         }
         AutoLinkTextView textView = convertView.findViewById(R.id.text);
 

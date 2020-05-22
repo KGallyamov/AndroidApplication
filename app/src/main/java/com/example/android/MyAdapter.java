@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -73,7 +74,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         holder.txtTitle.setText(itemList.getTitle());
         String s;
         try{
-            s = itemList.getDescription().substring(0, 57) + "...";
+            if ((mContext.getResources().getConfiguration().screenLayout &
+                    Configuration.SCREENLAYOUT_SIZE_MASK) ==
+                    Configuration.SCREENLAYOUT_SIZE_LARGE) {
+                s = itemList.getDescription().substring(0, 117) + "...";
+            } else {
+                s = itemList.getDescription().substring(0, 57) + "...";
+            }
         }catch (Exception e){
             s = itemList.getDescription();
         }

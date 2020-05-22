@@ -274,7 +274,6 @@ public class PostPage extends AppCompatActivity {
             ok.setVisibility(View.VISIBLE);
             refuse.setVisibility(View.VISIBLE);
             comments_list.setVisibility(View.GONE);
-            //TODO: сделать невидимыми лайки дизлайки сумму
 
             // пост допущен в общую ленту
             ok.setOnClickListener(new View.OnClickListener() {

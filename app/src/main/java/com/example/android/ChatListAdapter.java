@@ -47,6 +47,8 @@ public class ChatListAdapter extends ArrayAdapter<String> {
         if(!(unread.get(chat) == 0)){
             unchecked.setVisibility(View.VISIBLE);
             unchecked.setText(Integer.toString(unread.get(chat)));
+        } else{
+            unchecked.setVisibility(View.GONE);
         }
         Arrays.sort(arr);
         final TextView last_message = (TextView) convertView.findViewById(R.id.last_message);
@@ -74,7 +76,11 @@ public class ChatListAdapter extends ArrayAdapter<String> {
                     arrayList.add(i.getValue(Message.class));
                 }
                 TextView time = (TextView) finalConvertView1.findViewById(R.id.time);
-                last_message.setText(arrayList.get(arrayList.size() - 1).getText());
+                try {
+                    last_message.setText(arrayList.get(arrayList.size() - 1).getText().substring(0, 25));
+                } catch(Exception e){
+                    last_message.setText(arrayList.get(arrayList.size() - 1).getText());
+                }
                 Calendar c = Calendar.getInstance();
                 SimpleDateFormat dateformat = new SimpleDateFormat("dd.MMMM.yyyy");
                 String now = dateformat.format(c.getTime());
