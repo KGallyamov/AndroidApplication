@@ -179,7 +179,7 @@ public class SendMessageWithImage extends AppCompatActivity {
             if(where.equals("Messages")) {
                 ref.child("Messages").child(getIntent().getStringExtra("db_path")).push().setValue(message_db);
             } else{
-
+                ref.child("GroupChats").child(getIntent().getStringExtra("db_path")).child("messages").push().setValue(message_db);
             }
             finish();
 

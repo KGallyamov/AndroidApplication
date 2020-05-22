@@ -1,6 +1,7 @@
 package com.example.android;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -35,7 +37,7 @@ public class GroupChatActivity extends AppCompatActivity {
     ListView messages;
     TextView chat_title;
     TextView exit;
-    Button send;
+    Button send, attach_image;
     EditText write_message;
 
     @Override
@@ -46,6 +48,7 @@ public class GroupChatActivity extends AppCompatActivity {
         messages = (ListView) findViewById(R.id.messages_list);
         chat_title = (TextView) findViewById(R.id.title);
         exit = (TextView) findViewById(R.id.exit);
+        attach_image = (Button) findViewById(R.id.attach_image);
         send = (Button) findViewById(R.id.send_comment);
         write_message = (EditText) findViewById(R.id.write_message);
 
@@ -102,6 +105,12 @@ public class GroupChatActivity extends AppCompatActivity {
 
             }
         });
+        attach_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseImage();
+            }
+        });
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +128,28 @@ public class GroupChatActivity extends AppCompatActivity {
             }
         });
 
+    }
+    private void chooseImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 71);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 71 && resultCode == -1
+                && data != null && data.getData() != null )
+        {
+            Uri filePath = data.getData();
+            Intent intent = new Intent(GroupChatActivity.this, SendMessageWithImage.class);
+            intent.putExtra("path", filePath.toString());
+            intent.putExtra("where", "GroupChats");
+            intent.putExtra("db_path", path);
+            intent.putExtra("message", write_message.getText().toString());
+            startActivity(intent);
+
+        }
     }
     class AsyncRequest extends AsyncTask<String, Integer, String> {
 
@@ -180,7 +211,6 @@ public class GroupChatActivity extends AppCompatActivity {
                 time_for_database = dateformat.format(c.getTime());
             }
 
-            //TODO: проверить картинку
             Message message = new Message(write_message.getText().toString(),
                     login,
                     time_for_database, false, "");
