@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#353E4f"
+    tools:context=".SendMessageWithImage">
+    <ImageView
+        android:id="@+id/image"
+        android:layout_marginBottom="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:layout_weight="5"
+            android:hint="Write message"
+            android:textColorHint="#C4B7B7"
+            android:textColor="#C4B7B7"
+            android:textSize="20sp"
+            android:id="@+id/write_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/submit"
+            android:background="@drawable/ic_send_black_24dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

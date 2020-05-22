@@ -50,7 +50,7 @@ import java.util.UUID;
 
 public class Chat extends Fragment {
     ListView chats;
-    String login;
+    String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
     View dialogView;
     ImageButton start_conv;
     RecyclerView group_chats;
@@ -71,7 +71,6 @@ public class Chat extends Fragment {
         inf = inflater;
         group_chats = (RecyclerView) myView.findViewById(R.id.group_chats);
         DatabaseReference user_chats = FirebaseDatabase.getInstance().getReference();
-        login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         user_chats.child("Users").child(login).child("chats").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -272,11 +271,13 @@ public class Chat extends Fragment {
         }
         for(String i:messages.keySet()){
             for(Message j:messages.get(i).values()){
-                if(!j.isRead() && !j.getAuthor().equals(login)){
-                    if(unread.containsKey(i)) {
-                        unread.put(i, unread.get(i) + 1);
-                    }else{
-                        unread.put(i, 1);
+                if(!j.getAuthor().equals(login)) {
+                    if (!j.getAuthor().equals(login) && !j.isRead()) {
+                        if (unread.containsKey(i)) {
+                            unread.put(i, unread.get(i) + 1);
+                        } else {
+                            unread.put(i, 1);
+                        }
                     }
                 }
             }
@@ -331,7 +332,7 @@ public class Chat extends Fragment {
                                 Calendar c = Calendar.getInstance();
                                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                                 String now = dateformat.format(c.getTime());
-                                Message mes = new Message(message.getText().toString(), login, now, false);
+                                Message mes = new Message(message.getText().toString(), login, now, false, "no_image");
                                 chat.child(name).push().setValue(mes);
                                 dialogBuilder.dismiss();
                             }
@@ -440,7 +441,7 @@ public class Chat extends Fragment {
                                 Calendar c = Calendar.getInstance();
                                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                                 String now = dateformat.format(c.getTime());
-                                messages.put("-M0t3jq9g", new Message(message, login, now, false));
+                                messages.put("-M0t3jq9g", new Message(message, login, now, false, "no_image"));
 
                                 final DatabaseReference new_chat = FirebaseDatabase.getInstance().getReference();
                                 new_chat.child("GroupChats").push().setValue(new GroupChat(image_link,

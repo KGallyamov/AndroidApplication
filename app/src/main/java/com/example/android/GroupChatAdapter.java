@@ -79,6 +79,20 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                 }
             });
         }
+        if (!(message.getImage().equals("no_image"))){
+            ImageView message_image = convertView.findViewById(R.id.image);
+            message_image.setVisibility(View.VISIBLE);
+            Glide.with(getContext()).load(message.getImage()).into(message_image);
+            message_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent photo_intent = new Intent(getContext(), PhotoPage.class);
+                    photo_intent.putExtra("link", message.getImage());
+                    getContext().startActivity(photo_intent);
+                }
+            });
+
+        }
         AutoLinkTextView textView = convertView.findViewById(R.id.text);
 
         textView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG, AutoLinkMode.MODE_URL);
