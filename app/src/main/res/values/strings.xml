@@ -49,6 +49,10 @@
     <string name="dialog">Dialog</string>
     <string name="add_member">Add member</string>
     <string name="enter_login">Enter login</string>
+    <string name="message_options">Message options</string>
+    <string name="copy_text">Copy text</string>
+    <string name="edit_message">Edit message</string>
+    <string name="delete_message">Delete message</string>
 
     <string-array name="saved">
         <item>2</item>

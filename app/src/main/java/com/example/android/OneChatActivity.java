@@ -134,7 +134,7 @@ public class OneChatActivity extends AppCompatActivity {
                     }
                 }
                 OneChatAdapter adapter = new OneChatAdapter(context, R.layout.message_out_item, list.toArray(new Message[0]),
-                        arr[0] + "_" + arr[1], paths);
+                        arr[0] + "_" + arr[1], paths, getLayoutInflater());
                 messages.setAdapter(adapter);
                 FirebaseSmartReply smartReply = FirebaseNaturalLanguage.getInstance().getSmartReply();
                 smartReply.suggestReplies(conversation)
