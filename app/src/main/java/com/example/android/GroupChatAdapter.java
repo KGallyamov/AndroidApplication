@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,11 +42,13 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
     Message[] messages;
     String path;
     ArrayList<String> message_path;
-    public GroupChatAdapter(@NonNull Context context, int resource, Message[] messages, String path, ArrayList<String> message_path) {
+    LayoutInflater inflater;
+    public GroupChatAdapter(@NonNull Context context, int resource, Message[] messages, String path, ArrayList<String> message_path, LayoutInflater inflater) {
         super(context, resource, messages);
         this.messages = messages;
         this.path = path;
         this.message_path = message_path;
+        this.inflater = inflater;
     }
 
     @NonNull
@@ -140,17 +143,67 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if(message.getAuthor().equals(login)) {
-                    final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
-                    ask.setMessage("Are you sure you want to delete this message?").setCancelable(false)
-                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, int which) {
-                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                                    reference.child("GroupChats").child(path).child(message_path.get(position)).child("messages").removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
+                View dialogView = inflater.inflate(R.layout.message_options, null);
+                TextView copy_text = dialogView.findViewById(R.id.copy);
+                TextView edit_message = dialogView.findViewById(R.id.edit);
+                TextView delete = dialogView.findViewById(R.id.delete);
+                TextView exit = dialogView.findViewById(R.id.Cancel);
+                if(login.equals(message.getAuthor())){
+                    edit_message.setVisibility(View.VISIBLE);
+                    delete.setVisibility(View.VISIBLE);
+                }
+
+
+                final AlertDialog alertDialog = ask.create();
+                alertDialog.setView(dialogView);
+                alertDialog.show();
+                exit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+                copy_text.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("", message.getText());
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(getContext(), "Text copied", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                    }
+                });
+                edit_message.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
+                        View dialogView = inflater.inflate(R.layout.edit_message, null);
+                        final EditText ed_message = dialogView.findViewById(R.id.edit_message);
+                        TextView submit = dialogView.findViewById(R.id.Submit);
+                        TextView exit = dialogView.findViewById(R.id.Cancel);
+                        ed_message.setText(message.getText());
+
+
+                        final AlertDialog alertDialog_edit = ask.create();
+                        alertDialog_edit.setView(dialogView);
+                        exit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                alertDialog_edit.dismiss();
+                            }
+                        });
+                        submit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                                if(ed_message.getText().toString().equals("")){
+                                    reference.child("GroupChats").child(path).child("messages").
+                                            child(message_path.get(position)).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            dialog.dismiss();
+                                            alertDialog.dismiss();
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
@@ -158,21 +211,66 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                                             Toast.makeText(getContext(), "Please check your connection", Toast.LENGTH_SHORT).show();
                                         }
                                     });
-
+                                }else {
+                                    reference.child("GroupChats").child(path).child("messages").
+                                            child(message_path.get(position)).child("text").setValue(ed_message.getText().toString())
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    alertDialog_edit.dismiss();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(getContext(), "Please check your connection", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
-                            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
+                            }
+                        });
+                        alertDialog_edit.show();
+                    }
+                });
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        if(message.getAuthor().equals(login)) {
+                            final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
+                            ask.setMessage("Are you sure you want to delete this message?").setCancelable(false)
+                                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(final DialogInterface dialog, int which) {
+                                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                                            reference.child("GroupChats").child(path).child("messages").
+                                                    child(message_path.get(position)).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    dialog.dismiss();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(getContext(), "Please check your connection", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
 
-                    AlertDialog alertDialog = ask.create();
-                    alertDialog.setTitle("Delete message");
-                    alertDialog.show();
-                }else{
-                    Toast.makeText(getContext(), "You can delete only your messages", Toast.LENGTH_SHORT).show();
-                }
+                                        }
+                                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                            AlertDialog alertDialog = ask.create();
+                            alertDialog.setTitle("Delete message");
+                            alertDialog.show();
+                        }else{
+                            Toast.makeText(getContext(), "You can delete only your messages", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
                 return false;
             }
         });

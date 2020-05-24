@@ -96,7 +96,8 @@ public class GroupChatActivity extends AppCompatActivity {
                     list.add(i.getValue(Message.class));
                     paths.add(i.getKey());
                 }
-                GroupChatAdapter adapter = new GroupChatAdapter(GroupChatActivity.this, R.layout.message_out_item,list.toArray(new Message[0]), path, paths);
+                GroupChatAdapter adapter = new GroupChatAdapter(GroupChatActivity.this,
+                        R.layout.message_out_item,list.toArray(new Message[0]), path, paths, getLayoutInflater());
                 messages.setAdapter(adapter);
             }
 
@@ -213,7 +214,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
             Message message = new Message(write_message.getText().toString(),
                     login,
-                    time_for_database, false, "");
+                    time_for_database, false, "no_image");
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("GroupChats").child(path).child("messages").push().setValue(message);
             write_message.setText("");
