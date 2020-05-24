@@ -445,7 +445,7 @@ public class Chat extends Fragment {
 
                                 final DatabaseReference new_chat = FirebaseDatabase.getInstance().getReference();
                                 new_chat.child("GroupChats").push().setValue(new GroupChat(image_link,
-                                        members_map, messages, title), new DatabaseReference.CompletionListener() {
+                                        members_map, messages, title, login), new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                         updateUsers(receviers, databaseReference.getKey());

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -123,9 +124,10 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
         }else{
             day_month.setText("today");
         }
+        LinearLayout message_body = (LinearLayout) convertView.findViewById(R.id.message_body);
 
-        convertView.setLongClickable(true);
-        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+        message_body.setLongClickable(true);
+        message_body.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);

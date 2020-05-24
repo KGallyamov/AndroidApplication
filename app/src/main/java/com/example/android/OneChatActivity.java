@@ -288,7 +288,7 @@ public class OneChatActivity extends AppCompatActivity {
 
             Message message = new Message(write_message.getText().toString(),
                     login,
-                    time_for_database, false, "");
+                    time_for_database, false, "no_image");
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("Messages").child(arr[0] + "_" + arr[1]).push().setValue(message);
             write_message.setText("");

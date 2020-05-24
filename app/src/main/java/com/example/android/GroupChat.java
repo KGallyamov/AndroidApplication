@@ -7,13 +7,23 @@ public class GroupChat {
     private HashMap<String, String> members;
     private HashMap<String, Message> messages;
     private String title;
+    private String creator;
     GroupChat(){}
 
-    GroupChat(String chat_avatar, HashMap<String, String> members, HashMap<String, Message> messages, String title){
+    GroupChat(String chat_avatar, HashMap<String, String> members, HashMap<String, Message> messages, String title, String creator){
         this.chat_avatar = chat_avatar;
         this.members = members;
         this.messages = messages;
         this.title = title;
+        this.creator = creator;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public String getChat_avatar() {
