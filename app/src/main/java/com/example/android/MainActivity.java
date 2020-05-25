@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frgmCont, profile);
-                        fragmentTransaction.commit();
+                        fragmentTransaction.commitAllowingStateLoss();
                     }
                 });
                 btn_main.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frgmCont, nf);
-                        fragmentTransaction.commit();
+                        fragmentTransaction.commitAllowingStateLoss();
 
                     }
                 });
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frgmCont, add);
-                        fragmentTransaction.commit();
+                        fragmentTransaction.commitAllowingStateLoss();
                     }
                 });
                 btn_message.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frgmCont, chat);
-                        fragmentTransaction.commit();
+                        fragmentTransaction.commitAllowingStateLoss();
                     }
                 });
             }
