@@ -58,6 +58,10 @@ public class splash extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        SharedPreferences preferences = getSharedPreferences("Main", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("first");
+        editor.apply();
         new AsyncRequest().execute();
     }
 

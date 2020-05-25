@@ -54,11 +54,11 @@ public class MainActivity extends AppCompatActivity {
                         user.getPassword(), user.getAvatar(), new ArrayList<String>(user.getPosts().values()),
                         user.getRating());
                 chat = new Chat(text_login);
-                SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+                SharedPreferences preferences = getSharedPreferences("Main", MODE_PRIVATE);
                 boolean first = preferences.getBoolean("first", true);
                 if(first) {
                     fragmentTransaction.add(R.id.frgmCont, nf);
-                    fragmentTransaction.commitAllowingStateLoss();
+                    fragmentTransaction.commit();
                     SharedPreferences.Editor ed = preferences.edit();
                     ed.putBoolean("first", false);
                     ed.apply();
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frgmCont, profile);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        fragmentTransaction.commit();
                     }
                 });
                 btn_main.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frgmCont, nf);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        fragmentTransaction.commit();
 
                     }
                 });
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frgmCont, add);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        fragmentTransaction.commit();
                     }
                 });
                 btn_message.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frgmCont, chat);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        fragmentTransaction.commit();
                     }
                 });
             }
@@ -111,12 +111,4 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.remove("first");
-        editor.apply();
-    }
 }
