@@ -69,7 +69,8 @@ public class NewAccount extends AppCompatActivity {
                                 already_exists = true;
                             }
                         }
-                        if(!already_exists && !(text_login.length() == 0) && !(text_password.length() < 8)){
+                        String mail = text_login.split("@")[1];
+                        if(!already_exists && !(text_login.length() == 0) && !(text_password.length() < 8) && mail.equals("gmail.com")){
                             already_exists = true;
                             auth = FirebaseAuth.getInstance();
                             auth.createUserWithEmailAndPassword(text_login, text_password).addOnCompleteListener((Activity) getContext, new OnCompleteListener<AuthResult>() {
@@ -116,6 +117,8 @@ public class NewAccount extends AppCompatActivity {
                             });
                         }else if(text_password.length() < 8){
                             Toast.makeText(getContext, "Create stronger password", Toast.LENGTH_LONG).show();
+                        }else if(!mail.equals("gmail.com")){
+                            Toast.makeText(getContext, "Enter gmail email", Toast.LENGTH_LONG).show();
                         }
                         else if(text_login.length() == 0){
                             Toast.makeText(getContext, "Enter the login", Toast.LENGTH_LONG).show();

@@ -43,6 +43,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         />
     <TextView
+        android:id="@+id/heading"
         android:text="@string/messages"
         android:layout_width="match_parent"
         android:textColor="@color/active_blue"
