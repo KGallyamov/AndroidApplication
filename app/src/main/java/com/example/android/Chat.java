@@ -287,8 +287,14 @@ public class Chat extends Fragment {
                 unread.put(i, 0);
             }
         }
-        ChatListAdapter adapter = new ChatListAdapter(getContext(), R.layout.chat_item, names, unread);
-        chats.setAdapter(adapter);
+        if(names.length == 0){
+            TextView heading = getActivity().findViewById(R.id.heading);
+            heading.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            heading.setText("No messages");
+        }else {
+            ChatListAdapter adapter = new ChatListAdapter(getContext(), R.layout.chat_item, names, unread);
+            chats.setAdapter(adapter);
+        }
     }
 
     public void startDialog(){
