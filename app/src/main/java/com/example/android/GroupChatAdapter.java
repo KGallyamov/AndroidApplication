@@ -43,7 +43,8 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
     String path;
     ArrayList<String> message_path;
     LayoutInflater inflater;
-    public GroupChatAdapter(@NonNull Context context, int resource, Message[] messages, String path, ArrayList<String> message_path, LayoutInflater inflater) {
+    public GroupChatAdapter(@NonNull Context context, int resource, Message[] messages, String path,
+                            ArrayList<String> message_path, LayoutInflater inflater) {
         super(context, resource, messages);
         this.messages = messages;
         this.path = path;
@@ -144,10 +145,11 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
             @Override
             public boolean onLongClick(View v) {
                 final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
-                View dialogView = inflater.inflate(R.layout.message_options, null);
+                View dialogView = inflater.inflate(R.layout.group_chat_message_options, null);
                 TextView copy_text = dialogView.findViewById(R.id.copy);
                 TextView edit_message = dialogView.findViewById(R.id.edit);
                 TextView delete = dialogView.findViewById(R.id.delete);
+                TextView pin = (TextView) dialogView.findViewById(R.id.pin_message);
                 TextView exit = dialogView.findViewById(R.id.Cancel);
                 if(login.equals(message.getAuthor())){
                     edit_message.setVisibility(View.VISIBLE);
@@ -171,6 +173,15 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                         ClipData clip = ClipData.newPlainText("", message.getText());
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(getContext(), "Text copied", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                    }
+                });
+                pin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DatabaseReference pin_message = FirebaseDatabase.getInstance().getReference();
+                        pin_message.child("GroupChats").child(path).child("pinned_message").
+                                setValue(message_path.get(position));
                         alertDialog.dismiss();
                     }
                 });
@@ -254,6 +265,7 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                                                     Toast.makeText(getContext(), "Please check your connection", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
+
 
                                         }
                                     }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

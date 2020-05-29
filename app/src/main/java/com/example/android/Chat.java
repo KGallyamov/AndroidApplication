@@ -450,8 +450,9 @@ public class Chat extends Fragment {
                                 messages.put("-M0t3jq9g", new Message(message, login, now, false, "no_image"));
 
                                 final DatabaseReference new_chat = FirebaseDatabase.getInstance().getReference();
+
                                 new_chat.child("GroupChats").push().setValue(new GroupChat(image_link,
-                                        members_map, messages, title, login), new DatabaseReference.CompletionListener() {
+                                        members_map, messages, title, login, "no_message"), new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                         updateUsers(receviers, databaseReference.getKey());
@@ -524,9 +525,24 @@ public class Chat extends Fragment {
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getContext(), GroupChatActivity.class);
-                        intent.putExtra("path", chats.get(getAdapterPosition()));
-                        startActivity(intent);
+                        DatabaseReference check_pinned = FirebaseDatabase.getInstance().getReference();
+                        check_pinned.child("GroupChats").child(chats.get(getAdapterPosition())).
+                                child("pinned_message").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String pinned_message_link = dataSnapshot.getValue().toString();
+                                Intent intent = new Intent(getContext(), GroupChatActivity.class);
+                                intent.putExtra("path", chats.get(getAdapterPosition()));
+                                intent.putExtra("pinned", pinned_message_link);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
                     }
                 });
             }

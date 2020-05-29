@@ -56,9 +56,35 @@
 
     </LinearLayout>
 
-    <ListView
+    <LinearLayout
+        android:id="@+id/pinned_message"
+        android:paddingLeft="10dp"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical"
         android:layout_marginTop="70dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:id="@+id/author_login"
+            android:textSize="18sp"
+            android:fontFamily="monospace"
+            android:textColor="@color/active_blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:paddingLeft="5dp"
+            android:fontFamily="monospace"
+            android:textColor="#C4B7B7"/>
+    </LinearLayout>
+
+    <ListView
+        android:layout_marginTop="120dp"
         android:id="@+id/messages_list"
+        android:layout_marginBottom="50dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

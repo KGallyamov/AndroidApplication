@@ -8,14 +8,25 @@ public class GroupChat {
     private HashMap<String, Message> messages;
     private String title;
     private String creator;
+    private String pinned_message;
     GroupChat(){}
 
-    GroupChat(String chat_avatar, HashMap<String, String> members, HashMap<String, Message> messages, String title, String creator){
+    GroupChat(String chat_avatar, HashMap<String, String> members, HashMap<String, Message> messages,
+              String title, String creator, String pinned_message){
         this.chat_avatar = chat_avatar;
         this.members = members;
         this.messages = messages;
         this.title = title;
         this.creator = creator;
+        this.pinned_message = pinned_message;
+    }
+
+    public String getPinned_message() {
+        return pinned_message;
+    }
+
+    public void setPinned_message(String pinned_message) {
+        this.pinned_message = pinned_message;
     }
 
     public String getCreator() {
