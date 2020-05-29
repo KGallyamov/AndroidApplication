@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.vision.text.Line;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,12 +41,39 @@ public class GroupChatActivity extends AppCompatActivity {
     TextView exit;
     Button send, attach_image;
     EditText write_message;
+    boolean pinned_exists = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_chat);
         path = getIntent().getStringExtra("path");
+        String pinned_message_link = getIntent().getStringExtra("pinned");
+        if(pinned_message_link.equals("no_message")){
+            setContentView(R.layout.activity_group_chat);
+        }else{
+            setContentView(R.layout.activity_group_chat_pinned_message);
+            pinned_exists = true;
+            final TextView pinned_text = (TextView) findViewById(R.id.text);
+            final TextView pinned_author = (TextView) findViewById(R.id.author_login);
+            DatabaseReference pinned_data = FirebaseDatabase.getInstance().getReference();
+            pinned_data.child("GroupChats").child(path).child("messages").child(pinned_message_link).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Message message = dataSnapshot.getValue(Message.class);
+                    try{
+                        pinned_text.setText(message.getText().substring(0, 20));
+                    }catch (Exception e){
+                        pinned_text.setText(message.getText());
+                    }
+                    pinned_author.setText(message.getAuthor());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
         messages = (ListView) findViewById(R.id.messages_list);
         chat_title = (TextView) findViewById(R.id.title);
         exit = (TextView) findViewById(R.id.exit);
@@ -52,12 +81,24 @@ public class GroupChatActivity extends AppCompatActivity {
         send = (Button) findViewById(R.id.send_comment);
         write_message = (EditText) findViewById(R.id.write_message);
 
-        (findViewById(R.id.chat_info)).setOnClickListener(new View.OnClickListener() {
+        DatabaseReference db_chat_creator = FirebaseDatabase.getInstance().getReference();
+        db_chat_creator.child("GroupChats").child(path).child("creator").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GroupChatActivity.this, GroupChatInfo.class);
-                intent.putExtra("path", path);
-                startActivity(intent);
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                (findViewById(R.id.chat_info)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(GroupChatActivity.this, GroupChatInfo.class);
+                        intent.putExtra("path", path);
+                        intent.putExtra("creator", dataSnapshot.getValue().toString());
+                        startActivity(intent);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
         Intent intent = getIntent();
@@ -91,13 +132,22 @@ public class GroupChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Message> list = new ArrayList<>();
-                ArrayList<String> paths = new ArrayList<>();
+                final ArrayList<String> paths = new ArrayList<>();
                 for(DataSnapshot i:dataSnapshot.getChildren()){
                     list.add(i.getValue(Message.class));
                     paths.add(i.getKey());
                 }
                 GroupChatAdapter adapter = new GroupChatAdapter(GroupChatActivity.this,
                         R.layout.message_out_item,list.toArray(new Message[0]), path, paths, getLayoutInflater());
+                if(pinned_exists){
+                    LinearLayout pinned = (LinearLayout) findViewById(R.id.pinned_message);
+                    pinned.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            messages.smoothScrollToPosition(paths.indexOf(getIntent().getStringExtra("pinned")));
+                        }
+                    });
+                }
                 messages.setAdapter(adapter);
             }
 
