@@ -44,12 +44,14 @@ import java.util.UUID;
 
 public class GroupChatInfo extends AppCompatActivity {
     String path;
+    String creator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_chat_info);
         path = getIntent().getStringExtra("path");
+        creator = getIntent().getStringExtra("creator");
         Button exit = (Button) findViewById(R.id.exit123456);
         final EditText new_member_name = (EditText) findViewById(R.id.member_name);
         final ListView members = (ListView) findViewById(R.id.members);
@@ -75,7 +77,7 @@ public class GroupChatInfo extends AppCompatActivity {
                         GroupChatMembersAdapter adapter = new GroupChatMembersAdapter(
                                 GroupChatInfo.this, R.layout.group_chat_member,
                                 list.toArray(new User[0]),
-                                list_members.toArray(new String[0]));
+                                list_members.toArray(new String[0]), creator, path);
                         members.setAdapter(adapter);
                     }
 

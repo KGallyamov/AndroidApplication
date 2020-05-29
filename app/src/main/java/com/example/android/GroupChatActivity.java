@@ -52,12 +52,25 @@ public class GroupChatActivity extends AppCompatActivity {
         send = (Button) findViewById(R.id.send_comment);
         write_message = (EditText) findViewById(R.id.write_message);
 
-        (findViewById(R.id.chat_info)).setOnClickListener(new View.OnClickListener() {
+
+        DatabaseReference db_chat_creator = FirebaseDatabase.getInstance().getReference();
+        db_chat_creator.child("GroupChats").child(path).child("creator").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GroupChatActivity.this, GroupChatInfo.class);
-                intent.putExtra("path", path);
-                startActivity(intent);
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                (findViewById(R.id.chat_info)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(GroupChatActivity.this, GroupChatInfo.class);
+                        intent.putExtra("path", path);
+                        intent.putExtra("creator", dataSnapshot.getValue().toString());
+                        startActivity(intent);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
         Intent intent = getIntent();
