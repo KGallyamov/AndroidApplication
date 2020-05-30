@@ -87,10 +87,16 @@ public class NewAccount extends AppCompatActivity {
                             String now = dateformat.format(c.getTime());
                             HashMap<String, String> chats = new HashMap<>();
                             chats.put("zero", "nothing");
+                            HashMap<String, String> friends = new HashMap<>();
+                            friends.put("zero", "nothing");
+                            HashMap<String, String> privacy_settings = new HashMap();
+                            privacy_settings.put("send_messages", "everyone");
+                            privacy_settings.put("see_my_posts", "everyone");
+                            privacy_settings.put("add_to_group_chats", "friends");
                             databaseReference.child(db_login).setValue(new User(text_password,
                                                                                 "user",
                                     "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2Fdefault_avatar.png?alt=media&token=7807ba53-1240-41d1-8f63-70f2e3e38cec",
-                                            posts, now, 0, chats),
+                                            posts, now, 0, chats, friends, privacy_settings),
                                     new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
