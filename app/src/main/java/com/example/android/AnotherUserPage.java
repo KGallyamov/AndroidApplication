@@ -43,6 +43,8 @@ public class AnotherUserPage extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.another_user_page);
+        //TDO: показывать информацию в зависимости от настроек
+        // кнопку добавить в друзья либо удалить из друзей если уже в друзьях
         avatar = (ImageView) findViewById(R.id.avatar);
         login = (TextView) findViewById(R.id.login);
         role = (TextView) findViewById(R.id.role);

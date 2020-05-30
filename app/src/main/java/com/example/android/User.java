@@ -10,10 +10,14 @@ public class User {
     private HashMap<String, String> chats;
     private String lastSeen;
     private float rating;
+    private HashMap<String, String> friends;
+    private HashMap<String, String> privacy_settings;
     User(){
     }
 
-    User(String password, String role, String avatar, HashMap<String, String> posts, String lastSeen, float rating, HashMap<String, String> chats){
+    User(String password, String role, String avatar, HashMap<String, String> posts, String lastSeen,
+         float rating, HashMap<String, String> chats, HashMap<String, String> friends,
+         HashMap<String, String> privacy_settings){
         this.password = password;
         this.role = role;
         this.avatar = avatar;
@@ -21,6 +25,24 @@ public class User {
         this.lastSeen = lastSeen;
         this.rating = rating;
         this.chats = chats;
+        this.friends = friends;
+        this.privacy_settings = privacy_settings;
+    }
+
+    public HashMap<String, String> getPrivacy_settings() {
+        return privacy_settings;
+    }
+
+    public void setPrivacy_settings(HashMap<String, String> privacy_settings) {
+        this.privacy_settings = privacy_settings;
+    }
+
+    public HashMap<String, String> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(HashMap<String, String> friends) {
+        this.friends = friends;
     }
 
     public HashMap<String, String> getChats() {

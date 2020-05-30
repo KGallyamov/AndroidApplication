@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -99,7 +100,11 @@ public class GroupChatInfo extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 GroupChat chat = dataSnapshot.getValue(GroupChat.class);
-                Glide.with(GroupChatInfo.this).load(chat.getChat_avatar()).into((ImageView) findViewById(R.id.chat_avatar));
+                try {
+                    Glide.with(GroupChatInfo.this).load(chat.getChat_avatar()).into((ImageView) findViewById(R.id.chat_avatar));
+                } catch (IllegalArgumentException e){
+                    Log.e("GroupChatInfo_106", e.toString());
+                }
                 ((TextView) findViewById(R.id.title)).setText(chat.getTitle());
 
             }

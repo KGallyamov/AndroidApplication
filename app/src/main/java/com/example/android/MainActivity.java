@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 add = new Add_post(user.getRole(), text_login);
                 profile = new Profile(user.getRole(), text_login,
                         user.getPassword(), user.getAvatar(), new ArrayList<String>(user.getPosts().values()),
-                        user.getRating());
+                        user.getRating(), user.getPrivacy_settings(), user.getFriends());
                 chat = new Chat(text_login);
                 SharedPreferences preferences = getSharedPreferences("Main", MODE_PRIVATE);
                 boolean first = preferences.getBoolean("first", true);

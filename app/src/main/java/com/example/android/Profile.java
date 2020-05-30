@@ -68,16 +68,20 @@ public class Profile extends Fragment {
     private TextView tv_login, tv_password, tv_role;
     private final int PICK_IMAGE_REQUEST = 71;
     float rating;
+    private HashMap<String, String> privacy_settings, friends;
 
     public Profile(){}
 
-    Profile(String role, String login, String password, String text_avatar, ArrayList<String> posts, float rating){
+    Profile(String role, String login, String password, String text_avatar, ArrayList<String> posts,
+            float rating, HashMap<String, String> privacy_settings, HashMap<String, String> friends){
         this.role = role;
         this.login = login;
         this.password = "Password: " + password;
         this.text_avatar = text_avatar;
         this.posts = posts;
         this.rating = rating;
+        this.friends = friends;
+        this.privacy_settings = privacy_settings;
     }
 
 
@@ -93,6 +97,10 @@ public class Profile extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        //TDO: показать количество друзей, при нажатии на них открыть список с ними
+        // какой-нибудь тип уведомлений о заявке в друзья
+        Log.d("Profile", Integer.toString(friends.size()));
+
         tv_login = (TextView) getActivity().findViewById(R.id.login);
         tv_role  =(TextView) getActivity().findViewById(R.id.role);
         tv_password = (TextView) getActivity().findViewById(R.id.password);
