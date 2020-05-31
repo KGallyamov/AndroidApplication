@@ -7,9 +7,10 @@ public class Comment {
     private String reply;
     private HashMap<String, String> likes;
 
-    Comment(){}
+    Comment() {
+    }
 
-    Comment(String author, String text, String time, HashMap<String, String> likes){
+    Comment(String author, String text, String time, HashMap<String, String> likes) {
         this.author = author;
         this.text = text;
         this.time = time;

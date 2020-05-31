@@ -57,12 +57,17 @@ public class Chat extends Fragment {
     Context context = getContext();
     AlertDialog dialogBuilder = null;
     Uri filePath = null;
-    public Chat(){}
+
+    public Chat() {
+    }
+
     String image_link;
     LayoutInflater inf;
-    Chat(String login){
+
+    Chat(String login) {
         this.login = login;
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -75,8 +80,8 @@ public class Chat extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<String> chats = new ArrayList<>();
-                for(DataSnapshot i:dataSnapshot.getChildren()){
-                    if(!i.getKey().equals("zero")){
+                for (DataSnapshot i : dataSnapshot.getChildren()) {
+                    if (!i.getKey().equals("zero")) {
                         chats.add(i.getValue().toString());
                     }
                 }
@@ -98,19 +103,19 @@ public class Chat extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<String> ch = new ArrayList<>();
                 HashMap<String, HashMap<String, Message>> messages = new HashMap<>();
-                for(DataSnapshot i:dataSnapshot.getChildren()){
+                for (DataSnapshot i : dataSnapshot.getChildren()) {
                     String[] arr = i.getKey().split("_");
-                    if(arr[1].equals(login)){
+                    if (arr[1].equals(login)) {
                         ch.add(arr[0]);
                         HashMap<String, Message> oneChat = new HashMap<>();
-                        for(DataSnapshot j:i.getChildren()){
+                        for (DataSnapshot j : i.getChildren()) {
                             oneChat.put(j.getKey(), j.getValue(Message.class));
                         }
                         messages.put(arr[0], oneChat);
-                    }else if(arr[0].equals(login)){
+                    } else if (arr[0].equals(login)) {
                         ch.add(arr[1]);
                         HashMap<String, Message> oneChat = new HashMap<>();
-                        for(DataSnapshot j:i.getChildren()){
+                        for (DataSnapshot j : i.getChildren()) {
                             oneChat.put(j.getKey(), j.getValue(Message.class));
                         }
                         messages.put(arr[1], oneChat);
@@ -118,6 +123,7 @@ public class Chat extends Fragment {
                 }
                 sortByTime(ch.toArray(new String[0]), messages);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -166,17 +172,17 @@ public class Chat extends Fragment {
     private void sortByTime(String[] names, HashMap<String, HashMap<String, Message>> messages) {
         ArrayList<String> lastMessagesTime = new ArrayList<>();
         HashMap<String, Integer> unread = new HashMap<>();
-        for(HashMap<String, Message> i:messages.values()){
-            for(Message j:i.values()){
+        for (HashMap<String, Message> i : messages.values()) {
+            for (Message j : i.values()) {
                 lastMessagesTime.add(j.getTime());
                 break;
             }
         }
         String[] times = lastMessagesTime.toArray(new String[0]);
         boolean again = true;
-        while(again){
+        while (again) {
             again = false;
-            for(int i=0;i<times.length - 1; i++){
+            for (int i = 0; i < times.length - 1; i++) {
                 String ymd = times[i].split(" ")[1], hms = times[i].split(" ")[0];
                 Log.d(ymd, hms);
                 HashMap<String, Integer> months = new HashMap<>();
@@ -208,59 +214,59 @@ public class Chat extends Fragment {
                         n_hour = Integer.parseInt(n_hms.substring(0, 2)),
                         n_minute = Integer.parseInt(n_hms.substring(3, 5)),
                         n_second = Integer.parseInt(n_hms.substring(6));
-                if(year < n_year){
+                if (year < n_year) {
                     again = true;
                     String k = times[i];
-                    times[i] = times[i+1];
-                    times[i+1] = k;
+                    times[i] = times[i + 1];
+                    times[i + 1] = k;
                     k = names[i];
-                    names[i] = names[i+1];
-                    names[i+1] = k;
-                } else if( year == n_year){
-                    if(month < n_month){
+                    names[i] = names[i + 1];
+                    names[i + 1] = k;
+                } else if (year == n_year) {
+                    if (month < n_month) {
                         again = true;
                         String k = times[i];
-                        times[i] = times[i+1];
-                        times[i+1] = k;
+                        times[i] = times[i + 1];
+                        times[i + 1] = k;
                         k = names[i];
-                        names[i] = names[i+1];
-                        names[i+1] = k;
-                    }else if(month == n_month){
-                        if(day < n_day){
+                        names[i] = names[i + 1];
+                        names[i + 1] = k;
+                    } else if (month == n_month) {
+                        if (day < n_day) {
                             again = true;
                             String k = times[i];
-                            times[i] = times[i+1];
-                            times[i+1] = k;
+                            times[i] = times[i + 1];
+                            times[i + 1] = k;
                             k = names[i];
-                            names[i] = names[i+1];
-                            names[i+1] = k;
-                        } else if(n_day == day){
-                            if(hour < n_hour){
+                            names[i] = names[i + 1];
+                            names[i + 1] = k;
+                        } else if (n_day == day) {
+                            if (hour < n_hour) {
                                 again = true;
                                 String k = times[i];
-                                times[i] = times[i+1];
-                                times[i+1] = k;
+                                times[i] = times[i + 1];
+                                times[i + 1] = k;
                                 k = names[i];
-                                names[i] = names[i+1];
-                                names[i+1] = k;
-                            } else if(hour == n_hour){
-                                if(minute < n_minute){
+                                names[i] = names[i + 1];
+                                names[i + 1] = k;
+                            } else if (hour == n_hour) {
+                                if (minute < n_minute) {
                                     again = true;
                                     String k = times[i];
-                                    times[i] = times[i+1];
-                                    times[i+1] = k;
+                                    times[i] = times[i + 1];
+                                    times[i + 1] = k;
                                     k = names[i];
-                                    names[i] = names[i+1];
-                                    names[i+1] = k;
-                                } else if(minute == n_minute){
-                                    if(second< n_second){
+                                    names[i] = names[i + 1];
+                                    names[i + 1] = k;
+                                } else if (minute == n_minute) {
+                                    if (second < n_second) {
                                         again = true;
                                         String k = times[i];
-                                        times[i] = times[i+1];
-                                        times[i+1] = k;
+                                        times[i] = times[i + 1];
+                                        times[i + 1] = k;
                                         k = names[i];
-                                        names[i] = names[i+1];
-                                        names[i+1] = k;
+                                        names[i] = names[i + 1];
+                                        names[i + 1] = k;
                                     }
                                 }
                             }
@@ -269,9 +275,9 @@ public class Chat extends Fragment {
                 }
             }
         }
-        for(String i:messages.keySet()){
-            for(Message j:messages.get(i).values()){
-                if(!j.getAuthor().equals(login)) {
+        for (String i : messages.keySet()) {
+            for (Message j : messages.get(i).values()) {
+                if (!j.getAuthor().equals(login)) {
                     if (!j.getAuthor().equals(login) && !j.isRead()) {
                         if (unread.containsKey(i)) {
                             unread.put(i, unread.get(i) + 1);
@@ -282,22 +288,22 @@ public class Chat extends Fragment {
                 }
             }
         }
-        for(String i:names){
-            if(!unread.containsKey(i)){
+        for (String i : names) {
+            if (!unread.containsKey(i)) {
                 unread.put(i, 0);
             }
         }
-        if(names.length == 0){
+        if (names.length == 0) {
             TextView heading = getActivity().findViewById(R.id.heading);
             heading.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             heading.setText("No messages");
-        }else {
+        } else {
             ChatListAdapter adapter = new ChatListAdapter(getContext(), R.layout.chat_item, names, unread);
             chats.setAdapter(adapter);
         }
     }
 
-    public void startDialog(){
+    public void startDialog() {
         final AlertDialog dialogBuilder = new AlertDialog.Builder(getContext()).create();
         View dialogView = inf.inflate(R.layout.start_dialog, null);
 
@@ -315,7 +321,7 @@ public class Chat extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!message.getText().toString().equals("") && !another_user.getText().toString().equals("")){
+                if (!message.getText().toString().equals("") && !another_user.getText().toString().equals("")) {
                     final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
                     final String recevier = another_user.getText().toString();
                     DatabaseReference users = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -323,14 +329,14 @@ public class Chat extends Fragment {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             boolean user_exists = false;
-                            for(DataSnapshot i:dataSnapshot.getChildren()){
-                                if(i.getKey().equals(recevier)){
+                            for (DataSnapshot i : dataSnapshot.getChildren()) {
+                                if (i.getKey().equals(recevier)) {
                                     user_exists = true;
                                 }
                             }
-                            if(!user_exists){
+                            if (!user_exists) {
                                 Toast.makeText(getContext(), "Specified user doesn't exist", Toast.LENGTH_SHORT).show();
-                            }else{
+                            } else {
                                 String[] arr = new String[]{login, recevier};
                                 Arrays.sort(arr);
                                 final String name = arr[0] + "_" + arr[1];
@@ -350,7 +356,7 @@ public class Chat extends Fragment {
                         }
                     });
 
-                }else{
+                } else {
                     Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 }
 
@@ -360,7 +366,7 @@ public class Chat extends Fragment {
         dialogBuilder.show();
     }
 
-    public void startChat(){
+    public void startChat() {
         dialogBuilder = new AlertDialog.Builder(getContext()).create();
         dialogView = inf.inflate(R.layout.start_group_chat, null);
 
@@ -388,12 +394,12 @@ public class Chat extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!message.getText().toString().equals("") && !members.getText().toString().equals("") && !groupTitle.getText().toString().equals("")){
+                if (!message.getText().toString().equals("") && !members.getText().toString().equals("") && !groupTitle.getText().toString().equals("")) {
                     final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
                     String members_names = members.getText().toString() + " " + login;
                     final String[] receviers = members_names.split(" ");
                     uploadImage(filePath, receviers, message.getText().toString(), groupTitle.getText().toString());
-                }else{
+                } else {
                     Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 }
 
@@ -402,12 +408,12 @@ public class Chat extends Fragment {
         dialogBuilder.setView(dialogView);
         dialogBuilder.show();
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 71 && resultCode == -1
-                && data != null && data.getData() != null )
-        {
+        if (requestCode == 71 && resultCode == -1
+                && data != null && data.getData() != null) {
             filePath = data.getData();
             Bitmap bitmap;
             try {
@@ -421,16 +427,14 @@ public class Chat extends Fragment {
     }
 
 
-
     private void uploadImage(Uri filePath, final String[] receviers, final String message, final String title) {
 
-        if(filePath != null)
-        {
+        if (filePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            final StorageReference ref = FirebaseStorage.getInstance().getReference().child("images/"+ UUID.randomUUID().toString());
+            final StorageReference ref = FirebaseStorage.getInstance().getReference().child("images/" + UUID.randomUUID().toString());
             ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -439,9 +443,9 @@ public class Chat extends Fragment {
                         @Override
                         public void onSuccess(Uri uri) {
                             image_link = uri.toString();
-                            try{
+                            try {
                                 final HashMap<String, String> members_map = new HashMap<>();
-                                for(String i:receviers){
+                                for (String i : receviers) {
                                     members_map.put(i, i);
                                 }
                                 HashMap<String, Message> messages = new HashMap<>();
@@ -460,7 +464,7 @@ public class Chat extends Fragment {
                                         dialogBuilder.dismiss();
                                     }
                                 });
-                            }catch(NullPointerException | ArrayIndexOutOfBoundsException e){
+                            } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
                                 Toast.makeText(getContext(), "Put spaces between names", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -471,15 +475,15 @@ public class Chat extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(getActivity(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
                         }
                     });
         }
@@ -500,9 +504,10 @@ public class Chat extends Fragment {
         }
     }
 
-    public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.ViewHolder>{
+    public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.ViewHolder> {
         ArrayList<String> chats;
-        GroupChatAdapter(ArrayList<String> chats){
+
+        GroupChatAdapter(ArrayList<String> chats) {
             this.chats = chats;
         }
 
@@ -559,7 +564,7 @@ public class Chat extends Fragment {
                     holder.title.setText(chat.getTitle());
                     try {
                         Glide.with(Objects.requireNonNull(getContext())).load(chat.getChat_avatar()).into(holder.avatar);
-                    }catch (NullPointerException e){
+                    } catch (NullPointerException e) {
 
                     }
 

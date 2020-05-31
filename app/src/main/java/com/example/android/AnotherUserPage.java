@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,26 +34,28 @@ import java.util.Calendar;
 import java.util.Collections;
 
 public class AnotherUserPage extends AppCompatActivity {
-    TextView login, posts, role, exit;
+    TextView login, posts, role, exit, number_of_friends;
     ImageView avatar;
     Button write_message;
     RecyclerView user_posts;
     String author_login;
     Context context = this;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.another_user_page);
-        //TOO: показывать информацию в зависимости от настроек
+        //TODO: показывать информацию в зависимости от настроек
         // кнопку добавить в друзья либо удалить из друзей если уже в друзьях
         avatar = (ImageView) findViewById(R.id.avatar);
         login = (TextView) findViewById(R.id.login);
         role = (TextView) findViewById(R.id.role);
         posts = (TextView) findViewById(R.id.posts);
+        number_of_friends = (TextView) findViewById(R.id.number_of_friends);
         write_message = (Button) findViewById(R.id.start_converstaion);
         exit = (TextView) findViewById(R.id.exit);
         user_posts = (RecyclerView) findViewById(R.id.users_posts);
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
 
         author_login = intent.getStringExtra("author");
         login.setText(author_login);
@@ -62,7 +65,7 @@ public class AnotherUserPage extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int k = 0;
                 ArrayList<String> user_links = new ArrayList<>();
-                for(DataSnapshot i: dataSnapshot.getChildren()) {
+                for (DataSnapshot i : dataSnapshot.getChildren()) {
                     if (i.getKey().equals("role")) {
                         role.setText(i.getValue().toString());
                     } else if (i.getKey().equals("avatar")) {
@@ -74,16 +77,16 @@ public class AnotherUserPage extends AppCompatActivity {
                                 user_links.add(j.getValue().toString());
                             }
                         }
-                    } else if(i.getKey().equals("lastSeen")){
+                    } else if (i.getKey().equals("lastSeen")) {
                         Calendar c = Calendar.getInstance();
                         SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                         String[] now = dateformat.format(c.getTime()).split(" ");
                         String time = i.getValue().toString();
                         TextView lastSeen = findViewById(R.id.lastSeen);
-                        if(time.equals("online")){
+                        if (time.equals("online")) {
                             lastSeen.setTextColor(getResources().getColor(R.color.active_blue));
                             lastSeen.setText(i.getValue().toString());
-                        }else {
+                        } else {
                             if (now[1].equals(i.getValue().toString().split(" ")[1])) {
                                 String[] refactor = time.split(" ")[0].split(":");
                                 lastSeen.setText("Was online at " + refactor[0] + ":" + refactor[1]);
@@ -94,15 +97,33 @@ public class AnotherUserPage extends AppCompatActivity {
                                 lastSeen.setText("Was online at " + hour_minute + " " + day_month);
                             }
                         }
-                    } else if(i.getKey().equals("rating")){
+                    } else if (i.getKey().equals("rating")) {
                         float rating = i.getValue(Float.TYPE);
                         TextView tv_rating = (TextView) findViewById(R.id.rating);
                         tv_rating.setText(i.getValue().toString());
-                        if(rating > 0){
+                        if (rating > 0) {
                             tv_rating.setTextColor(getResources().getColor(R.color.rating_green));
-                        }else if(rating < 0){
+                        } else if (rating < 0) {
                             tv_rating.setTextColor(getResources().getColor(R.color.colorAccent));
                         }
+                    } else if(i.getKey().equals("friends")){
+                        ArrayList<String> friends_list = new ArrayList<>();
+                        for(DataSnapshot ds:i.getChildren()){
+                            if(ds.getValue().equals("friend")) {
+                                friends_list.add(ds.getKey());
+                            }
+                        }
+                        number_of_friends.setText(Integer.toString(friends_list.size()));
+                        RelativeLayout friends_layout = (RelativeLayout) findViewById(R.id.friends_layout);
+                        friends_layout.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent friends = new Intent(AnotherUserPage.this, FriendsList.class);
+                                friends.putExtra("name", author_login);
+                                friends.putExtra("show_requests", false);
+                                startActivity(friends);
+                            }
+                        });
                     }
                 }
                 fill(user_links);
@@ -136,7 +157,7 @@ public class AnotherUserPage extends AppCompatActivity {
                 send.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(!message.getText().toString().equals("") && !ed_another_user.getText().toString().equals("")){
+                        if (!message.getText().toString().equals("") && !ed_another_user.getText().toString().equals("")) {
                             final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
                             final String recevier = ed_another_user.getText().toString();
                             DatabaseReference users = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -144,14 +165,14 @@ public class AnotherUserPage extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     boolean user_exists = false;
-                                    for(DataSnapshot i:dataSnapshot.getChildren()){
-                                        if(i.getKey().equals(recevier)){
+                                    for (DataSnapshot i : dataSnapshot.getChildren()) {
+                                        if (i.getKey().equals(recevier)) {
                                             user_exists = true;
                                         }
                                     }
-                                    if(!user_exists){
+                                    if (!user_exists) {
                                         Toast.makeText(AnotherUserPage.this, "Specified user doesn't exist", Toast.LENGTH_SHORT).show();
-                                    }else{
+                                    } else {
                                         String[] arr = new String[]{login, recevier};
                                         Arrays.sort(arr);
                                         final String name = arr[0] + "_" + arr[1];
@@ -171,7 +192,7 @@ public class AnotherUserPage extends AppCompatActivity {
                                 }
                             });
 
-                        }else{
+                        } else {
                             Toast.makeText(AnotherUserPage.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                         }
 
@@ -188,7 +209,8 @@ public class AnotherUserPage extends AppCompatActivity {
             }
         });
     }
-    private void fill(final ArrayList<String> links){
+
+    private void fill(final ArrayList<String> links) {
         DatabaseReference data = FirebaseDatabase.getInstance().getReference().child("Data");
         data.addValueEventListener(new ValueEventListener() {
             @Override
@@ -196,8 +218,8 @@ public class AnotherUserPage extends AppCompatActivity {
                 final ArrayList<RecyclerItem> listItems = new ArrayList<>();
                 final ArrayList<String> pt = new ArrayList<>();
                 final LinearLayoutManager manager = new LinearLayoutManager(context);
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
-                    if(links.contains(dataSnapshot1.getKey())) {
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    if (links.contains(dataSnapshot1.getKey())) {
                         RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
                         listItems.add(p);
                         pt.add(dataSnapshot1.getKey());

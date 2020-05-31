@@ -42,7 +42,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final Comment db = getItem(position);
-        if(convertView == null){
+        if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.comment_item, null);
 
         }
@@ -67,16 +67,16 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int result = 0;
-                for(DataSnapshot i:dataSnapshot.getChildren()){
-                    if(!i.getKey().equals("zero")){
-                        if(i.getValue().equals("up")){
+                for (DataSnapshot i : dataSnapshot.getChildren()) {
+                    if (!i.getKey().equals("zero")) {
+                        if (i.getValue().equals("up")) {
                             ++result;
-                        }else{
+                        } else {
                             --result;
                         }
                         // пользователь уже оценил этот комментарий
-                        if(login.equals(i.getKey())){
-                            if(i.getValue().equals("up")){
+                        if (login.equals(i.getKey())) {
+                            if (i.getValue().equals("up")) {
                                 ((TextView) finalConvertView.findViewById(R.id.up)).
                                         setBackground(finalConvertView.getResources().getDrawable(R.drawable.ic_thumb_up_activated_24dp));
 
@@ -88,7 +88,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
                                                 child("likes").child(login).removeValue();
                                     }
                                 });
-                            }else{
+                            } else {
                                 ((TextView) finalConvertView.findViewById(R.id.down)).
                                         setBackground(finalConvertView.getResources().getDrawable(R.drawable.ic_thumb_down_activated_24dp));
 
@@ -142,9 +142,9 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
         String time = db.getTime().split("/")[0];
 
         // если отправили не сегодня, а раньше
-        if(now.equals(time)) {
+        if (now.equals(time)) {
             ((TextView) convertView.findViewById(R.id.time)).setText(db.getTime().split("/")[1]);
-        }else{
+        } else {
             ((TextView) convertView.findViewById(R.id.time)).setText(db.getTime().split("/")[0]);
         }
         author.setOnClickListener(new View.OnClickListener() {
