@@ -43,13 +43,15 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
     String path;
     ArrayList<String> message_path;
     LayoutInflater inflater;
+    String pinned_message_link;
     public GroupChatAdapter(@NonNull Context context, int resource, Message[] messages, String path,
-                            ArrayList<String> message_path, LayoutInflater inflater) {
+                            ArrayList<String> message_path, LayoutInflater inflater, String pinned_message_link) {
         super(context, resource, messages);
         this.messages = messages;
         this.path = path;
         this.message_path = message_path;
         this.inflater = inflater;
+        this.pinned_message_link = pinned_message_link;
     }
 
     @NonNull
@@ -155,6 +157,9 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                     edit_message.setVisibility(View.VISIBLE);
                     delete.setVisibility(View.VISIBLE);
                 }
+                if(message_path.get(position).equals(pinned_message_link)){
+                    pin.setText("Unpin message");
+                }
 
 
                 final AlertDialog alertDialog = ask.create();
@@ -179,10 +184,15 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                 pin.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DatabaseReference pin_message = FirebaseDatabase.getInstance().getReference();
-                        pin_message.child("GroupChats").child(path).child("pinned_message").
-                                setValue(message_path.get(position));
-                        alertDialog.dismiss();
+                        if(message_path.get(position).equals(pinned_message_link)){
+                            DatabaseReference pin_message = FirebaseDatabase.getInstance().getReference();
+                            pin_message.child("GroupChats").child(path).child("pinned_message").setValue("no_message");
+                            alertDialog.dismiss();
+                        }else {
+                            DatabaseReference pin_message = FirebaseDatabase.getInstance().getReference();
+                            pin_message.child("GroupChats").child(path).child("pinned_message").setValue(message_path.get(position));
+                            alertDialog.dismiss();
+                        }
                     }
                 });
                 edit_message.setOnClickListener(new View.OnClickListener() {

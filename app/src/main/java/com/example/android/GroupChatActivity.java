@@ -47,7 +47,7 @@ public class GroupChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         path = getIntent().getStringExtra("path");
-        String pinned_message_link = getIntent().getStringExtra("pinned");
+        final String pinned_message_link = getIntent().getStringExtra("pinned");
         if(pinned_message_link.equals("no_message")){
             setContentView(R.layout.activity_group_chat);
         }else{
@@ -55,6 +55,7 @@ public class GroupChatActivity extends AppCompatActivity {
             pinned_exists = true;
             final TextView pinned_text = (TextView) findViewById(R.id.text);
             final TextView pinned_author = (TextView) findViewById(R.id.author_login);
+            final TextView pinned_time = (TextView)  findViewById(R.id.message_time);
             DatabaseReference pinned_data = FirebaseDatabase.getInstance().getReference();
             pinned_data.child("GroupChats").child(path).child("messages").child(pinned_message_link).addValueEventListener(new ValueEventListener() {
                 @Override
@@ -64,6 +65,22 @@ public class GroupChatActivity extends AppCompatActivity {
                         pinned_text.setText(message.getText().substring(0, 20));
                     }catch (Exception e){
                         pinned_text.setText(message.getText());
+                    }
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat dateformat = new SimpleDateFormat("dd.MMMM.yyyy");
+                    SimpleDateFormat year = new SimpleDateFormat("yyyy");
+                    String now = dateformat.format(c.getTime());
+                    final String message_time = message.getTime();
+                    String[] h = message_time.split(" ")[0].split(":");
+                    // отправили не сегодня
+                    if(!now.equals(message_time.split(" ")[1])){
+                        String dm = message_time.split(" ")[1];
+                        if(year.format(c.getTime()).equals(dm.substring(dm.length() - 4))) {
+                            dm = dm.substring(0, dm.length() - 5);
+                        }
+                        pinned_time.setText(h[0] + ":" + h[1] + " " + dm);
+                    }else{
+                        pinned_time.setText(h[0] + ":" + h[1]);
                     }
                     pinned_author.setText(message.getAuthor());
                 }
@@ -138,7 +155,7 @@ public class GroupChatActivity extends AppCompatActivity {
                     paths.add(i.getKey());
                 }
                 GroupChatAdapter adapter = new GroupChatAdapter(GroupChatActivity.this,
-                        R.layout.message_out_item,list.toArray(new Message[0]), path, paths, getLayoutInflater());
+                        R.layout.message_out_item,list.toArray(new Message[0]), path, paths, getLayoutInflater(), pinned_message_link);
                 if(pinned_exists){
                     LinearLayout pinned = (LinearLayout) findViewById(R.id.pinned_message);
                     pinned.setOnClickListener(new View.OnClickListener() {

@@ -43,7 +43,7 @@ public class AnotherUserPage extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.another_user_page);
-        //TDO: показывать информацию в зависимости от настроек
+        //TOO: показывать информацию в зависимости от настроек
         // кнопку добавить в друзья либо удалить из друзей если уже в друзьях
         avatar = (ImageView) findViewById(R.id.avatar);
         login = (TextView) findViewById(R.id.login);
@@ -86,7 +86,7 @@ public class AnotherUserPage extends AppCompatActivity {
                         }else {
                             if (now[1].equals(i.getValue().toString().split(" ")[1])) {
                                 String[] refactor = time.split(" ")[0].split(":");
-                                lastSeen.setText(refactor[0] + ":" + refactor[1]);
+                                lastSeen.setText("Was online at " + refactor[0] + ":" + refactor[1]);
                             } else {
                                 String[] refactor = time.split(" ");
                                 String day_month = refactor[1].substring(0, refactor[1].length() - 5);
