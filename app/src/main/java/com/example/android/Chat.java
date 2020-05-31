@@ -390,7 +390,8 @@ public class Chat extends Fragment {
             public void onClick(View view) {
                 if(!message.getText().toString().equals("") && !members.getText().toString().equals("") && !groupTitle.getText().toString().equals("")){
                     final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
-                    final String[] receviers = members.getText().toString().split(" ");
+                    String members_names = members.getText().toString() + " " + login;
+                    final String[] receviers = members_names.split(" ");
                     uploadImage(filePath, receviers, message.getText().toString(), groupTitle.getText().toString());
                 }else{
                     Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();

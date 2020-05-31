@@ -97,7 +97,7 @@ public class Profile extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        //TDO: показать количество друзей, при нажатии на них открыть список с ними
+        //TOD: показать количество друзей, при нажатии на них открыть список с ними
         // какой-нибудь тип уведомлений о заявке в друзья
         Log.d("Profile", Integer.toString(friends.size()));
 

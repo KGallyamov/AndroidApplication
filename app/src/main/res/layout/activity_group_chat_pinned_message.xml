@@ -64,13 +64,27 @@
         android:layout_marginTop="70dp"
         android:layout_width="match_parent"
         android:layout_height="50dp">
-        <TextView
-            android:id="@+id/author_login"
-            android:textSize="18sp"
-            android:fontFamily="monospace"
-            android:textColor="@color/active_blue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="25dp">
+            <TextView
+                android:id="@+id/author_login"
+                android:textSize="18sp"
+                android:fontFamily="monospace"
+                android:textColor="@color/active_blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/message_time"
+                android:textSize="18sp"
+                android:layout_alignParentEnd="true"
+                android:fontFamily="monospace"
+                android:textColor="@color/active_blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </RelativeLayout>
+
         <TextView
             android:id="@+id/text"
             android:layout_width="match_parent"
