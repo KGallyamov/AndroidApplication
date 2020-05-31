@@ -65,23 +65,25 @@ public class Add_post extends Fragment implements View.OnClickListener {
     Button photo, post;
     Spinner spinner;
     private Uri filePath;
-    public String txtTitle="Title", txtDescription="Description", txtImage = "0-0", role;
+    public String txtTitle = "Title", txtDescription = "Description", txtImage = "0-0", role;
     FirebaseStorage storage;
     StorageReference storageReference;
     ArrayAdapter<String> adapter;
     String heading = "", login;
     String image_link = "";
-    String [] text_tags;
+    String[] text_tags;
     ArrayList<String> tags_db = new ArrayList<>();
     static List<String> headings = new ArrayList<>();
 
     private final int PICK_IMAGE_REQUEST = 71;
 
-    Add_post(String role, String login){
+    Add_post(String role, String login) {
         this.role = role;
         this.login = login;
     }
-    public Add_post(){}
+
+    public Add_post() {
+    }
 
 
     @Override
@@ -100,7 +102,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
         spinner = (Spinner) myView.findViewById(R.id.spinner);
 
         DatabaseReference head = FirebaseDatabase.getInstance().getReference().child("Headings");
-        if(role.equals("admin")){
+        if (role.equals("admin")) {
             headings.add("System message");
         }
         head.addValueEventListener(new ValueEventListener() {
@@ -129,6 +131,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
                                        int position, long id) {
                 heading = spinner.getSelectedItem().toString();
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
@@ -193,17 +196,17 @@ public class Add_post extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View v){
-        switch (v.getId()){
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.add_photo:
                 chooseImage();
                 break;
             case R.id.button_send:
-                if(description.getText().toString().equals("") ||
-                          tags.getText().toString().equals("") ||
-                          title.getText().toString().equals("")) {
+                if (description.getText().toString().equals("") ||
+                        tags.getText().toString().equals("") ||
+                        title.getText().toString().equals("")) {
                     Toast.makeText(getContext(), "Заполните все поля перед отправкой", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     uploadImage();
                 }
             default:
@@ -214,16 +217,15 @@ public class Add_post extends Fragment implements View.OnClickListener {
     private void uploadPost(String image) {
         image_link = image;
         new AsyncRequest().execute();
-        
+
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == -1
-                && data != null && data.getData() != null )
-        {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == -1
+                && data != null && data.getData() != null) {
             filePath = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
@@ -241,7 +243,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
                         .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
                             @Override
                             public void onSuccess(List<FirebaseVisionImageLabel> labels) {
-                                for (FirebaseVisionImageLabel label: labels) {
+                                for (FirebaseVisionImageLabel label : labels) {
                                     String text = label.getText();
                                     Log.d("Look: ", text);
                                     SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
@@ -258,51 +260,47 @@ public class Add_post extends Fragment implements View.OnClickListener {
                                 Log.d("LOOK_HERE", e.getMessage());
                             }
                         });
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
 
-
     private void uploadImage() {
 
-        if(filePath != null)
-        {
+        if (filePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            final StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
+            final StorageReference ref = storageReference.child("images/" + UUID.randomUUID().toString());
             ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    progressDialog.dismiss();
+                    ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    String image = uri.toString();
-                                    uploadPost(image);
-                                }
-                            });
+                        public void onSuccess(Uri uri) {
+                            String image = uri.toString();
+                            uploadPost(image);
                         }
-                    })
+                    });
+                }
+            })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(getActivity(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
                         }
                     });
         }
@@ -314,6 +312,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
+
     class AsyncRequest extends AsyncTask<String, Integer, String> {
 
         @Override
@@ -324,7 +323,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
                 try {
                     client.setDefaultTimeout(30000);
                     client.connect("time-a-b.nist.gov");
-                    time =  client.getDate().toString();
+                    time = client.getDate().toString();
                 } finally {
                     client.disconnect();
                 }
@@ -356,7 +355,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
             months.put("April", "апреля");
             // успешное соединение с сервером
             String time_for_database;
-            if(!s.equals("failed")) {
+            if (!s.equals("failed")) {
                 String[] time_data = s.split(" ");
                 for (String i : time_data) {
                     Log.d("Look", i);
@@ -367,12 +366,12 @@ public class Add_post extends Fragment implements View.OnClickListener {
 
             }
             // если не получилось взять время с сервера
-            else{
+            else {
                 Calendar c = Calendar.getInstance();
                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                 time_for_database = dateformat.format(c.getTime());
             }
-            for(String i:text_tags){
+            for (String i : text_tags) {
                 tags_db.add(i);
             }
 
@@ -400,7 +399,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
             databaseReference.child(wh).push().setValue(data, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    if(role.equals("admin")){
+                    if (role.equals("admin")) {
                         DatabaseReference posts_num_update = FirebaseDatabase.getInstance().getReference();
                         posts_num_update.child("Users").child(login).child("posts").push().setValue(databaseReference.getKey());
                     }

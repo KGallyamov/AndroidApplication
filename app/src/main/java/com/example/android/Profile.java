@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,15 +66,16 @@ public class Profile extends Fragment {
     ImageView avatar;
     boolean is = true;
     ArrayList<String> posts;
-    private TextView tv_login, tv_password, tv_role;
+    private TextView tv_login, tv_password, tv_role, tv_friends;
     private final int PICK_IMAGE_REQUEST = 71;
     float rating;
     private HashMap<String, String> privacy_settings, friends;
 
-    public Profile(){}
+    public Profile() {
+    }
 
     Profile(String role, String login, String password, String text_avatar, ArrayList<String> posts,
-            float rating, HashMap<String, String> privacy_settings, HashMap<String, String> friends){
+            float rating, HashMap<String, String> privacy_settings, HashMap<String, String> friends) {
         this.role = role;
         this.login = login;
         this.password = "Password: " + password;
@@ -97,18 +99,16 @@ public class Profile extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        //TOD: показать количество друзей, при нажатии на них открыть список с ними
-        // какой-нибудь тип уведомлений о заявке в друзья
-        Log.d("Profile", Integer.toString(friends.size()));
 
         tv_login = (TextView) getActivity().findViewById(R.id.login);
-        tv_role  =(TextView) getActivity().findViewById(R.id.role);
+        tv_role = (TextView) getActivity().findViewById(R.id.role);
         tv_password = (TextView) getActivity().findViewById(R.id.password);
         tv_posts = (TextView) getActivity().findViewById(R.id.posts);
         user_posts = (RecyclerView) getActivity().findViewById(R.id.users_posts);
         look_password = (Button) getActivity().findViewById(R.id.look_password);
         change = (TextView) getActivity().findViewById(R.id.change);
-        confirm  =(Button) getActivity().findViewById(R.id.confirm);
+        tv_friends = (TextView) getActivity().findViewById(R.id.number_of_friends);
+        confirm = (Button) getActivity().findViewById(R.id.confirm);
         exit = (Button) getActivity().findViewById(R.id.exit123456);
         avatar = (ImageView) getActivity().findViewById(R.id.avatar);
         new_password = (EditText) getActivity().findViewById(R.id.new_password);
@@ -117,6 +117,34 @@ public class Profile extends Fragment {
         tv_login.setText(login);
 
         tv_posts.setText(Integer.toString(posts.size() - 1));
+        DatabaseReference friends_num = FirebaseDatabase.getInstance().getReference();
+        friends_num.child("Users").child(login).child("friends").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int num = 0;
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.getValue().toString().equals("friend")) {
+                        ++num;
+                    }
+                }
+                tv_friends.setText((Integer.toString(num)));
+                RelativeLayout friends_layout = (RelativeLayout) getActivity().findViewById(R.id.friends_layout);
+                friends_layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), FriendsList.class);
+                        intent.putExtra("name", login);
+                        startActivity(intent);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
         Glide.with(getActivity()).load(text_avatar).into(avatar);
         DatabaseReference update_role = FirebaseDatabase.getInstance().getReference();
@@ -126,7 +154,7 @@ public class Profile extends Fragment {
                 float user_rating = dataSnapshot.getValue(Float.TYPE);
                 String new_role = "user";
                 DatabaseReference update = FirebaseDatabase.getInstance().getReference().child("Users").child(login).child("role");
-                if(!role.equals("admin")) {
+                if (!role.equals("admin")) {
                     if (user_rating >= 120) {
                         new_role = "moderator";
                         update.setValue(new_role);
@@ -146,7 +174,7 @@ public class Profile extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<String> user_links = new ArrayList<>();
-                for(DataSnapshot i: dataSnapshot.getChildren()) {
+                for (DataSnapshot i : dataSnapshot.getChildren()) {
                     if (!i.getKey().equals("zero")) {
                         user_links.add(i.getValue().toString());
                     }
@@ -161,15 +189,15 @@ public class Profile extends Fragment {
         });
         TextView tv_rating = (TextView) getActivity().findViewById(R.id.rating);
         tv_rating.setText(Float.toString(rating));
-        if(rating > 0){
+        if (rating > 0) {
             tv_rating.setTextColor(getActivity().getColor(R.color.rating_green));
-        }else if(rating < 0){
+        } else if (rating < 0) {
             tv_rating.setTextColor(getActivity().getColor(R.color.colorAccent));
         }
 
 
         fake_password = "Password: ";
-        for(int i=0;i<password.length() - "Password: ".length();i++){
+        for (int i = 0; i < password.length() - "Password: ".length(); i++) {
             fake_password = fake_password + "*";
         }
         tv_password.setText(fake_password);
@@ -178,7 +206,7 @@ public class Profile extends Fragment {
         change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(is){
+                if (is) {
                     change.setText("Cancel");
                     is = false;
                     change.setTextColor(getActivity().getResources().getColor(R.color.colorAccent));
@@ -206,9 +234,9 @@ public class Profile extends Fragment {
                     confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if(updated.equals("") || updated.length() < 4){
+                            if (updated.equals("") || updated.length() < 4) {
                                 Toast.makeText(getContext(), "Too simple", Toast.LENGTH_SHORT).show();
-                            }else{
+                            } else {
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(login);
                                 ref.child("password").setValue(updated);
                                 Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
@@ -219,7 +247,7 @@ public class Profile extends Fragment {
                             }
                         }
                     });
-                }else{
+                } else {
                     is = true;
                     change.setTextColor(getActivity().getResources().getColor(R.color.active_blue));
                     change.setText("Change password");
@@ -235,11 +263,11 @@ public class Profile extends Fragment {
         look_password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(tv_password.getText().equals(password)) {
+                if (tv_password.getText().equals(password)) {
                     look_password.setBackground(getActivity().getDrawable(R.drawable.ic_visibility_unactive_24dp));
                     tv_password.setText(fake_password);
 
-                }else{
+                } else {
                     look_password.setBackground(getActivity().getDrawable(R.drawable.ic_visibility_black_24dp));
                     tv_password.setText(password);
                 }
@@ -251,15 +279,15 @@ public class Profile extends Fragment {
             public void onClick(View v) {
                 final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
                 ask.setMessage("Are you sure you want to log out?").setCancelable(false)
-                .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        FirebaseAuth auth = FirebaseAuth.getInstance();
-                        auth.signOut();
-                        new AsyncRequest().execute();
+                        .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                FirebaseAuth auth = FirebaseAuth.getInstance();
+                                auth.signOut();
+                                new AsyncRequest().execute();
 
-                    }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -298,6 +326,7 @@ public class Profile extends Fragment {
         });
 
     }
+
     class AsyncRequest extends AsyncTask<String, Integer, String> {
 
         @Override
@@ -308,7 +337,7 @@ public class Profile extends Fragment {
                 try {
                     client.setDefaultTimeout(30000);
                     client.connect("time.nist.gov");
-                    time =  client.getDate().toString();
+                    time = client.getDate().toString();
                 } finally {
                     client.disconnect();
                 }
@@ -321,42 +350,42 @@ public class Profile extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-                HashMap<String, String> months = new HashMap<>();
-                months.put("May", "мая");
-                months.put("June", "июня");
-                months.put("July", "июля");
-                months.put("August", "августа");
+            HashMap<String, String> months = new HashMap<>();
+            months.put("May", "мая");
+            months.put("June", "июня");
+            months.put("July", "июля");
+            months.put("August", "августа");
 
-                months.put("September", "сентября");
-                months.put("October", "октября");
-                months.put("November", "ноября");
-                months.put("December", "декабря");
+            months.put("September", "сентября");
+            months.put("October", "октября");
+            months.put("November", "ноября");
+            months.put("December", "декабря");
 
-                months.put("January", "января");
-                months.put("February", "февраля");
-                months.put("March", "марта");
-                months.put("April", "апреля");
-                String time_for_database;
-                if(!s.equals("failed")) {
-                    String[] time_data = s.split(" ");
-                    for (String i : time_data) {
-                        Log.d("Look", i);
-                    }
-
-                    time_for_database = time_data[3] + " " + time_data[2] +
-                            "." + months.get(time_data[1]) + "." + time_data[5];
-
+            months.put("January", "января");
+            months.put("February", "февраля");
+            months.put("March", "марта");
+            months.put("April", "апреля");
+            String time_for_database;
+            if (!s.equals("failed")) {
+                String[] time_data = s.split(" ");
+                for (String i : time_data) {
+                    Log.d("Look", i);
                 }
-                // если не получилось взять время с сервера
-                else{
-                    Calendar c = Calendar.getInstance();
-                    SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
-                    time_for_database = dateformat.format(c.getTime());
-                }
-                Log.d("Look", time_for_database);
 
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                reference.child("Users").child(login).child("lastSeen").setValue(time_for_database);
+                time_for_database = time_data[3] + " " + time_data[2] +
+                        "." + months.get(time_data[1]) + "." + time_data[5];
+
+            }
+            // если не получилось взять время с сервера
+            else {
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                time_for_database = dateformat.format(c.getTime());
+            }
+            Log.d("Look", time_for_database);
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+            reference.child("Users").child(login).child("lastSeen").setValue(time_for_database);
             Intent mStartActivity = new Intent(getContext(), Authentication.class);
             int mPendingIntentId = 123456;
             PendingIntent mPendingIntent = PendingIntent.getActivity(getContext(), mPendingIntentId, mStartActivity,
@@ -372,7 +401,7 @@ public class Profile extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Uri filePath;
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == -1 && data != null && data.getData() != null ) {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == -1 && data != null && data.getData() != null) {
             filePath = data.getData();
             uploadImage(filePath);
 
@@ -386,13 +415,14 @@ public class Profile extends Fragment {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
-    private void uploadImage(Uri filePath){
+
+    private void uploadImage(Uri filePath) {
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         progressDialog.setTitle("Uploading...");
         progressDialog.show();
 
-        final StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
+        final StorageReference ref = storageReference.child("images/" + UUID.randomUUID().toString());
         ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -414,19 +444,20 @@ public class Profile extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
-                        Toast.makeText(getActivity(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                        double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                 .getTotalByteCount());
-                        progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                        progressDialog.setMessage("Uploaded " + (int) progress + "%");
                     }
                 });
     }
-    private void fill(final ArrayList<String> links){
+
+    private void fill(final ArrayList<String> links) {
         user_posts = (RecyclerView) getActivity().findViewById(R.id.users_posts);
         DatabaseReference data = FirebaseDatabase.getInstance().getReference().child("Data");
         data.addValueEventListener(new ValueEventListener() {
@@ -435,8 +466,8 @@ public class Profile extends Fragment {
                 final ArrayList<RecyclerItem> listItems = new ArrayList<>();
                 final ArrayList<String> pt = new ArrayList<>();
                 final LinearLayoutManager manager = new LinearLayoutManager(getContext());
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
-                    if(links.contains(dataSnapshot1.getKey())) {
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    if (links.contains(dataSnapshot1.getKey())) {
                         RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
                         listItems.add(p);
                         pt.add(dataSnapshot1.getKey());

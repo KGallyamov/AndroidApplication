@@ -9,10 +9,12 @@ public class GroupChat {
     private String title;
     private String creator;
     private String pinned_message;
-    GroupChat(){}
+
+    GroupChat() {
+    }
 
     GroupChat(String chat_avatar, HashMap<String, String> members, HashMap<String, Message> messages,
-              String title, String creator, String pinned_message){
+              String title, String creator, String pinned_message) {
         this.chat_avatar = chat_avatar;
         this.members = members;
         this.messages = messages;

@@ -54,6 +54,8 @@
     <string name="edit_message">Edit message</string>
     <string name="delete_message">Delete message</string>
     <string name="pin_message">Pin message</string>
+    <string name="friends">Friends</string>
+    <string name="requests">Requests</string>
 
     <string-array name="saved">
         <item>2</item>

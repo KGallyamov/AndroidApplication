@@ -33,7 +33,7 @@ public class Authentication extends AppCompatActivity {
     Button confirm;
     TextView create;
 
-    String text_login="", text_password="";
+    String text_login = "", text_password = "";
     Context getContext = this;
     DatabaseReference databaseReference;
     ArrayList<User> users;
@@ -92,22 +92,20 @@ public class Authentication extends AppCompatActivity {
                 auth.signInWithEmailAndPassword(text_login, text_password).addOnCompleteListener((Activity) getContext, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             final String username = text_login.split("@")[0];
                             password.setText("");
                             login.setText("");
                             Intent intent = new Intent(getContext, MainActivity.class);
                             intent.putExtra("Login", username);
                             startActivity(intent);
-                        }else{
+                        } else {
                             Toast.makeText(getContext, "Wrong login/password", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
             }
         });
-
-
 
 
         create.setOnClickListener(new View.OnClickListener() {
