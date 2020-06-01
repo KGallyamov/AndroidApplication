@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -129,20 +130,58 @@ public class GroupChatInfo extends AppCompatActivity {
         ((Button) findViewById(R.id.add_member)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TOD: только если есть допуск
                 if(new_member_name.getText().toString().equals("")){
                     Toast.makeText(GroupChatInfo.this, "Enter the name", Toast.LENGTH_SHORT).show();
                 }else{
-                    //TOO: проверить существует ли такой пользователь
-                    String name = new_member_name.getText().toString();
-                    DatabaseReference add_member = FirebaseDatabase.getInstance().getReference();
-                    add_member.child("GroupChats").child(path).child("members").child(name).setValue(name);
-                    DatabaseReference add_chat = FirebaseDatabase.getInstance().getReference();
-                    add_chat.child("Users").child(name).child("chats").push().setValue(path).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    final String name = new_member_name.getText().toString();
+                    DatabaseReference check_exists = FirebaseDatabase.getInstance().getReference();
+                    check_exists.child("Users").child(name).addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(GroupChatInfo.this, "User added", Toast.LENGTH_SHORT).show();
-                            new_member_name.setText("");
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            try{
+                                User user = dataSnapshot.getValue(User.class);
+                                boolean in_chat = false;
+                                boolean have_permission = false;
+                                String permission = user.getPrivacy_settings().get("add_to_group_chats");
+                                if(permission.equals("everyone")){
+                                    have_permission = true;
+                                } else if(permission.equals("friends")){
+                                    String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+                                    if(user.getFriends().containsKey(login)){
+                                        have_permission = user.getFriends().get(login).equals("friend");
+                                    }else{
+                                        have_permission = false;
+                                    }
+                                }
+                                for(String s:user.getChats().values()){
+                                    if(s.equals(path)){
+                                        in_chat = true;
+                                    }
+                                }
+                                if((!in_chat) && have_permission){
+                                    DatabaseReference add_member = FirebaseDatabase.getInstance().getReference();
+                                    add_member.child("GroupChats").child(path).child("members").child(name).setValue(name);
+                                    DatabaseReference add_chat = FirebaseDatabase.getInstance().getReference();
+                                    add_chat.child("Users").child(name).child("chats").push().setValue(path).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(GroupChatInfo.this, "User added", Toast.LENGTH_SHORT).show();
+                                            new_member_name.setText("");
+                                        }
+                                    });
+                                } else if(!have_permission){
+                                    Toast.makeText(GroupChatInfo.this, "You can't add this user", Toast.LENGTH_SHORT).show();
+                                    new_member_name.setText("");
+                                }
+                            } catch (Exception e){
+                                e.printStackTrace();
+                                Toast.makeText(GroupChatInfo.this, "Please check user's name", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
                         }
                     });
 
