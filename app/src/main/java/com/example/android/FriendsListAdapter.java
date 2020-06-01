@@ -46,7 +46,6 @@ public class FriendsListAdapter extends ArrayAdapter<String> {
                 accept.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //TODO: в два узла прописать друга
                         DatabaseReference add_friend = FirebaseDatabase.getInstance().getReference();
                         add_friend.child("Users").child(username).child("friends").child(login).setValue("friend");
                         DatabaseReference add_to_current_user = FirebaseDatabase.getInstance().getReference();

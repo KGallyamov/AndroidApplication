@@ -59,7 +59,7 @@ import java.util.UUID;
 public class Profile extends Fragment {
     String role, login, password, fake_password, text_avatar;
     TextView change, tv_posts;
-    Button look_password, confirm, exit;
+    Button look_password, confirm, settings;
     EditText new_password;
     RecyclerView user_posts;
     String updated = "";
@@ -109,7 +109,7 @@ public class Profile extends Fragment {
         change = (TextView) getActivity().findViewById(R.id.change);
         tv_friends = (TextView) getActivity().findViewById(R.id.number_of_friends);
         confirm = (Button) getActivity().findViewById(R.id.confirm);
-        exit = (Button) getActivity().findViewById(R.id.exit123456);
+        settings = (Button) getActivity().findViewById(R.id.settings);
         avatar = (ImageView) getActivity().findViewById(R.id.avatar);
         new_password = (EditText) getActivity().findViewById(R.id.new_password);
 
@@ -274,31 +274,14 @@ public class Profile extends Fragment {
             }
         });
 
-        exit.setOnClickListener(new View.OnClickListener() {
+        settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
-                ask.setMessage("Are you sure you want to log out?").setCancelable(false)
-                        .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                FirebaseAuth auth = FirebaseAuth.getInstance();
-                                auth.signOut();
-                                new AsyncRequest().execute();
-
-                            }
-                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                AlertDialog alertDialog = ask.create();
-                alertDialog.setTitle("Log out");
-                alertDialog.show();
+                Intent intent = new Intent(getContext(), ProfileSettings.class);
+                startActivity(intent);
             }
         });
+
 
         avatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -327,75 +310,7 @@ public class Profile extends Fragment {
 
     }
 
-    class AsyncRequest extends AsyncTask<String, Integer, String> {
 
-        @Override
-        protected String doInBackground(String... arg) {
-            String time = "failed";
-            try {
-                TimeTCPClient client = new TimeTCPClient();
-                try {
-                    client.setDefaultTimeout(30000);
-                    client.connect("time.nist.gov");
-                    time = client.getDate().toString();
-                } finally {
-                    client.disconnect();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return time;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            HashMap<String, String> months = new HashMap<>();
-            months.put("May", "мая");
-            months.put("Jun", "июня");
-            months.put("Jul", "июля");
-            months.put("Aug", "августа");
-
-            months.put("Sep", "сентября");
-            months.put("Oct", "октября");
-            months.put("Nov", "ноября");
-            months.put("Dec", "декабря");
-
-            months.put("Jan", "января");
-            months.put("Feb", "февраля");
-            months.put("Mar", "марта");
-            months.put("Apr", "апреля");
-            String time_for_database;
-            if (!s.equals("failed")) {
-                String[] time_data = s.split(" ");
-                for (String i : time_data) {
-                    Log.d("Look", i);
-                }
-
-                time_for_database = time_data[3] + " " + time_data[2] +
-                        "." + months.get(time_data[1]) + "." + time_data[5];
-
-            }
-            // если не получилось взять время с сервера
-            else {
-                Calendar c = Calendar.getInstance();
-                SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
-                time_for_database = dateformat.format(c.getTime());
-            }
-            Log.d("Look", time_for_database);
-
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-            reference.child("Users").child(login).child("lastSeen").setValue(time_for_database);
-            Intent mStartActivity = new Intent(getContext(), Authentication.class);
-            int mPendingIntentId = 123456;
-            PendingIntent mPendingIntent = PendingIntent.getActivity(getContext(), mPendingIntentId, mStartActivity,
-                    PendingIntent.FLAG_CANCEL_CURRENT);
-            AlarmManager mgr = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-            System.exit(0);
-
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

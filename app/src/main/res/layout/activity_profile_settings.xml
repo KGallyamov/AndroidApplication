@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#353E4f"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70sp"
+            android:background="@drawable/toolbar"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/back"
+                android:textSize="25sp"
+                android:fontFamily="monospace"
+                android:gravity="center_vertical"
+                android:paddingTop="5dp"
+                android:textColor="#C4B7B7"
+                android:background="@drawable/ic_arrow_back_black_24dp"
+                android:paddingStart="10dp"
+                android:paddingBottom="5dp"
+                android:layout_width="90dp"
+                android:layout_height="match_parent">
+
+            </TextView>
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="15"
+                android:fontFamily="monospace"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="@string/settings"
+                android:textAlignment="center"
+                android:textColor="#C4B7B7"
+                android:textSize="25sp">
+
+            </TextView>
+
+
+            <Button
+                android:id="@+id/exit123456"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button"
+                android:text="Log out"
+                android:textAllCaps="false"
+                android:paddingRight="7dp"
+                android:paddingLeft="7dp"
+                android:textColor="@color/white"
+                android:textSize="25sp">
+
+            </Button>
+
+
+        </LinearLayout>
+        <TextView
+            android:paddingTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:paddingBottom="5dp"
+            android:text="Кто может отправлять мне сообщения"
+            android:textColor="#C4B7B7"
+            android:textSize="20sp"/>
+        <RadioGroup
+            android:id="@+id/send_messages"
+            android:layout_width="match_parent"
+            android:theme="@style/MyRadioButton"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp">
+
+            <RadioButton
+                android:id="@+id/all_users"
+                android:layout_width="wrap_content"
+                android:textColor="#C4B7B7"
+                android:textSize="18sp"
+                android:onClick="onClick"
+                android:layout_height="wrap_content"
+                android:text="Все пользователи" />
+
+            <RadioButton
+                android:id="@+id/just_friends"
+                android:layout_width="wrap_content"
+                android:textColor="#C4B7B7"
+                android:textSize="18sp"
+                android:onClick="onClick"
+                android:layout_height="wrap_content"
+                android:text="Только друзья" />
+        </RadioGroup>
+
+
+        <TextView
+            android:paddingTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:paddingBottom="5dp"
+            android:text="Кто может видеть мои посты"
+            android:textColor="#C4B7B7"
+            android:textSize="20sp"/>
+        <RadioGroup
+            android:id="@+id/see_posts"
+            android:layout_width="match_parent"
+            android:theme="@style/MyRadioButton"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp">
+
+            <RadioButton
+                android:id="@+id/all_users_see_posts"
+                android:layout_width="wrap_content"
+                android:textColor="#C4B7B7"
+                android:textSize="18sp"
+                android:onClick="onClick"
+                android:layout_height="wrap_content"
+                android:text="Все пользователи" />
+
+            <RadioButton
+                android:id="@+id/just_friends_see_posts"
+                android:layout_width="wrap_content"
+                android:textColor="#C4B7B7"
+                android:textSize="18sp"
+                android:onClick="onClick"
+                android:layout_height="wrap_content"
+                android:text="Только друзья" />
+
+            <RadioButton
+                android:id="@+id/no_one_see_posts"
+                android:layout_width="wrap_content"
+                android:textColor="#C4B7B7"
+                android:textSize="18sp"
+                android:onClick="onClick"
+                android:layout_height="wrap_content"
+                android:text="Только я" />
+        </RadioGroup>
+
+        <TextView
+            android:paddingTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:paddingBottom="5dp"
+            android:text="Кто может добавлять меня в беседы"
+            android:textColor="#C4B7B7"
+            android:textSize="20sp"/>
+        <RadioGroup
+            android:id="@+id/add_to_chats"
+            android:layout_width="match_parent"
+            android:theme="@style/MyRadioButton"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp">
+
+            <RadioButton
+                android:id="@+id/all_users_can_add"
+                android:layout_width="wrap_content"
+                android:textColor="#C4B7B7"
+                android:textSize="18sp"
+                android:onClick="onClick"
+                android:layout_height="wrap_content"
+                android:text="Все пользователи" />
+
+            <RadioButton
+                android:id="@+id/just_friends_can_add"
+                android:layout_width="wrap_content"
+                android:textColor="#C4B7B7"
+                android:textSize="18sp"
+                android:onClick="onClick"
+                android:layout_height="wrap_content"
+                android:text="Только друзья" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+
+</ScrollView>

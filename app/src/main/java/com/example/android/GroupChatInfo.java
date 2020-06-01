@@ -129,9 +129,11 @@ public class GroupChatInfo extends AppCompatActivity {
         ((Button) findViewById(R.id.add_member)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TOD: только если есть допуск
                 if(new_member_name.getText().toString().equals("")){
                     Toast.makeText(GroupChatInfo.this, "Enter the name", Toast.LENGTH_SHORT).show();
                 }else{
+                    //TOO: проверить существует ли такой пользователь
                     String name = new_member_name.getText().toString();
                     DatabaseReference add_member = FirebaseDatabase.getInstance().getReference();
                     add_member.child("GroupChats").child(path).child("members").child(name).setValue(name);
