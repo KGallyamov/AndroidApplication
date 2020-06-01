@@ -304,6 +304,7 @@ public class Chat extends Fragment {
     }
 
     public void startDialog() {
+        //TOO: только если есть допуск
         final AlertDialog dialogBuilder = new AlertDialog.Builder(getContext()).create();
         View dialogView = inf.inflate(R.layout.start_dialog, null);
 
@@ -367,6 +368,7 @@ public class Chat extends Fragment {
     }
 
     public void startChat() {
+        //TOO: только если есть допуск
         dialogBuilder = new AlertDialog.Builder(getContext()).create();
         dialogView = inf.inflate(R.layout.start_group_chat, null);
 

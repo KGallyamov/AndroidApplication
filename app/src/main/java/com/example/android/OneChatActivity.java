@@ -254,19 +254,19 @@ public class OneChatActivity extends AppCompatActivity {
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Data");
             HashMap<String, String> months = new HashMap<>();
             months.put("May", "мая");
-            months.put("June", "июня");
-            months.put("July", "июля");
-            months.put("August", "августа");
+            months.put("Jun", "июня");
+            months.put("Jul", "июля");
+            months.put("Aug", "августа");
 
-            months.put("September", "сентября");
-            months.put("October", "октября");
-            months.put("November", "ноября");
-            months.put("December", "декабря");
+            months.put("Sep", "сентября");
+            months.put("Oct", "октября");
+            months.put("Nov", "ноября");
+            months.put("Dec", "декабря");
 
-            months.put("January", "января");
-            months.put("February", "февраля");
-            months.put("March", "марта");
-            months.put("April", "апреля");
+            months.put("Jan", "января");
+            months.put("Feb", "февраля");
+            months.put("Mar", "марта");
+            months.put("Apr", "апреля");
 
             String time_for_database;
             if(!s.equals("failed")) {

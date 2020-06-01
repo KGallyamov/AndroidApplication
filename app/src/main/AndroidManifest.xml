@@ -12,9 +12,13 @@
         android:roundIcon="@drawable/sigma"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FriendsList"
+        <activity android:name=".ProfileSettings"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".FriendsList"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SendMessageWithImage"
             android:screenOrientation="portrait"

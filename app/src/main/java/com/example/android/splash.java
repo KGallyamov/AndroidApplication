@@ -102,19 +102,19 @@ public class splash extends AppCompatActivity {
 
             HashMap<String, String> months = new HashMap<>();
             months.put("May", "мая");
-            months.put("June", "июня");
-            months.put("July", "июля");
-            months.put("August", "августа");
+            months.put("Jun", "июня");
+            months.put("Jul", "июля");
+            months.put("Aug", "августа");
 
-            months.put("September", "сентября");
-            months.put("October", "октября");
-            months.put("November", "ноября");
-            months.put("December", "декабря");
+            months.put("Sep", "сентября");
+            months.put("Oct", "октября");
+            months.put("Nov", "ноября");
+            months.put("Dec", "декабря");
 
-            months.put("January", "января");
-            months.put("February", "февраля");
-            months.put("March", "марта");
-            months.put("April", "апреля");
+            months.put("Jan", "января");
+            months.put("Feb", "февраля");
+            months.put("Mar", "марта");
+            months.put("Apr", "апреля");
             // успешное соединение с сервером
             if(!s.equals("failed")) {
                 String[] time_data = s.split(" ");
@@ -124,6 +124,7 @@ public class splash extends AppCompatActivity {
 
                 time_for_database = time_data[3] + " " + time_data[2] +
                         "." + months.get(time_data[1]) + "." + time_data[5];
+                Log.d("Splash", time_data[1]);
 
             }
             // если не получилось взять время с сервера

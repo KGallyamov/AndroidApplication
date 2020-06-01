@@ -2,6 +2,7 @@ package com.example.android;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,7 +37,7 @@ import java.util.Collections;
 public class AnotherUserPage extends AppCompatActivity {
     TextView login, posts, role, exit, number_of_friends;
     ImageView avatar;
-    Button write_message;
+    Button write_message, add_to_friends;
     RecyclerView user_posts;
     String author_login;
     Context context = this;
@@ -45,11 +46,11 @@ public class AnotherUserPage extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.another_user_page);
-        //TODO: показывать информацию в зависимости от настроек
-        // кнопку добавить в друзья либо удалить из друзей если уже в друзьях
+        //TDO: показывать информацию в зависимости от настроек
         avatar = (ImageView) findViewById(R.id.avatar);
         login = (TextView) findViewById(R.id.login);
         role = (TextView) findViewById(R.id.role);
+        add_to_friends = (Button) findViewById(R.id.send_friend_request);
         posts = (TextView) findViewById(R.id.posts);
         number_of_friends = (TextView) findViewById(R.id.number_of_friends);
         write_message = (Button) findViewById(R.id.start_converstaion);
@@ -129,6 +130,75 @@ public class AnotherUserPage extends AppCompatActivity {
                 fill(user_links);
                 posts.setText(Integer.toString(k));
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        DatabaseReference request = FirebaseDatabase.getInstance().getReference();
+        final String user_login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+        request.child("Users").child(author_login).child("friends").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String state = "nothing";
+                for(DataSnapshot i:dataSnapshot.getChildren()){
+                    if(i.getKey().equals(user_login)){
+                        state = i.getValue().toString();
+                    }
+                }
+                //пользователя нет в друзьях
+                if(state.equals("nothing")){
+                    add_to_friends.setText("Add to friends");
+                    add_to_friends.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DatabaseReference send_request = FirebaseDatabase.getInstance().getReference();
+                            String user_login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+                            send_request.child("Users").child(author_login).child("friends").child(user_login).setValue("request");
+                        }
+                    });
+                } // был отправлен запрос
+                else if(state.equals("request")){
+                    add_to_friends.setText("Remove request");
+                    add_to_friends.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DatabaseReference send_request = FirebaseDatabase.getInstance().getReference();
+                            send_request.child("Users").child(author_login).child("friends").child(user_login).removeValue();
+                        }
+                    });
+                } //пользователи друзья
+                else{
+                    add_to_friends.setText("Remove from friends");
+                    add_to_friends.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final AlertDialog.Builder ask = new AlertDialog.Builder(AnotherUserPage.this, R.style.MyAlertDialogStyle);
+                            ask.setMessage("Are you sure you want to remove this user from friends?").setCancelable(false)
+                                    .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            DatabaseReference send_request = FirebaseDatabase.getInstance().getReference();
+                                            send_request.child("Users").child(author_login).child("friends").child(user_login).removeValue();
+                                            DatabaseReference update_list = FirebaseDatabase.getInstance().getReference();
+                                            update_list.child("Users").child(user_login).child("friends").child(author_login).removeValue();
+                                            dialog.cancel();
+                                        }
+                                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                            AlertDialog alertDialog = ask.create();
+                            alertDialog.setTitle("Remove friend");
+                            alertDialog.show();
+                        }
+                    });
+                }
             }
 
             @Override

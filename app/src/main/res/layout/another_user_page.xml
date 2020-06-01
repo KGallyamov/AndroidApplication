@@ -96,19 +96,39 @@
                     android:layout_weight="3"
                     android:textColor="#03A9F4"
                     android:textSize="13sp"/>
-                <Button
-                    android:id="@+id/start_converstaion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Message"
-                    android:padding="3dp"
-                    android:background="@drawable/write_message_button"
-                    android:layout_marginStart="10dp"
-                    android:textAllCaps="false"
-                    android:layout_marginTop="5sp"
-                    android:layout_weight="1"
-                    android:textColor="#FFFEFE"
-                    android:textSize="15sp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/start_converstaion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Message"
+                        android:padding="3dp"
+                        android:background="@drawable/write_message_button"
+                        android:layout_marginStart="10dp"
+                        android:textAllCaps="false"
+                        android:layout_marginTop="5sp"
+                        android:layout_weight="1"
+                        android:textColor="#FFFEFE"
+                        android:textSize="15sp"/>
+                    <Button
+                        android:id="@+id/send_friend_request"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Add to friends"
+                        android:padding="3dp"
+                        android:background="@drawable/write_message_button"
+                        android:layout_marginStart="10dp"
+                        android:textAllCaps="false"
+                        android:layout_marginTop="5sp"
+                        android:layout_weight="1"
+                        android:textColor="#FFFEFE"
+                        android:textSize="15sp"/>
+
+                </LinearLayout>
+
+
 
 
 
