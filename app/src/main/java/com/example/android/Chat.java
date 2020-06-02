@@ -368,7 +368,7 @@ public class Chat extends Fragment {
     }
 
     public void startChat() {
-        //TOO: только если есть допуск
+        //TDO: только если есть допуск
         dialogBuilder = new AlertDialog.Builder(getContext()).create();
         dialogView = inf.inflate(R.layout.start_group_chat, null);
 

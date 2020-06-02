@@ -46,7 +46,6 @@ public class AnotherUserPage extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.another_user_page);
-        //TDO: показывать информацию в зависимости от настроек
         avatar = (ImageView) findViewById(R.id.avatar);
         login = (TextView) findViewById(R.id.login);
         role = (TextView) findViewById(R.id.role);
@@ -65,12 +64,18 @@ public class AnotherUserPage extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int k = 0;
+                User user = dataSnapshot.getValue(User.class);
                 ArrayList<String> user_links = new ArrayList<>();
                 for (DataSnapshot i : dataSnapshot.getChildren()) {
                     if (i.getKey().equals("role")) {
                         role.setText(i.getValue().toString());
                     } else if (i.getKey().equals("avatar")) {
-                        Glide.with(context).load(i.getValue().toString()).into(avatar);
+                        try {
+                            Glide.with(context).load(i.getValue().toString()).into(avatar);
+                        }catch (IllegalArgumentException e){
+                            Log.d("AnotherUserPage_77", "");
+                            e.printStackTrace();
+                        }
                     } else if (i.getKey().equals("posts")) {
                         for (DataSnapshot j : i.getChildren()) {
                             if (!j.getKey().equals("zero")) {
@@ -127,7 +132,24 @@ public class AnotherUserPage extends AppCompatActivity {
                         });
                     }
                 }
-                fill(user_links);
+                String current_user_login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+                if(user.getPrivacy_settings().get("see_my_posts").equals("everyone")) {
+                    fill(user_links);
+                }else if(user.getPrivacy_settings().get("see_my_posts").equals("friends") &&
+                        user.getFriends().containsKey(current_user_login)){
+                    if(user.getFriends().get(current_user_login).equals("friend")){
+                        fill(user_links);
+                    }
+                }
+                if(user.getPrivacy_settings().get("send_messages").equals("friends")){
+                    if(user.getFriends().containsKey(current_user_login)) {
+                        if (!user.getFriends().get(current_user_login).equals("friend")) {
+                            write_message.setVisibility(View.GONE);
+                        }
+                    }else{
+                        write_message.setVisibility(View.GONE);
+                    }
+                }
                 posts.setText(Integer.toString(k));
 
             }
