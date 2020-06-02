@@ -272,7 +272,7 @@ public class AnotherUserPage extends AppCompatActivity {
                                         Calendar c = Calendar.getInstance();
                                         SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                                         String now = dateformat.format(c.getTime());
-                                        Message mes = new Message(message.getText().toString(), login, now, false, "no_image");
+                                        Message mes = new Message(message.getText().toString(), login, now, false, "no_image", "not_forwarded");
                                         chat.child(name).push().setValue(mes);
                                         dialogBuilder.dismiss();
                                     }

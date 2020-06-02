@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +38,7 @@ import com.luseen.autolinklibrary.AutoLinkTextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class GroupChatAdapter extends ArrayAdapter<Message> {
@@ -44,14 +47,21 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
     ArrayList<String> message_path;
     LayoutInflater inflater;
     String pinned_message_link;
+    ArrayList<String> forwards_chats, group_chat_paths;
     public GroupChatAdapter(@NonNull Context context, int resource, Message[] messages, String path,
-                            ArrayList<String> message_path, LayoutInflater inflater, String pinned_message_link) {
+                            ArrayList<String> message_path, LayoutInflater inflater,
+                            String pinned_message_link, ArrayList<String> forwards_chats,
+                            ArrayList<String> paths) {
         super(context, resource, messages);
         this.messages = messages;
         this.path = path;
         this.message_path = message_path;
         this.inflater = inflater;
         this.pinned_message_link = pinned_message_link;
+        this.forwards_chats = forwards_chats;
+        this.group_chat_paths = paths;
+        Log.d("look", paths.toString());
+
     }
 
     @NonNull
@@ -150,6 +160,7 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                 View dialogView = inflater.inflate(R.layout.group_chat_message_options, null);
                 TextView copy_text = dialogView.findViewById(R.id.copy);
                 TextView edit_message = dialogView.findViewById(R.id.edit);
+                TextView forward_message = (TextView) dialogView.findViewById(R.id.forward);
                 TextView delete = dialogView.findViewById(R.id.delete);
                 TextView pin = (TextView) dialogView.findViewById(R.id.pin_message);
                 TextView exit = dialogView.findViewById(R.id.Cancel);
@@ -169,6 +180,13 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                     @Override
                     public void onClick(View v) {
                         alertDialog.dismiss();
+                    }
+                });
+                forward_message.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        forwardMessage(message);
                     }
                 });
                 copy_text.setOnClickListener(new View.OnClickListener() {
@@ -297,5 +315,79 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
             }
         });
         return convertView;
+    }
+    private void forwardMessage(final Message message) {
+        final AlertDialog.Builder where = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
+        View dialogView = inflater.inflate(R.layout.forward_alert_dialog, null);
+        final ListView variants = (ListView) dialogView.findViewById(R.id.variants);
+        TextView cancel = (TextView) dialogView.findViewById(R.id.Cancel);
+
+
+
+
+        final AlertDialog alertDialog = where.create();
+        alertDialog.setView(dialogView);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+        DatabaseReference chats_and_messages = FirebaseDatabase.getInstance().getReference().child("Messages");
+        chats_and_messages.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+                final ArrayList<String> messages = new ArrayList<>();
+                for(DataSnapshot i:dataSnapshot.getChildren()){
+                    String[] people = i.getKey().split("_");
+                    if(people[0].equals(login)){
+                        messages.add(people[1]);
+                    }else{
+                        messages.add(people[0]);
+                    }
+                }
+                final ArrayList<String> arrayList = messages;
+                arrayList.addAll(forwards_chats);
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                        R.layout.forward_list_item,
+                        arrayList.toArray(new String[0]));
+                variants.setAdapter(adapter);
+                variants.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Message forwarded_message = message;
+                        forwarded_message.setForwarded(login);
+                        Calendar c = Calendar.getInstance();
+                        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                        String now = dateformat.format(c.getTime());
+                        forwarded_message.setTime(now);
+                        forwarded_message.setForwarded(forwarded_message.getAuthor());
+                        forwarded_message.setAuthor(login);
+                        if(forwards_chats.contains(arrayList.get(position))){
+                            DatabaseReference forward_to_chat = FirebaseDatabase.getInstance().getReference();
+                            forward_to_chat.child("GroupChats").
+                                    child(group_chat_paths.get(forwards_chats.indexOf(arrayList.get(position)))).
+                                    child("messages").push().setValue(forwarded_message);
+                            alertDialog.dismiss();
+                        }else{
+                            DatabaseReference forward_to_chat = FirebaseDatabase.getInstance().getReference();
+                            String[] names = new String[]{login, messages.get(messages.indexOf(arrayList.get(position)))};
+                            Arrays.sort(names);
+                            forward_to_chat.child("Messages").
+                                    child(names[0] + "_" + names[1]).push().setValue(forwarded_message);
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        alertDialog.show();
     }
 }

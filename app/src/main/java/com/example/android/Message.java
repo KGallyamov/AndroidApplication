@@ -6,14 +6,24 @@ public class Message {
     private String time;
     private boolean read;
     private String image;
+    private String forwarded;
     Message(){}
 
-    public Message(String text, String author, String time, boolean read, String image) {
+    public Message(String text, String author, String time, boolean read, String image, String forwarded) {
         this.text = text;
         this.author = author;
         this.time = time;
         this.read = read;
         this.image = image;
+        this.forwarded = forwarded;
+    }
+
+    public String isForwarded() {
+        return forwarded;
+    }
+
+    public void setForwarded(String forwarded) {
+        this.forwarded = forwarded;
     }
 
     public String getImage() {

@@ -345,7 +345,7 @@ public class Chat extends Fragment {
                                 Calendar c = Calendar.getInstance();
                                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                                 String now = dateformat.format(c.getTime());
-                                Message mes = new Message(message.getText().toString(), login, now, false, "no_image");
+                                Message mes = new Message(message.getText().toString(), login, now, false, "no_image", "not_forwarded");
                                 chat.child(name).push().setValue(mes);
                                 dialogBuilder.dismiss();
                             }
@@ -454,7 +454,7 @@ public class Chat extends Fragment {
                                 Calendar c = Calendar.getInstance();
                                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                                 String now = dateformat.format(c.getTime());
-                                messages.put("-M0t3jq9g", new Message(message, login, now, false, "no_image"));
+                                messages.put("-M0t3jq9g", new Message(message, login, now, false, "no_image", "not_forwarded"));
 
                                 final DatabaseReference new_chat = FirebaseDatabase.getInstance().getReference();
 
@@ -539,10 +539,30 @@ public class Chat extends Fragment {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 String pinned_message_link = dataSnapshot.getValue().toString();
-                                Intent intent = new Intent(getContext(), GroupChatActivity.class);
+                                final Intent intent = new Intent(getContext(), GroupChatActivity.class);
                                 intent.putExtra("path", chats.get(getAdapterPosition()));
                                 intent.putExtra("pinned", pinned_message_link);
-                                startActivity(intent);
+                                DatabaseReference reference  =FirebaseDatabase.getInstance().getReference();
+                                final ArrayList<String> forwards = new ArrayList<>();
+                                reference.child("GroupChats").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for(DataSnapshot i:dataSnapshot.getChildren()){
+                                            if(chats.contains(i.getKey())){
+                                                GroupChat groupChat = i.getValue(GroupChat.class);
+                                                forwards.add(groupChat.getTitle());
+                                            }
+                                        }
+                                        intent.putExtra("forwards", forwards);
+                                        intent.putExtra("paths", chats);
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                             }
 
                             @Override

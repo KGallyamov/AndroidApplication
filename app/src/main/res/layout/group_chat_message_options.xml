@@ -59,6 +59,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
     <TextView
+        android:id="@+id/forward"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="monospace"
+        android:text="@string/forward_message"
+        android:textColor="#C4B7B7"
+        android:textColorHint="#C4B7B7"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+    <TextView
         android:id="@+id/edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
