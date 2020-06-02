@@ -40,11 +40,19 @@
 
     <style name="PostPageRatingBar" parent="Theme.AppCompat">
         <item name="colorControlNormal">#9193A5</item>
-        <item name="colorControlActivated">#AF3333</item>
+        <item name="colorControlActivated">#ACACAC</item>
     </style>
     <style name="MyRadioButton" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">#FFFFFF</item>
         <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+    <style name="ListViewStyle" parent="android:style/Widget.ListView">
+        <item name="android:background">#353E4f</item>
+        <item name="android:divider">#8A8787</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:listSelector">#000000</item>
+        <item name="android:drawSelectorOnTop">false</item>
+        <item name="android:cacheColorHint">#00000000</item>
     </style>
 
 

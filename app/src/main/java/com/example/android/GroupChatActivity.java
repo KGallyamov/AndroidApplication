@@ -48,6 +48,9 @@ public class GroupChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         path = getIntent().getStringExtra("path");
         final String pinned_message_link = getIntent().getStringExtra("pinned");
+        final ArrayList<String> forwards = getIntent().getStringArrayListExtra("forwards");
+        final ArrayList<String> gorup_chat_paths = getIntent().getStringArrayListExtra("paths");
+        Log.d("GroupChatActivity", forwards.toString());
         if(pinned_message_link.equals("no_message")){
             setContentView(R.layout.activity_group_chat);
         }else{
@@ -155,7 +158,8 @@ public class GroupChatActivity extends AppCompatActivity {
                     paths.add(i.getKey());
                 }
                 GroupChatAdapter adapter = new GroupChatAdapter(GroupChatActivity.this,
-                        R.layout.message_out_item,list.toArray(new Message[0]), path, paths, getLayoutInflater(), pinned_message_link);
+                        R.layout.message_out_item,list.toArray(new Message[0]), path, paths,
+                        getLayoutInflater(), pinned_message_link, forwards, gorup_chat_paths);
                 if(pinned_exists){
                     LinearLayout pinned = (LinearLayout) findViewById(R.id.pinned_message);
                     pinned.setOnClickListener(new View.OnClickListener() {
@@ -281,7 +285,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
             Message message = new Message(write_message.getText().toString(),
                     login,
-                    time_for_database, false, "no_image");
+                    time_for_database, false, "no_image", "not_forwarded");
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("GroupChats").child(path).child("messages").push().setValue(message);
             write_message.setText("");
