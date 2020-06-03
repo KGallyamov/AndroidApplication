@@ -71,9 +71,19 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
         final Message message = getItem(position);
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         if(message.getAuthor().equals(login)){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
+            if(!message.isForwarded().equals("not_forwarded")){
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_out, null);
+                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.isForwarded());
+            }else {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
+            }
         }else{
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_item, null);
+            if(!message.isForwarded().equals("not_forwarded")){
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_in, null);
+                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.isForwarded());
+            }else {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_item, null);
+            }
         }
         if (!(message.getImage().equals("no_image"))){
             ImageView message_image = convertView.findViewById(R.id.image);
