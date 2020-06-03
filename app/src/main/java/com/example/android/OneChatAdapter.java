@@ -343,12 +343,15 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Message forwarded_message = message;
-                        forwarded_message.setForwarded(login);
                         Calendar c = Calendar.getInstance();
                         SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                         String now = dateformat.format(c.getTime());
                         forwarded_message.setTime(now);
-                        forwarded_message.setForwarded(forwarded_message.getAuthor());
+                        if(forwarded_message.isForwarded().equals("not_forwarded")){
+                            forwarded_message.setForwarded(login);
+                        }else{
+                            Log.d("OneChatAdapter_354", forwarded_message.isForwarded());
+                        }
                         forwarded_message.setAuthor(login);
                         if(forwards_chats.contains(arrayList.get(position))){
                             DatabaseReference forward_to_chat = FirebaseDatabase.getInstance().getReference();
