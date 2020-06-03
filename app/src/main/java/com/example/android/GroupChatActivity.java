@@ -49,7 +49,7 @@ public class GroupChatActivity extends AppCompatActivity {
         path = getIntent().getStringExtra("path");
         final String pinned_message_link = getIntent().getStringExtra("pinned");
         final ArrayList<String> forwards = getIntent().getStringArrayListExtra("forwards");
-        final ArrayList<String> gorup_chat_paths = getIntent().getStringArrayListExtra("paths");
+        final ArrayList<String> group_chat_paths = getIntent().getStringArrayListExtra("paths");
         Log.d("GroupChatActivity", forwards.toString());
         if(pinned_message_link.equals("no_message")){
             setContentView(R.layout.activity_group_chat);
@@ -159,7 +159,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 }
                 GroupChatAdapter adapter = new GroupChatAdapter(GroupChatActivity.this,
                         R.layout.message_out_item,list.toArray(new Message[0]), path, paths,
-                        getLayoutInflater(), pinned_message_link, forwards, gorup_chat_paths);
+                        getLayoutInflater(), pinned_message_link, forwards, group_chat_paths);
                 if(pinned_exists){
                     LinearLayout pinned = (LinearLayout) findViewById(R.id.pinned_message);
                     pinned.setOnClickListener(new View.OnClickListener() {
