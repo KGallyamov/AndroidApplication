@@ -6,15 +6,18 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,17 +48,21 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 
 public class OneChatAdapter extends ArrayAdapter<Message> {
     String chat;
     ArrayList<String> paths;
     LayoutInflater inflater;
-    OneChatAdapter(@NonNull Context context, int resource, Message[] arr, String chat, ArrayList<String> paths, LayoutInflater inflater) {
+    ArrayList<String> dialogs;
+    OneChatAdapter(@NonNull Context context, int resource, Message[] arr, String chat,
+                   ArrayList<String> paths, LayoutInflater inflater, ArrayList<String> dialogs) {
         super(context, resource, arr);
         this.chat = chat;
         this.paths = paths;
         this.inflater = inflater;
+        this.dialogs = dialogs;
     }
 
     @NonNull
@@ -64,9 +71,19 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
         final Message message = getItem(position);
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         if(message.getAuthor().equals(login)){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
+            if(!message.isForwarded().equals("not_forwarded")){
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_out, null);
+                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.isForwarded());
+            }else {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
+            }
         }else{
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_item, null);
+            if(!message.isForwarded().equals("not_forwarded")){
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_in, null);
+                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.isForwarded());
+            }else {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_item, null);
+            }
         }
         if (!(message.getImage().equals("no_image"))){
             ImageView message_image = convertView.findViewById(R.id.image);
@@ -133,6 +150,7 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                 final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
                 View dialogView = inflater.inflate(R.layout.message_options, null);
                 TextView copy_text = dialogView.findViewById(R.id.copy);
+                TextView tv_forward = dialogView.findViewById(R.id.forward);
                 TextView edit_message = dialogView.findViewById(R.id.edit);
                 TextView delete = dialogView.findViewById(R.id.delete);
                 TextView exit = dialogView.findViewById(R.id.Cancel);
@@ -216,6 +234,30 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                         alertDialog_edit.show();
                     }
                 });
+                tv_forward.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        DatabaseReference user_chats = FirebaseDatabase.getInstance().getReference();
+                        user_chats.child("Users").child(login).child("chats").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                ArrayList<String> chats_paths = new ArrayList<>();
+                                for(DataSnapshot i:dataSnapshot.getChildren()){
+                                    if(!i.getKey().equals("zero")){
+                                        chats_paths.add(i.getValue().toString());
+                                    }
+                                }
+                                forwardMessage(message, chats_paths);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
                 delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -260,5 +302,80 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
             }
         });
         return convertView;
+    }
+    private void forwardMessage(final Message message, final ArrayList<String> group_chat_paths) {
+        final AlertDialog.Builder where = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
+        View dialogView = inflater.inflate(R.layout.forward_alert_dialog, null);
+        final ListView variants = (ListView) dialogView.findViewById(R.id.variants);
+        TextView cancel = (TextView) dialogView.findViewById(R.id.Cancel);
+
+
+
+
+        final AlertDialog alertDialog = where.create();
+        alertDialog.setView(dialogView);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+        DatabaseReference chats_and_messages = FirebaseDatabase.getInstance().getReference().child("GroupChats");
+        chats_and_messages.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+                final ArrayList<String> forwards_chats = new ArrayList<>();
+                for(DataSnapshot i:dataSnapshot.getChildren()){
+                    if(group_chat_paths.contains(i.getKey())){
+                        GroupChat groupChat = i.getValue(GroupChat.class);
+                        forwards_chats.add(groupChat.getTitle());
+                    }
+                }
+                final ArrayList<String> arrayList = dialogs;
+                arrayList.addAll(forwards_chats);
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                        R.layout.forward_list_item,
+                        arrayList.toArray(new String[0]));
+                variants.setAdapter(adapter);
+                variants.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Message forwarded_message = message;
+                        Calendar c = Calendar.getInstance();
+                        SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
+                        String now = dateformat.format(c.getTime());
+                        forwarded_message.setTime(now);
+                        if(forwarded_message.isForwarded().equals("not_forwarded")){
+                            forwarded_message.setForwarded(login);
+                        }else{
+                            Log.d("OneChatAdapter_354", forwarded_message.isForwarded());
+                        }
+                        forwarded_message.setAuthor(login);
+                        if(forwards_chats.contains(arrayList.get(position))){
+                            DatabaseReference forward_to_chat = FirebaseDatabase.getInstance().getReference();
+                            forward_to_chat.child("GroupChats").
+                                    child(group_chat_paths.get(forwards_chats.indexOf(arrayList.get(position)))).
+                                    child("messages").push().setValue(forwarded_message);
+                            alertDialog.dismiss();
+                        }else{
+                            DatabaseReference forward_to_chat = FirebaseDatabase.getInstance().getReference();
+                            String[] names = new String[]{login, dialogs.get(dialogs.indexOf(arrayList.get(position)))};
+                            Arrays.sort(names);
+                            forward_to_chat.child("Messages").
+                                    child(names[0] + "_" + names[1]).push().setValue(forwarded_message);
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        alertDialog.show();
     }
 }

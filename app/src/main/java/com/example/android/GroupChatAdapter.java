@@ -70,9 +70,19 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
         final Message message = getItem(position);
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         if(message.getAuthor().equals(login)){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
+            if(message.isForwarded().equals("not_forwarded")) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
+            }else{
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_out, null);
+                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.isForwarded());
+            }
         }else{
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_group, null);
+            if(message.isForwarded().equals("not_forwarded")) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_group, null);
+            }else{
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_in_group, null);
+                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.isForwarded());
+            }
             DatabaseReference user_avatar = FirebaseDatabase.getInstance().getReference();
             final View finalConvertView = convertView;
             user_avatar.child("Users").child(message.getAuthor()).child("avatar").addValueEventListener(new ValueEventListener() {
@@ -358,12 +368,13 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Message forwarded_message = message;
-                        forwarded_message.setForwarded(login);
                         Calendar c = Calendar.getInstance();
                         SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                         String now = dateformat.format(c.getTime());
                         forwarded_message.setTime(now);
-                        forwarded_message.setForwarded(forwarded_message.getAuthor());
+                        if(forwarded_message.isForwarded().equals("not_forwarded")) {
+                            forwarded_message.setForwarded(forwarded_message.getAuthor());
+                        }
                         forwarded_message.setAuthor(login);
                         if(forwards_chats.contains(arrayList.get(position))){
                             DatabaseReference forward_to_chat = FirebaseDatabase.getInstance().getReference();

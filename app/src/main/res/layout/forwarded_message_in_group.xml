@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:background="#353E4f"
+
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/avatar"
+        android:src="@drawable/sigma5"
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
+
+    <TextView
+        android:id="@+id/day_month"
+        android:text="time"
+        android:padding="3dp"
+        android:layout_alignParentEnd="true"
+        android:textColor="#C4B7B7"
+        android:fontFamily="monospace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:id="@+id/message_body"
+        android:layout_alignParentStart="true"
+        android:orientation="vertical"
+        android:padding="4dp"
+        android:layout_marginLeft="50dp"
+        android:background="@drawable/message_in"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="Forwarded message"
+            android:padding="3dp"
+            android:textColor="#6B6A6A"
+            android:fontFamily="monospace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/real_author"
+            android:text="author"
+            android:padding="3dp"
+            android:textColor="#141111"
+            android:fontFamily="monospace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <com.luseen.autolinklibrary.AutoLinkTextView
+            android:id="@+id/text"
+            android:text="text"
+            android:padding="5dp"
+            android:textSize="16sp"
+            android:fontFamily="monospace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/image"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"/>
+        <TextView
+            android:id="@+id/hour_min"
+            android:text="time"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
+
+</RelativeLayout>

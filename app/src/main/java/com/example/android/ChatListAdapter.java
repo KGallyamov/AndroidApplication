@@ -29,10 +29,12 @@ import java.util.HashMap;
 
 public class ChatListAdapter extends ArrayAdapter<String> {
     HashMap<String, Integer> unread;
+    String[] dialogs;
 
     ChatListAdapter(@NonNull Context context, int resource, String[] arr, HashMap<String, Integer> unread) {
         super(context, resource, arr);
         this.unread = unread;
+        this.dialogs = arr;
     }
 
     @NonNull
@@ -108,6 +110,7 @@ public class ChatListAdapter extends ArrayAdapter<String> {
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), OneChatActivity.class);
                 intent.putExtra("Another_person", chat);
+                intent.putExtra("dialogs", dialogs);
                 getContext().startActivity(intent);
             }
         });

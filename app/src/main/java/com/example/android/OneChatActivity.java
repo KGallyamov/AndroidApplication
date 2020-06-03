@@ -2,12 +2,9 @@ package com.example.android;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,11 +30,6 @@ import com.google.firebase.ml.naturallanguage.smartreply.FirebaseSmartReply;
 import com.google.firebase.ml.naturallanguage.smartreply.FirebaseTextMessage;
 import com.google.firebase.ml.naturallanguage.smartreply.SmartReplySuggestion;
 import com.google.firebase.ml.naturallanguage.smartreply.SmartReplySuggestionResult;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
-import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
 
 import org.apache.commons.net.time.TimeTCPClient;
 
@@ -56,6 +48,7 @@ public class OneChatActivity extends AppCompatActivity {
     TextView lastSeen;
     String[] arr;
     int click = 0;
+    String[] dialogs;
     boolean not_supported = false;
     ArrayList<String> reply_list;
     EditText write_message;
@@ -77,6 +70,7 @@ public class OneChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String another_user_name = intent.getStringExtra("Another_person");
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+        dialogs = getIntent().getStringArrayExtra("dialogs");
         another_user.setText(another_user_name);
         arr = new String[]{login, another_user_name};
         Arrays.sort(arr);
@@ -130,11 +124,13 @@ public class OneChatActivity extends AppCompatActivity {
                                 i.getValue(Message.class).getText(), System.currentTimeMillis()));
                     } else{
                         conversation.add(FirebaseTextMessage.createForRemoteUser(
-                                i.getValue(Message.class).getText(), System.currentTimeMillis(), i.getValue(Message.class).getAuthor()));
+                                i.getValue(Message.class).getText(), System.currentTimeMillis(),
+                                i.getValue(Message.class).getAuthor()));
                     }
                 }
                 OneChatAdapter adapter = new OneChatAdapter(context, R.layout.message_out_item, list.toArray(new Message[0]),
-                        arr[0] + "_" + arr[1], paths, getLayoutInflater());
+                        arr[0] + "_" + arr[1], paths, getLayoutInflater(),
+                        new ArrayList<String>(Arrays.asList(dialogs)));
                 messages.setAdapter(adapter);
                 FirebaseSmartReply smartReply = FirebaseNaturalLanguage.getInstance().getSmartReply();
                 smartReply.suggestReplies(conversation)

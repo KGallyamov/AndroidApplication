@@ -298,7 +298,8 @@ public class Chat extends Fragment {
             heading.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             heading.setText("No messages");
         } else {
-            ChatListAdapter adapter = new ChatListAdapter(getContext(), R.layout.chat_item, names, unread);
+            ChatListAdapter adapter = new ChatListAdapter(getContext(),
+                    R.layout.chat_item, names, unread);
             chats.setAdapter(adapter);
         }
     }
