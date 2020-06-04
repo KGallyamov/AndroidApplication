@@ -285,7 +285,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
             Message message = new Message(write_message.getText().toString(),
                     login,
-                    time_for_database, false, "no_image", "not_forwarded");
+                    time_for_database, false, "no_image", "not_forwarded", "no_reply");
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("GroupChats").child(path).child("messages").push().setValue(message);
             write_message.setText("");

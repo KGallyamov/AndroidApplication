@@ -174,7 +174,7 @@ public class SendMessageWithImage extends AppCompatActivity {
             if(message_text.equals("")) message_text = "Фотография";
             Message message_db = new Message(message_text,
                     login,
-                    time_for_database, false, image_txt, "not_forwarded");
+                    time_for_database, false, image_txt, "not_forwarded", "no_reply");
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             if(where.equals("Messages")) {
                 ref.child("Messages").child(getIntent().getStringExtra("db_path")).push().setValue(message_db);

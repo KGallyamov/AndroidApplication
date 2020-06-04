@@ -346,7 +346,8 @@ public class Chat extends Fragment {
                                 Calendar c = Calendar.getInstance();
                                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                                 String now = dateformat.format(c.getTime());
-                                Message mes = new Message(message.getText().toString(), login, now, false, "no_image", "not_forwarded");
+                                Message mes = new Message(message.getText().toString(), login, now,
+                                        false, "no_image", "not_forwarded", "no_reply");
                                 chat.child(name).push().setValue(mes);
                                 dialogBuilder.dismiss();
                             }
@@ -455,7 +456,8 @@ public class Chat extends Fragment {
                                 Calendar c = Calendar.getInstance();
                                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                                 String now = dateformat.format(c.getTime());
-                                messages.put("-M0t3jq9g", new Message(message, login, now, false, "no_image", "not_forwarded"));
+                                messages.put("-M0t3jq9g", new Message(message, login, now, false,
+                                        "no_image", "not_forwarded", "no_reply"));
 
                                 final DatabaseReference new_chat = FirebaseDatabase.getInstance().getReference();
 

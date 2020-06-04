@@ -70,18 +70,18 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
         final Message message = getItem(position);
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         if(message.getAuthor().equals(login)){
-            if(message.isForwarded().equals("not_forwarded")) {
+            if(message.getForwarded().equals("not_forwarded")) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
             }else{
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_out, null);
-                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.isForwarded());
+                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.getForwarded());
             }
         }else{
-            if(message.isForwarded().equals("not_forwarded")) {
+            if(message.getForwarded().equals("not_forwarded")) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_group, null);
             }else{
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_in_group, null);
-                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.isForwarded());
+                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.getForwarded());
             }
             DatabaseReference user_avatar = FirebaseDatabase.getInstance().getReference();
             final View finalConvertView = convertView;
@@ -372,7 +372,8 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                         SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                         String now = dateformat.format(c.getTime());
                         forwarded_message.setTime(now);
-                        if(forwarded_message.isForwarded().equals("not_forwarded")) {
+                        forwarded_message.setReply("no_reply");
+                        if(forwarded_message.getForwarded().equals("not_forwarded")) {
                             forwarded_message.setForwarded(forwarded_message.getAuthor());
                         }
                         forwarded_message.setAuthor(login);
