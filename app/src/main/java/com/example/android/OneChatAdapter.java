@@ -14,10 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,8 @@ import com.luseen.autolinklibrary.AutoLinkMode;
 import com.luseen.autolinklibrary.AutoLinkOnClickListener;
 import com.luseen.autolinklibrary.AutoLinkTextView;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,13 +60,18 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
     ArrayList<String> paths;
     LayoutInflater inflater;
     ArrayList<String> dialogs;
+    RelativeLayout reply_layout;
+    TextView reply_text;
     OneChatAdapter(@NonNull Context context, int resource, Message[] arr, String chat,
-                   ArrayList<String> paths, LayoutInflater inflater, ArrayList<String> dialogs) {
+                   ArrayList<String> paths, LayoutInflater inflater, ArrayList<String> dialogs,
+                   RelativeLayout reply_layout, TextView reply_text) {
         super(context, resource, arr);
         this.chat = chat;
         this.paths = paths;
         this.inflater = inflater;
         this.dialogs = dialogs;
+        this.reply_layout = reply_layout;
+        this.reply_text = reply_text;
     }
 
     @NonNull
@@ -71,16 +80,16 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
         final Message message = getItem(position);
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
         if(message.getAuthor().equals(login)){
-            if(!message.isForwarded().equals("not_forwarded")){
+            if(!message.getForwarded().equals("not_forwarded")){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_out, null);
-                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.isForwarded());
+                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.getForwarded());
             }else {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
             }
         }else{
-            if(!message.isForwarded().equals("not_forwarded")){
+            if(!message.getForwarded().equals("not_forwarded")){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_in, null);
-                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.isForwarded());
+                ((TextView) convertView.findViewById(R.id.real_author)).setText(message.getForwarded());
             }else {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_item, null);
             }
@@ -152,6 +161,7 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                 TextView copy_text = dialogView.findViewById(R.id.copy);
                 TextView tv_forward = dialogView.findViewById(R.id.forward);
                 TextView edit_message = dialogView.findViewById(R.id.edit);
+                TextView reply = (TextView) dialogView.findViewById(R.id.reply);
                 TextView delete = dialogView.findViewById(R.id.delete);
                 TextView exit = dialogView.findViewById(R.id.Cancel);
                 if(login.equals(message.getAuthor())){
@@ -166,6 +176,20 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                 exit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+                reply.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SharedPreferences preferences = getContext().getSharedPreferences("Reply_message", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor ed = preferences.edit();
+                        ed.putString("link", paths.get(position));
+                        ed.putString("author", message.getAuthor());
+                        ed.putString("text", message.getText());
+                        ed.apply();
+                        reply_layout.setVisibility(View.VISIBLE);
+                        reply_text.setText(message.getText());
                         alertDialog.dismiss();
                     }
                 });
@@ -347,10 +371,11 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                         SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                         String now = dateformat.format(c.getTime());
                         forwarded_message.setTime(now);
-                        if(forwarded_message.isForwarded().equals("not_forwarded")){
+                        forwarded_message.setReply("no_reply");
+                        if(forwarded_message.getForwarded().equals("not_forwarded")){
                             forwarded_message.setForwarded(login);
                         }else{
-                            Log.d("OneChatAdapter_354", forwarded_message.isForwarded());
+                            Log.d("OneChatAdapter_354", forwarded_message.getForwarded());
                         }
                         forwarded_message.setAuthor(login);
                         if(forwards_chats.contains(arrayList.get(position))){

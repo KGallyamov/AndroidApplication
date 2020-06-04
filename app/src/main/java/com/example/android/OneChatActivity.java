@@ -2,14 +2,18 @@ package com.example.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,13 +51,16 @@ public class OneChatActivity extends AppCompatActivity {
     TextView exit;
     TextView lastSeen;
     String[] arr;
+    TextView reply_text;
     int click = 0;
     String[] dialogs;
+    RelativeLayout reply_layout;
     boolean not_supported = false;
     ArrayList<String> reply_list;
     EditText write_message;
-    Button send, quick_reply, attach_image;
+    Button send, quick_reply, attach_image, cancel_reply;
     Context context = this;
+    String reply = "no_reply";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +70,9 @@ public class OneChatActivity extends AppCompatActivity {
         another_user = (TextView) findViewById(R.id.title);
         lastSeen = (TextView) findViewById(R.id.lastSeen);
         exit = (TextView) findViewById(R.id.exit);
+        reply_layout = (RelativeLayout) findViewById(R.id.reply);
+        reply_text = (TextView) findViewById(R.id.reply_text);
+        cancel_reply = (Button) findViewById(R.id.cancel_reply);
         attach_image = (Button) findViewById(R.id.attach_image);
         quick_reply = (Button) findViewById(R.id.quick_reply);
         send = (Button) findViewById(R.id.send_comment);
@@ -103,6 +113,17 @@ public class OneChatActivity extends AppCompatActivity {
 
             }
         });
+        cancel_reply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reply_layout.setVisibility(View.GONE);
+                SharedPreferences preferences = getSharedPreferences("Reply_message", MODE_PRIVATE);
+                SharedPreferences.Editor ed = preferences.edit();
+                ed.remove("link");
+                ed.apply();
+                reply = "no_reply";
+            }
+        });
         attach_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,7 +151,7 @@ public class OneChatActivity extends AppCompatActivity {
                 }
                 OneChatAdapter adapter = new OneChatAdapter(context, R.layout.message_out_item, list.toArray(new Message[0]),
                         arr[0] + "_" + arr[1], paths, getLayoutInflater(),
-                        new ArrayList<String>(Arrays.asList(dialogs)));
+                        new ArrayList<String>(Arrays.asList(dialogs)), reply_layout, reply_text);
                 messages.setAdapter(adapter);
                 FirebaseSmartReply smartReply = FirebaseNaturalLanguage.getInstance().getSmartReply();
                 smartReply.suggestReplies(conversation)
@@ -194,6 +215,34 @@ public class OneChatActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+        write_message.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                SharedPreferences preferences = getSharedPreferences("Reply_message", MODE_PRIVATE);
+                String link = preferences.getString("link", "nothing_here");
+                if(!link.equals("nothing_here")){
+                    reply = link;
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                SharedPreferences preferences = getSharedPreferences("Reply_message", MODE_PRIVATE);
+                String link = preferences.getString("link", "nothing_here");
+                if(!link.equals("nothing_here")){
+                    reply = link;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                SharedPreferences preferences = getSharedPreferences("Reply_message", MODE_PRIVATE);
+                String link = preferences.getString("link", "nothing_here");
+                if(!link.equals("nothing_here")){
+                    reply = link;
+                }
             }
         });
         send.setOnClickListener(new View.OnClickListener() {
@@ -281,12 +330,20 @@ public class OneChatActivity extends AppCompatActivity {
                 SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss dd.MMMM.yyyy");
                 time_for_database = dateformat.format(c.getTime());
             }
-
+            SharedPreferences preferences = getSharedPreferences("Reply_message", MODE_PRIVATE);
+            String link = preferences.getString("link", "nothing_here");
+            if(!link.equals("nothing_here")){
+                reply = link;
+            } else{
+                reply = "no_reply";
+            }
             Message message = new Message(write_message.getText().toString(),
                     login,
-                    time_for_database, false, "no_image", "not_forwarded");
+                    time_for_database, false, "no_image", "not_forwarded", reply);
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("Messages").child(arr[0] + "_" + arr[1]).push().setValue(message);
+            reply_text.setText("");
+            reply_layout.setVisibility(View.GONE);
             write_message.setText("");
 
         }

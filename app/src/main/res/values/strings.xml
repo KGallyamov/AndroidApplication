@@ -59,6 +59,7 @@
     <string name="settings">Настройки</string>
     <string name="forward_message">Forward message</string>
     <string name="choose_chat_or_dialog">Choose chat or dialog</string>
+    <string name="reply">Reply</string>
 
     <string-array name="saved">
         <item>2</item>

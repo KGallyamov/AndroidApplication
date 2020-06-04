@@ -7,18 +7,29 @@ public class Message {
     private boolean read;
     private String image;
     private String forwarded;
+    private String reply;
     Message(){}
 
-    public Message(String text, String author, String time, boolean read, String image, String forwarded) {
+    public Message(String text, String author, String time, boolean read, String image,
+                   String forwarded, String reply) {
         this.text = text;
         this.author = author;
         this.time = time;
         this.read = read;
         this.image = image;
         this.forwarded = forwarded;
+        this.reply = reply;
     }
 
-    public String isForwarded() {
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+
+    public String getForwarded() {
         return forwarded;
     }
 
