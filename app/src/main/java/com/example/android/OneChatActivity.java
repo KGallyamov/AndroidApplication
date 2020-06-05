@@ -151,7 +151,8 @@ public class OneChatActivity extends AppCompatActivity {
                 }
                 OneChatAdapter adapter = new OneChatAdapter(context, R.layout.message_out_item, list.toArray(new Message[0]),
                         arr[0] + "_" + arr[1], paths, getLayoutInflater(),
-                        new ArrayList<String>(Arrays.asList(dialogs)), reply_layout, reply_text);
+                        new ArrayList<String>(Arrays.asList(dialogs)), reply_layout, reply_text,
+                        (TextView) findViewById(R.id.reply_message_author), messages);
                 messages.setAdapter(adapter);
                 FirebaseSmartReply smartReply = FirebaseNaturalLanguage.getInstance().getSmartReply();
                 smartReply.suggestReplies(conversation)
@@ -334,6 +335,9 @@ public class OneChatActivity extends AppCompatActivity {
             String link = preferences.getString("link", "nothing_here");
             if(!link.equals("nothing_here")){
                 reply = link;
+                SharedPreferences.Editor ed = preferences.edit();
+                ed.remove("link");
+                ed.apply();
             } else{
                 reply = "no_reply";
             }
