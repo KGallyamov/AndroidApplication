@@ -1,6 +1,7 @@
 package com.example.android;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -42,6 +44,7 @@ public class GroupChatActivity extends AppCompatActivity {
     Button send, attach_image;
     EditText write_message;
     boolean pinned_exists = false;
+    String reply = "no_reply";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 }
             });
         }
+
         messages = (ListView) findViewById(R.id.messages_list);
         chat_title = (TextView) findViewById(R.id.title);
         exit = (TextView) findViewById(R.id.exit);
@@ -157,9 +161,13 @@ public class GroupChatActivity extends AppCompatActivity {
                     list.add(i.getValue(Message.class));
                     paths.add(i.getKey());
                 }
+                TextView reply_text = (TextView) findViewById(R.id.reply_text);
+                TextView reply_author = (TextView) findViewById(R.id.reply_message_author);
+                RelativeLayout reply_layout = (RelativeLayout) findViewById(R.id.reply);
                 GroupChatAdapter adapter = new GroupChatAdapter(GroupChatActivity.this,
                         R.layout.message_out_item,list.toArray(new Message[0]), path, paths,
-                        getLayoutInflater(), pinned_message_link, forwards, group_chat_paths);
+                        getLayoutInflater(), pinned_message_link, forwards, group_chat_paths, reply_layout,
+                        reply_text, reply_author, messages);
                 if(pinned_exists){
                     LinearLayout pinned = (LinearLayout) findViewById(R.id.pinned_message);
                     pinned.setOnClickListener(new View.OnClickListener() {
@@ -283,9 +291,19 @@ public class GroupChatActivity extends AppCompatActivity {
                 time_for_database = dateformat.format(c.getTime());
             }
 
+            SharedPreferences preferences = getSharedPreferences("Reply_message", MODE_PRIVATE);
+            String link = preferences.getString("link", "nothing_here");
+            if(!link.equals("nothing_here")){
+                reply = link;
+                SharedPreferences.Editor ed = preferences.edit();
+                ed.remove("link");
+                ed.apply();
+            } else{
+                reply = "no_reply";
+            }
             Message message = new Message(write_message.getText().toString(),
                     login,
-                    time_for_database, false, "no_image", "not_forwarded", "no_reply");
+                    time_for_database, false, "no_image", "not_forwarded", reply);
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("GroupChats").child(path).child("messages").push().setValue(message);
             write_message.setText("");

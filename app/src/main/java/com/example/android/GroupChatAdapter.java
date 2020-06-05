@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +16,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,10 +51,14 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
     LayoutInflater inflater;
     String pinned_message_link;
     ArrayList<String> forwards_chats, group_chat_paths;
+    RelativeLayout reply_layout;
+    TextView reply_text, reply_author;
+    ListView items;
     public GroupChatAdapter(@NonNull Context context, int resource, Message[] messages, String path,
                             ArrayList<String> message_path, LayoutInflater inflater,
                             String pinned_message_link, ArrayList<String> forwards_chats,
-                            ArrayList<String> paths) {
+                            ArrayList<String> paths, RelativeLayout reply_layout, TextView reply_text,
+                            TextView reply_author, ListView items) {
         super(context, resource, messages);
         this.messages = messages;
         this.path = path;
@@ -60,7 +67,10 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
         this.pinned_message_link = pinned_message_link;
         this.forwards_chats = forwards_chats;
         this.group_chat_paths = paths;
-        Log.d("look", paths.toString());
+        this.reply_layout = reply_layout;
+        this.reply_author = reply_author;
+        this.reply_text = reply_text;
+        this.items = items;
 
     }
 
@@ -102,6 +112,20 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                     Intent intent = new Intent(getContext(), AnotherUserPage.class);
                     intent.putExtra("author", message.getAuthor());
                     getContext().startActivity(intent);
+                }
+            });
+        }
+        if(!message.getReply().equals("no_reply")){
+            LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.reply_in_message);
+            layout.setVisibility(View.VISIBLE);
+            TextView reply_message_tv = (TextView) convertView.findViewById(R.id.reply_message);
+            ArrayList<Message> mes = new ArrayList<>(Arrays.asList(messages));
+            String txt = mes.get(message_path.indexOf(message.getReply())).getText();
+            reply_message_tv.setText(txt);
+            layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    items.smoothScrollToPosition(message_path.indexOf(message.getReply()));
                 }
             });
         }
@@ -172,6 +196,7 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                 TextView edit_message = dialogView.findViewById(R.id.edit);
                 TextView forward_message = (TextView) dialogView.findViewById(R.id.forward);
                 TextView delete = dialogView.findViewById(R.id.delete);
+                TextView reply = (TextView) dialogView.findViewById(R.id.reply);
                 TextView pin = (TextView) dialogView.findViewById(R.id.pin_message);
                 TextView exit = dialogView.findViewById(R.id.Cancel);
                 if(login.equals(message.getAuthor())){
@@ -206,6 +231,21 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                         ClipData clip = ClipData.newPlainText("", message.getText());
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(getContext(), "Text copied", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                    }
+                });
+                reply.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SharedPreferences preferences = getContext().getSharedPreferences("Reply_message", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor ed = preferences.edit();
+                        ed.putString("link", message_path.get(position));
+                        ed.putString("author", message.getAuthor());
+                        ed.putString("text", message.getText());
+                        ed.apply();
+                        reply_layout.setVisibility(View.VISIBLE);
+                        reply_text.setText(message.getText());
+                        reply_author.setText(message.getAuthor());
                         alertDialog.dismiss();
                     }
                 });
