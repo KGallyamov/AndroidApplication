@@ -21,26 +21,51 @@
         android:padding="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <com.luseen.autolinklibrary.AutoLinkTextView
-            android:id="@+id/text"
-            android:text="text"
-            android:padding="5dp"
-            android:textSize="16sp"
-            android:fontFamily="monospace"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <ImageView
-            android:id="@+id/image"
+        <LinearLayout
+            android:id="@+id/reply_in_message"
             android:visibility="gone"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"/>
-        <TextView
-            android:id="@+id/hour_min"
-            android:text="time"
-            android:textSize="12sp"
-            android:fontFamily="monospace"
+            android:layout_height="wrap_content">
+            <TextView
+                android:fontFamily="monospace"
+                android:layout_width="5dp"
+                android:background="#FFFFFF"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/reply_message"
+                android:text="ppovjope"
+                android:textSize="12sp"
+                android:fontFamily="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+            <com.luseen.autolinklibrary.AutoLinkTextView
+                android:id="@+id/text"
+                android:text="text"
+                android:padding="5dp"
+                android:textSize="16sp"
+                android:fontFamily="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/image"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"/>
+            <TextView
+                android:id="@+id/hour_min"
+                android:text="time"
+                android:textSize="12sp"
+                android:fontFamily="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
     </LinearLayout>
 
 

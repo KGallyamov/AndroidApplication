@@ -61,10 +61,13 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
     LayoutInflater inflater;
     ArrayList<String> dialogs;
     RelativeLayout reply_layout;
-    TextView reply_text;
+    TextView reply_text, reply_author;
+    ArrayList<Message> messages;
+    ListView items;
     OneChatAdapter(@NonNull Context context, int resource, Message[] arr, String chat,
                    ArrayList<String> paths, LayoutInflater inflater, ArrayList<String> dialogs,
-                   RelativeLayout reply_layout, TextView reply_text) {
+                   RelativeLayout reply_layout, TextView reply_text, TextView reply_author,
+                   ListView items) {
         super(context, resource, arr);
         this.chat = chat;
         this.paths = paths;
@@ -72,6 +75,9 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
         this.dialogs = dialogs;
         this.reply_layout = reply_layout;
         this.reply_text = reply_text;
+        this.reply_author = reply_author;
+        this.messages = new ArrayList<>(Arrays.asList(arr));
+        this.items = items;
     }
 
     @NonNull
@@ -107,6 +113,19 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                 }
             });
 
+        }
+        if(!message.getReply().equals("no_reply")){
+            LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.reply_in_message);
+            layout.setVisibility(View.VISIBLE);
+            TextView reply_message_tv = (TextView) convertView.findViewById(R.id.reply_message);
+            String txt = messages.get(paths.indexOf(message.getReply())).getText();
+            reply_message_tv.setText(txt);
+            layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    items.smoothScrollToPosition(paths.indexOf(message.getReply()));
+                }
+            });
         }
         AutoLinkTextView textView = convertView.findViewById(R.id.text);
 
@@ -190,6 +209,7 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                         ed.apply();
                         reply_layout.setVisibility(View.VISIBLE);
                         reply_text.setText(message.getText());
+                        reply_author.setText(message.getAuthor());
                         alertDialog.dismiss();
                     }
                 });

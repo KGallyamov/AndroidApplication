@@ -74,16 +74,39 @@
         android:layout_marginBottom="50dp"
         android:layout_height="50dp">
         <TextView
-            android:id="@+id/reply_text"
-            android:text="Text"
-            android:textSize="18sp"
-            android:fontFamily="monospace"
-            android:paddingTop="5dp"
             android:paddingLeft="5dp"
+            android:background="@color/active_blue"
+            android:layout_alignParentTop="true"
             android:textColor="#C4B7B7"
             android:paddingBottom="5dp"
             android:layout_width="match_parent"
+            android:layout_height="5dp"/>
+        <TextView
+            android:id="@+id/reply_message_author"
+            android:text="Kgalliamov"
+            android:textSize="18sp"
+            android:fontFamily="monospace"
+            android:paddingTop="5dp"
+            android:layout_alignParentStart="true"
+            android:paddingLeft="5dp"
+            android:textColor="#C4B7B7"
+            android:gravity="center_vertical"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/reply_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignEnd="@id/cancel_reply"
+            android:layout_marginEnd="60dp"
+            android:layout_marginStart="120dp"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:text="Text"
+            android:textColor="#C4B7B7"
+            android:textSize="18sp" />
         <Button
             android:id="@+id/cancel_reply"
             android:layout_alignParentEnd="true"
