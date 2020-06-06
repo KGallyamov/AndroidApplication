@@ -93,7 +93,8 @@ public class NewAccount extends AppCompatActivity {
                             privacy_settings.put("send_messages", "everyone");
                             privacy_settings.put("see_my_posts", "everyone");
                             privacy_settings.put("add_to_group_chats", "friends");
-                            databaseReference.child(db_login).setValue(new User(text_password,
+                            final String db_login_lower = db_login.toLowerCase();
+                            databaseReference.child(db_login_lower).setValue(new User(text_password,
                                                                                 "user",
                                     "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/images%2Fdefault_avatar.png?alt=media&token=7807ba53-1240-41d1-8f63-70f2e3e38cec",
                                             posts, now, 0, chats, friends, privacy_settings),
@@ -103,16 +104,16 @@ public class NewAccount extends AppCompatActivity {
                                     Toast.makeText(getContext, "Success", Toast.LENGTH_SHORT).show();
                                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                                     ArrayList<String> t = new ArrayList<>();
-                                    t.add("system");
-                                    t.add("greetings");
-                                    t.add("admin");
+                                    t.add("#system");
+                                    t.add("#greetings");
+                                    t.add("#admin");
                                     HashMap<String, String> rating = new HashMap<>();
                                     rating.put("zero", "nothing");
                                     HashMap<String, Comment> comments = new HashMap<>();
                                     HashMap<String, String> likes = new HashMap<>();
                                     likes.put("zero", "nothing");
                                     comments.put("zero", new Comment("nothing", "interesting", "in here", likes));
-                                    ref.child("Favorite" + db_login).child("0").setValue(new RecyclerItem("Добро пожаловать!",
+                                    ref.child("Favorite" + db_login_lower).child("0").setValue(new RecyclerItem("Добро пожаловать!",
                                             "Это лента избранных постов",
                                             "https://firebasestorage.googleapis.com/v0/b/android-824bc.appspot.com/o/sigma.jpg?alt=media&token=328187a2-65a5-4623-885f-1d19c12d72d2",
                                             "System message",

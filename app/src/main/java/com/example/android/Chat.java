@@ -44,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
@@ -545,27 +546,9 @@ public class Chat extends Fragment {
                                 final Intent intent = new Intent(getContext(), GroupChatActivity.class);
                                 intent.putExtra("path", chats.get(getAdapterPosition()));
                                 intent.putExtra("pinned", pinned_message_link);
-                                DatabaseReference reference  =FirebaseDatabase.getInstance().getReference();
-                                final ArrayList<String> forwards = new ArrayList<>();
-                                reference.child("GroupChats").addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        for(DataSnapshot i:dataSnapshot.getChildren()){
-                                            if(chats.contains(i.getKey())){
-                                                GroupChat groupChat = i.getValue(GroupChat.class);
-                                                forwards.add(groupChat.getTitle());
-                                            }
-                                        }
-                                        intent.putExtra("forwards", forwards);
-                                        intent.putExtra("paths", chats);
-                                        startActivity(intent);
-                                    }
+                                intent.putExtra("paths", chats);
+                                startActivity(intent);
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
                             }
 
                             @Override
@@ -573,7 +556,6 @@ public class Chat extends Fragment {
 
                             }
                         });
-
                     }
                 });
             }
