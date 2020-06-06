@@ -51,9 +51,8 @@ public class GroupChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         path = getIntent().getStringExtra("path");
         final String pinned_message_link = getIntent().getStringExtra("pinned");
-        final ArrayList<String> forwards = getIntent().getStringArrayListExtra("forwards");
+        //final ArrayList<String> forwards = getIntent().getStringArrayListExtra("forwards");
         final ArrayList<String> group_chat_paths = getIntent().getStringArrayListExtra("paths");
-        Log.d("GroupChatActivity", forwards.toString());
         if(pinned_message_link.equals("no_message")){
             setContentView(R.layout.activity_group_chat);
         }else{
@@ -155,29 +154,48 @@ public class GroupChatActivity extends AppCompatActivity {
         reference.child(path).child("messages").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<Message> list = new ArrayList<>();
+                final ArrayList<Message> list = new ArrayList<>();
                 final ArrayList<String> paths = new ArrayList<>();
                 for(DataSnapshot i:dataSnapshot.getChildren()){
                     list.add(i.getValue(Message.class));
                     paths.add(i.getKey());
                 }
-                TextView reply_text = (TextView) findViewById(R.id.reply_text);
-                TextView reply_author = (TextView) findViewById(R.id.reply_message_author);
-                RelativeLayout reply_layout = (RelativeLayout) findViewById(R.id.reply);
-                GroupChatAdapter adapter = new GroupChatAdapter(GroupChatActivity.this,
-                        R.layout.message_out_item,list.toArray(new Message[0]), path, paths,
-                        getLayoutInflater(), pinned_message_link, forwards, group_chat_paths, reply_layout,
-                        reply_text, reply_author, messages);
-                if(pinned_exists){
-                    LinearLayout pinned = (LinearLayout) findViewById(R.id.pinned_message);
-                    pinned.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            messages.smoothScrollToPosition(paths.indexOf(getIntent().getStringExtra("pinned")));
+                final TextView reply_text = (TextView) findViewById(R.id.reply_text);
+                final TextView reply_author = (TextView) findViewById(R.id.reply_message_author);
+                final RelativeLayout reply_layout = (RelativeLayout) findViewById(R.id.reply);
+                final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                final ArrayList<String> forwards = new ArrayList<>();
+                reference.child("GroupChats").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot i:dataSnapshot.getChildren()){
+                            if(group_chat_paths.contains(i.getKey())){
+                                GroupChat groupChat = i.getValue(GroupChat.class);
+                                forwards.add(groupChat.getTitle());
+                            }
                         }
-                    });
-                }
-                messages.setAdapter(adapter);
+                        GroupChatAdapter adapter = new GroupChatAdapter(GroupChatActivity.this,
+                                R.layout.message_out_item,list.toArray(new Message[0]), path, paths,
+                                getLayoutInflater(), pinned_message_link, forwards, group_chat_paths, reply_layout,
+                                reply_text, reply_author, messages);
+                        if(pinned_exists){
+                            LinearLayout pinned = (LinearLayout) findViewById(R.id.pinned_message);
+                            pinned.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    messages.smoothScrollToPosition(paths.indexOf(getIntent().getStringExtra("pinned")));
+                                }
+                            });
+                        }
+                        messages.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
 
             @Override
