@@ -56,6 +56,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class OneChatAdapter extends ArrayAdapter<Message> {
+    // адаптер сообщений чата
     String chat;
     ArrayList<String> paths;
     LayoutInflater inflater;
@@ -85,14 +86,18 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final Message message = getItem(position);
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+        // сообщение отправлено нынешним пользователем
         if(message.getAuthor().equals(login)){
+            // сообщение не является пересалнным
             if(!message.getForwarded().equals("not_forwarded")){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_out, null);
                 ((TextView) convertView.findViewById(R.id.real_author)).setText(message.getForwarded());
             }else {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_out_item, null);
             }
-        }else{
+        }// сообщение отправил другой пользователь
+        else{
+            // сообщение не является пересалнным
             if(!message.getForwarded().equals("not_forwarded")){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.forwarded_message_in, null);
                 ((TextView) convertView.findViewById(R.id.real_author)).setText(message.getForwarded());
@@ -100,6 +105,7 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_in_item, null);
             }
         }
+        // при нажатии на фотографию в сообщении откроется окно с картинкой
         if (!(message.getImage().equals("no_image"))){
             ImageView message_image = convertView.findViewById(R.id.image);
             message_image.setVisibility(View.VISIBLE);
@@ -127,6 +133,7 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                 }
             });
         }
+        // все ссылки в сообщении будут открываться в браузере(при нажатии), теги копироваться
         AutoLinkTextView textView = convertView.findViewById(R.id.text);
 
         textView.addAutoLinkMode(AutoLinkMode.MODE_HASHTAG, AutoLinkMode.MODE_URL);
@@ -172,6 +179,7 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
         LinearLayout message_body = (LinearLayout) convertView.findViewById(R.id.message_body);
 
         message_body.setLongClickable(true);
+        // функции сообщения
         message_body.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -278,6 +286,7 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                         alertDialog_edit.show();
                     }
                 });
+                // переслать в другой даилог или беседу
                 tv_forward.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -370,6 +379,7 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
                 final ArrayList<String> forwards_chats = new ArrayList<>();
+                // беседы, в которые можно переслать соообщение
                 for(DataSnapshot i:dataSnapshot.getChildren()){
                     if(group_chat_paths.contains(i.getKey())){
                         GroupChat groupChat = i.getValue(GroupChat.class);
@@ -398,13 +408,15 @@ public class OneChatAdapter extends ArrayAdapter<Message> {
                             Log.d("OneChatAdapter_354", forwarded_message.getForwarded());
                         }
                         forwarded_message.setAuthor(login);
+                        // переслать в беседу
                         if(forwards_chats.contains(arrayList.get(position))){
                             DatabaseReference forward_to_chat = FirebaseDatabase.getInstance().getReference();
                             forward_to_chat.child("GroupChats").
                                     child(group_chat_paths.get(forwards_chats.indexOf(arrayList.get(position)))).
                                     child("messages").push().setValue(forwarded_message);
                             alertDialog.dismiss();
-                        }else{
+                        }// переслать в диалог
+                        else{
                             DatabaseReference forward_to_chat = FirebaseDatabase.getInstance().getReference();
                             String[] names = new String[]{login, dialogs.get(dialogs.indexOf(arrayList.get(position)))};
                             Arrays.sort(names);

@@ -3,6 +3,7 @@ package com.example.android;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,8 @@ public class GroupChatMembersAdapter extends ArrayAdapter<User> {
     String[] names;
     String creator;
     String path;
-    public GroupChatMembersAdapter(@NonNull Context context, int resource, @NonNull User[] objects, String[] names, String creator, String path) {
+    public GroupChatMembersAdapter(@NonNull Context context, int resource, @NonNull User[] objects,
+                                   String[] names, String creator, String path) {
         super(context, resource, objects);
         this.users = objects;
         this.names = names;
@@ -39,7 +41,7 @@ public class GroupChatMembersAdapter extends ArrayAdapter<User> {
     @NonNull
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        User user = getItem(position);
+        final User user = getItem(position);
         final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
 
         if(convertView == null){
@@ -102,9 +104,15 @@ public class GroupChatMembersAdapter extends ArrayAdapter<User> {
         } else{
             lastSeen.setTextColor(getContext().getResources().getColor(R.color.grey));
         }
-
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AnotherUserPage.class);
+                intent.putExtra("author", names[position]);
+                getContext().startActivity(intent);
+            }
+        });
         Glide.with(getContext()).load(user.getAvatar()).into(avatar);
-
         return convertView;
     }
 }

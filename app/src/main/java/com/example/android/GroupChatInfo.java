@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class GroupChatInfo extends AppCompatActivity {
+    // активити с информацией о чате
     String path;
     String creator;
 
@@ -57,21 +58,24 @@ public class GroupChatInfo extends AppCompatActivity {
         Button exit = (Button) findViewById(R.id.exit123456);
         final EditText new_member_name = (EditText) findViewById(R.id.member_name);
         final ListView members = (ListView) findViewById(R.id.members);
+
+        // в окне с информацией о чате показывается список его участников
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("GroupChats").child(path).child("members").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final ArrayList<String> list_members = new ArrayList<>();
-                for(DataSnapshot i:dataSnapshot.getChildren()){
+                for (DataSnapshot i : dataSnapshot.getChildren()) {
                     list_members.add(i.getValue().toString());
                 }
+                // получение аватарок и времени последнего входа пользователей
                 DatabaseReference user_ref = FirebaseDatabase.getInstance().getReference();
                 user_ref.child("Users").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         ArrayList<User> list = new ArrayList<>();
-                        for(DataSnapshot i:dataSnapshot.getChildren()){
-                            if(list_members.contains(i.getKey())){
+                        for (DataSnapshot i : dataSnapshot.getChildren()) {
+                            if (list_members.contains(i.getKey())) {
                                 list.add(i.getValue(User.class));
                             }
                         }
@@ -103,7 +107,7 @@ public class GroupChatInfo extends AppCompatActivity {
                 GroupChat chat = dataSnapshot.getValue(GroupChat.class);
                 try {
                     Glide.with(GroupChatInfo.this).load(chat.getChat_avatar()).into((ImageView) findViewById(R.id.chat_avatar));
-                } catch (IllegalArgumentException e){
+                } catch (IllegalArgumentException e) {
                     Log.e("GroupChatInfo_106", e.toString());
                 }
                 ((TextView) findViewById(R.id.title)).setText(chat.getTitle());
@@ -130,52 +134,58 @@ public class GroupChatInfo extends AppCompatActivity {
         ((Button) findViewById(R.id.add_member)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(new_member_name.getText().toString().equals("")){
+                if (new_member_name.getText().toString().equals("")) {
                     Toast.makeText(GroupChatInfo.this, "Enter the name", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     final String name = new_member_name.getText().toString();
                     DatabaseReference check_exists = FirebaseDatabase.getInstance().getReference();
                     check_exists.child("Users").child(name).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            try{
+                            try {
                                 User user = dataSnapshot.getValue(User.class);
                                 boolean in_chat = false;
                                 boolean have_permission = false;
                                 String permission = user.getPrivacy_settings().get("add_to_group_chats");
-                                if(permission.equals("everyone")){
+                                if (permission.equals("everyone")) {
                                     have_permission = true;
-                                } else if(permission.equals("friends")){
-                                    String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
-                                    if(user.getFriends().containsKey(login)){
+                                } else if (permission.equals("friends")) {
+                                    String login = FirebaseAuth.getInstance().getCurrentUser().
+                                            getEmail().split("@")[0];
+                                    if (user.getFriends().containsKey(login)) {
                                         have_permission = user.getFriends().get(login).equals("friend");
-                                    }else{
+                                    } else {
                                         have_permission = false;
                                     }
                                 }
-                                for(String s:user.getChats().values()){
-                                    if(s.equals(path)){
+                                for (String s : user.getChats().values()) {
+                                    if (s.equals(path)) {
                                         in_chat = true;
                                     }
                                 }
-                                if((!in_chat) && have_permission){
+                                if ((!in_chat) && have_permission) {
                                     DatabaseReference add_member = FirebaseDatabase.getInstance().getReference();
-                                    add_member.child("GroupChats").child(path).child("members").child(name).setValue(name);
+                                    add_member.child("GroupChats").child(path).child("members")
+                                            .child(name).setValue(name);
                                     DatabaseReference add_chat = FirebaseDatabase.getInstance().getReference();
-                                    add_chat.child("Users").child(name).child("chats").push().setValue(path).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    add_chat.child("Users").child(name).child("chats").push().
+                                            setValue(path).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            Toast.makeText(GroupChatInfo.this, "User added", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(GroupChatInfo.this,
+                                                    "User added", Toast.LENGTH_SHORT).show();
                                             new_member_name.setText("");
                                         }
                                     });
-                                } else if(!have_permission){
-                                    Toast.makeText(GroupChatInfo.this, "You can't add this user", Toast.LENGTH_SHORT).show();
+                                } else if (!have_permission) {
+                                    Toast.makeText(GroupChatInfo.this,
+                                            "You can't add this user", Toast.LENGTH_SHORT).show();
                                     new_member_name.setText("");
                                 }
-                            } catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
-                                Toast.makeText(GroupChatInfo.this, "Please check user's name", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(GroupChatInfo.this,
+                                        "Please check user's name", Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -191,31 +201,37 @@ public class GroupChatInfo extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final AlertDialog.Builder ask = new AlertDialog.Builder(GroupChatInfo.this, R.style.MyAlertDialogStyle);
+                final AlertDialog.Builder ask = new AlertDialog.Builder(GroupChatInfo.this,
+                        R.style.MyAlertDialogStyle);
                 ask.setMessage("Are you sure you want to leave this chat?").setCancelable(false)
                         .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                final String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
-                                final DatabaseReference user_update = FirebaseDatabase.getInstance().getReference();
-                                user_update.child("Users").child(login).child("chats").addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        for(DataSnapshot i:dataSnapshot.getChildren()){
-                                            if(i.getValue().toString().equals(path)){
-                                                final DatabaseReference user_update_2 = FirebaseDatabase.getInstance().getReference();
-                                                user_update_2.child("Users").child(login).child("chats").child(i.getKey()).removeValue();
-                                                finish();
-                                                break;
+                                final String login = FirebaseAuth.getInstance().getCurrentUser().
+                                        getEmail().split("@")[0];
+                                final DatabaseReference user_update = FirebaseDatabase.getInstance().
+                                        getReference();
+                                user_update.child("Users").child(login).child("chats").
+                                        addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                for (DataSnapshot i : dataSnapshot.getChildren()) {
+                                                    if (i.getValue().toString().equals(path)) {
+                                                        final DatabaseReference user_update_2 =
+                                                                FirebaseDatabase.getInstance().getReference();
+                                                        user_update_2.child("Users").child(login).
+                                                                child("chats").child(i.getKey()).removeValue();
+                                                        finish();
+                                                        break;
+                                                    }
+                                                }
                                             }
-                                        }
-                                    }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                    }
-                                });
+                                            }
+                                        });
                                 DatabaseReference update_chat = FirebaseDatabase.getInstance().getReference();
                                 update_chat.child("GroupChats").child(path).child("members").child(login).removeValue();
                             }
@@ -232,22 +248,24 @@ public class GroupChatInfo extends AppCompatActivity {
             }
         });
     }
+
     private void chooseImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), 71);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 71 && resultCode == -1
-                && data != null && data.getData() != null )
-        {
+        if (requestCode == 71 && resultCode == -1
+                && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             Bitmap bitmap;
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), filePath);
+                bitmap = MediaStore.Images.Media.
+                        getBitmap(getApplicationContext().getContentResolver(), filePath);
                 ((ImageView) findViewById(R.id.chat_avatar)).setImageBitmap(bitmap);
                 uploadImage(filePath);
             } catch (IOException e) {
@@ -256,15 +274,15 @@ public class GroupChatInfo extends AppCompatActivity {
 
         }
     }
+
     private void uploadImage(Uri filePath) {
 
-        if(filePath != null)
-        {
+        if (filePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(GroupChatInfo.this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            final StorageReference ref = FirebaseStorage.getInstance().getReference().child("images/"+ UUID.randomUUID().toString());
+            final StorageReference ref = FirebaseStorage.getInstance().getReference().child("images/" + UUID.randomUUID().toString());
             ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -274,7 +292,8 @@ public class GroupChatInfo extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                             String image_link = uri.toString();
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                            reference.child("GroupChats").child(path).child("chat_avatar").setValue(image_link);
+                            reference.child("GroupChats").child(path).child("chat_avatar").
+                                    setValue(image_link);
                         }
                     });
                 }
@@ -283,15 +302,15 @@ public class GroupChatInfo extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(GroupChatInfo.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(GroupChatInfo.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
                         }
                     });
         }

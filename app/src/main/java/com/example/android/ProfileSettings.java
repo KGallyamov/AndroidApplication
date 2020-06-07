@@ -51,25 +51,25 @@ public class ProfileSettings extends AppCompatActivity {
         settings.child("Users").child(login).child("privacy_settings").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot i:dataSnapshot.getChildren()){
-                    if(i.getKey().equals("add_to_group_chats")){
-                        if(i.getValue().toString().equals("friends")){
+                for (DataSnapshot i : dataSnapshot.getChildren()) {
+                    if (i.getKey().equals("add_to_group_chats")) {
+                        if (i.getValue().toString().equals("friends")) {
                             add_to_chats.check(R.id.just_friends_can_add);
-                        }else{
+                        } else {
                             add_to_chats.check(R.id.all_users_can_add);
                         }
-                    }else if(i.getKey().equals("see_my_posts")){
-                        if(i.getValue().toString().equals("friends")){
+                    } else if (i.getKey().equals("see_my_posts")) {
+                        if (i.getValue().toString().equals("friends")) {
                             see_posts.check(R.id.just_friends_see_posts);
-                        }else if(i.getValue().toString().equals("everyone")){
+                        } else if (i.getValue().toString().equals("everyone")) {
                             see_posts.check(R.id.all_users_see_posts);
-                        } else{
+                        } else {
                             see_posts.check(R.id.no_one_see_posts);
                         }
-                    }else if(i.getKey().equals("send_messages")){
-                        if(i.getValue().toString().equals("friends")){
+                    } else if (i.getKey().equals("send_messages")) {
+                        if (i.getValue().toString().equals("friends")) {
                             send_messages.check(R.id.just_friends);
-                        }else{
+                        } else {
                             send_messages.check(R.id.all_users);
                         }
                     }
@@ -81,7 +81,6 @@ public class ProfileSettings extends AppCompatActivity {
 
             }
         });
-
 
 
         back.setOnClickListener(new View.OnClickListener() {
@@ -118,9 +117,10 @@ public class ProfileSettings extends AppCompatActivity {
         });
 
     }
+
     public void onClick(View view) {
         int id = view.getId();
-        switch(id){
+        switch (id) {
             case R.id.all_users_see_posts:
                 send_setting("see_my_posts", "everyone");
                 break;
@@ -145,7 +145,7 @@ public class ProfileSettings extends AppCompatActivity {
         }
     }
 
-    private void send_setting(String where, String data){
+    private void send_setting(String where, String data) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("Users").child(login).child("privacy_settings").child(where).setValue(data);
     }

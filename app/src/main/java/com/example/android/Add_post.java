@@ -57,23 +57,22 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class Add_post extends Fragment implements View.OnClickListener {
 
-    private Button btnChoose, btnUpload, btnRetrieve;
+    private Button btnChoose, btnUpload;
     private ImageView imageView;
     EditText title;
-    EditText description;
-    EditText tags;
-    Button photo, post;
-    Spinner spinner;
+    private EditText description;
+    private EditText tags;
+    private Spinner spinner;
     private Uri filePath;
-    public String txtTitle = "Title", txtDescription = "Description", txtImage = "0-0", role;
-    FirebaseStorage storage;
-    StorageReference storageReference;
-    ArrayAdapter<String> adapter;
-    String heading = "", login;
-    String image_link = "";
-    String[] text_tags;
-    ArrayList<String> tags_db = new ArrayList<>();
-    static List<String> headings = new ArrayList<>();
+    private String txtTitle = "Title", txtDescription = "Description", txtImage = "0-0", role;
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
+    private ArrayAdapter<String> adapter;
+    private String heading = "", login;
+    private String image_link = "";
+    private String[] text_tags;
+    private ArrayList<String> tags_db = new ArrayList<>();
+    private static List<String> headings = new ArrayList<>();
 
     private final int PICK_IMAGE_REQUEST = 71;
 
@@ -102,9 +101,11 @@ public class Add_post extends Fragment implements View.OnClickListener {
         spinner = (Spinner) myView.findViewById(R.id.spinner);
 
         DatabaseReference head = FirebaseDatabase.getInstance().getReference().child("Headings");
+        // админ может отправлять посты с пометкой "системное сообщение"
         if (role.equals("admin")) {
             headings.add("System message");
         }
+        // возможные пометки к постам хранятся в БД
         head.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -147,8 +148,6 @@ public class Add_post extends Fragment implements View.OnClickListener {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 text_tags = s.toString().split(" ");
-
-
             }
 
             @Override
@@ -188,8 +187,9 @@ public class Add_post extends Fragment implements View.OnClickListener {
 
             }
         });
-
+        // выбор картинки к посту
         btnChoose.setOnClickListener(this);
+        // отправка самого поста
         btnUpload.setOnClickListener(this);
         return myView;
 
@@ -216,6 +216,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
 
     private void uploadPost(String image) {
         image_link = image;
+        // для отправки поста нужно делать запрос к серверу(для получения времени)
         new AsyncRequest().execute();
 
     }
@@ -224,6 +225,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == -1
                 && data != null && data.getData() != null) {
             filePath = data.getData();
@@ -231,8 +233,8 @@ public class Add_post extends Fragment implements View.OnClickListener {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
                 imageView.setImageBitmap(bitmap);
 
+                // создание дополнительного тега к изображению
                 FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
-
                 FirebaseVisionOnDeviceImageLabelerOptions options =
                         new FirebaseVisionOnDeviceImageLabelerOptions.Builder()
                                 .setConfidenceThreshold(0.8f)
@@ -257,7 +259,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.d("LOOK_HERE", e.getMessage());
+                                Log.d("Add_Post_262", e.getMessage());
                             }
                         });
             } catch (Exception e) {
@@ -273,7 +275,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-
+            // загрузка в хранилище
             final StorageReference ref = storageReference.child("images/" + UUID.randomUUID().toString());
             ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -283,6 +285,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                             String image = uri.toString();
+                            // сразу после загрузки изобажения отправляется пост
                             uploadPost(image);
                         }
                     });
@@ -372,7 +375,11 @@ public class Add_post extends Fragment implements View.OnClickListener {
                 time_for_database = dateformat.format(c.getTime());
             }
             for (String i : text_tags) {
-                tags_db.add(i);
+                if (!(i.charAt(0) == '#')) {
+                    tags_db.add("#" + i);
+                } else {
+                    tags_db.add(i);
+                }
             }
 
             tags_db.add("#" + role);
@@ -383,6 +390,7 @@ public class Add_post extends Fragment implements View.OnClickListener {
             tags_db.add("#" + tag);
             HashMap<String, String> rating = new HashMap<>();
             HashMap<String, Comment> comments = new HashMap<>();
+            // изначально нет никаких оценок и комментариев
             rating.put("zero", "nothing");
             HashMap<String, String> likes = new HashMap<>();
             likes.put("zero", "nothing");
@@ -391,9 +399,9 @@ public class Add_post extends Fragment implements View.OnClickListener {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
             String wh = "Moderate";
 
+            // админ добавляет посты, минуя модераторов
             if (role.equals("admin")) {
                 wh = "Data";
-
             }
 
             databaseReference.child(wh).push().setValue(data, new DatabaseReference.CompletionListener() {
@@ -403,13 +411,13 @@ public class Add_post extends Fragment implements View.OnClickListener {
                         DatabaseReference posts_num_update = FirebaseDatabase.getInstance().getReference();
                         posts_num_update.child("Users").child(login).child("posts").push().setValue(databaseReference.getKey());
                     }
+                    // все поля для ввода обнуляются
                     title.setText("");
                     description.setText("");
                     imageView.setImageResource(android.R.color.transparent);
                     tags.setText("");
                 }
             });
-
 
         }
     }

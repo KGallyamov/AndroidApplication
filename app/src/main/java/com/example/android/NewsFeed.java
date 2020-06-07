@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class NewsFeed extends Fragment {
+    // фрагмент новостной ленты
     private MyAdapter adapter;
     private RecyclerView recyclerView;
     private TextView title, menu;
@@ -62,6 +63,7 @@ public class NewsFeed extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // получение данных
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -129,7 +131,8 @@ public class NewsFeed extends Fragment {
         title = (TextView) getActivity().findViewById(R.id.title);
         menu = (TextView) getActivity().findViewById(R.id.options);
         btn_search = (Button) getActivity().findViewById(R.id.search);
-
+        // меню, переключающееся между общей лентой, сохраненными постами,
+        // и, если пользователь является модератором или админом, лентой модераторов
         menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,6 +147,7 @@ public class NewsFeed extends Fragment {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
+                            // основная лента
                             case R.id.mnu_main:
                                 title.setVisibility(View.VISIBLE);
                                 watch.setVisibility(View.GONE);
@@ -185,12 +189,12 @@ public class NewsFeed extends Fragment {
                                 });
                                 Toast.makeText(getContext(), "Main", Toast.LENGTH_SHORT).show();
                                 break;
-
+                            // поиск по тегам или рубрикам
                             case R.id.mnu_search:
                                 search();
                                 Toast.makeText(getContext(), "Search", Toast.LENGTH_SHORT).show();
                                 break;
-
+                            // лента модераторов
                             case R.id.mnu_moderate:
                                 title.setVisibility(View.VISIBLE);
                                 watch.setVisibility(View.GONE);
@@ -239,6 +243,7 @@ public class NewsFeed extends Fragment {
                                 });
                                 Toast.makeText(getContext(), "Moderator", Toast.LENGTH_SHORT).show();
                                 break;
+                            // сохраненные посты
                             case R.id.favorite:
                                 DatabaseReference fav = FirebaseDatabase.getInstance().getReference().child("Favorite"+login);
                                 fav.addValueEventListener(new ValueEventListener() {
@@ -324,6 +329,8 @@ public class NewsFeed extends Fragment {
                         for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
                         {
                             RecyclerItem p = dataSnapshot1.getValue(RecyclerItem.class);
+                            // если в посте из ленты есть указанный тег или пост из той же рубрики,
+                            // добавить в ленту
                             if(p.getHeading().equals(tag) || p.getTags().contains(tag)) {
                                 listItems.add(p);
                                 pt.add(dataSnapshot1.getKey());

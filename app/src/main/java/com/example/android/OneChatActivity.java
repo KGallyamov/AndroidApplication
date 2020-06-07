@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class OneChatActivity extends AppCompatActivity {
+    // активити диалога
     ListView messages;
     TextView another_user;
     TextView exit;
@@ -84,6 +85,7 @@ public class OneChatActivity extends AppCompatActivity {
         another_user.setText(another_user_name);
         arr = new String[]{login, another_user_name};
         Arrays.sort(arr);
+        // пользователь зашел в чат и прочитал отправленные другим пользователем сообщения
         final DatabaseReference update_read = FirebaseDatabase.getInstance().getReference().child("Messages");
         update_read.child(arr[0] + "_" + arr[1]).addValueEventListener(new ValueEventListener() {
             @Override
@@ -91,8 +93,10 @@ public class OneChatActivity extends AppCompatActivity {
                 for(DataSnapshot ds:dataSnapshot.getChildren()){
                     Message message = ds.getValue(Message.class);
                     if(!message.isRead() && !login.equals(message.getAuthor())){
-                        DatabaseReference update_read_2 = FirebaseDatabase.getInstance().getReference().child("Messages");
-                        update_read_2.child(arr[0] + "_" + arr[1]).child(ds.getKey()).child("read").setValue(true);
+                        DatabaseReference update_read_2 = FirebaseDatabase.getInstance().
+                                getReference().child("Messages");
+                        update_read_2.child(arr[0] + "_" + arr[1]).child(ds.getKey()).
+                                child("read").setValue(true);
                     }
                 }
                 update_read.removeEventListener(new ValueEventListener() {
@@ -113,6 +117,7 @@ public class OneChatActivity extends AppCompatActivity {
 
             }
         });
+        // пользователь передумал отвечать на сообщение
         cancel_reply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,12 +129,14 @@ public class OneChatActivity extends AppCompatActivity {
                 reply = "no_reply";
             }
         });
+        // отправить картинку
         attach_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 chooseImage();
             }
         });
+        // генерация быстрого ответа
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Messages");
         reference.child(arr[0] + "_" + arr[1]).addValueEventListener(new ValueEventListener() {
             @Override
@@ -246,6 +253,7 @@ public class OneChatActivity extends AppCompatActivity {
                 }
             }
         });
+        // отправка сообщения
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -254,6 +262,7 @@ public class OneChatActivity extends AppCompatActivity {
                 }
             }
         });
+        // откроет страницу другого пользователя
         another_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -262,6 +271,7 @@ public class OneChatActivity extends AppCompatActivity {
                 startActivity(user_page);
             }
         });
+        // выйти из чата
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

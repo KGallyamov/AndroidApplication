@@ -3,6 +3,7 @@ package com.example.android;
 import java.util.HashMap;
 
 public class GroupChat {
+    // класс беседы
     private String chat_avatar;
     private HashMap<String, String> members;
     private HashMap<String, Message> messages;

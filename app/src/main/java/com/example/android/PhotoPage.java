@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoViewAttacher;
 
 public class PhotoPage extends AppCompatActivity {
+    // окно фотографии(картинку можно увеличить или уменьшить)
     PhotoViewAttacher attacher;
 
     @Override

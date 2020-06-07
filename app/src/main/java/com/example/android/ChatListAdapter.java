@@ -2,7 +2,6 @@ package com.example.android;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +27,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class ChatListAdapter extends ArrayAdapter<String> {
-    HashMap<String, Integer> unread;
-    String[] dialogs;
+    // адаптер списка диалогов
+    private HashMap<String, Integer> unread;
+    private String[] dialogs;
 
     ChatListAdapter(@NonNull Context context, int resource, String[] arr, HashMap<String, Integer> unread) {
         super(context, resource, arr);
@@ -69,6 +69,7 @@ public class ChatListAdapter extends ArrayAdapter<String> {
 
             }
         });
+        // показывается последнее отправленное сообщение
         DatabaseReference get_last = FirebaseDatabase.getInstance().getReference();
         final View finalConvertView1 = convertView;
         get_last.child("Messages").child(arr[0] + "_" + arr[1]).addValueEventListener(new ValueEventListener() {
@@ -105,6 +106,7 @@ public class ChatListAdapter extends ArrayAdapter<String> {
 
             }
         });
+        // открыть окно диалога
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

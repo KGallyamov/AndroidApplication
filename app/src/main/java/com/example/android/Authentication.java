@@ -85,7 +85,7 @@ public class Authentication extends AppCompatActivity {
 
             }
         });
-
+        // войти с существующими логином/паролем
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +107,7 @@ public class Authentication extends AppCompatActivity {
             }
         });
 
-
+        // или создать новый аккаунг
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

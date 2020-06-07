@@ -32,6 +32,7 @@ public class splash extends AppCompatActivity {
 
         try {
             FirebaseUser currentUser = mAuth.getCurrentUser();
+            // аутентификация
             updateUI(currentUser);
         }catch (NullPointerException e){
             startActivity(new Intent(this, Authentication.class));

@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class FriendsListAdapter extends ArrayAdapter<String> {
+    // адаптер списка друзей
     private Context context;
     private String state;
 
@@ -35,9 +36,11 @@ public class FriendsListAdapter extends ArrayAdapter<String> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final String username = getItem(position);
         if(convertView == null){
+            // нужно показать список друзей
             if(state.equals("friends")) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.friends_list_item, null);
-            } else{
+            } // нужно опказать список запросов в друзья
+            else{
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.friend_request_list_item, null);
                 TextView accept = (TextView) convertView.findViewById(R.id.accept);
                 TextView cancel = (TextView) convertView.findViewById(R.id.cancel);
@@ -63,6 +66,7 @@ public class FriendsListAdapter extends ArrayAdapter<String> {
         }
         TextView name = (TextView) convertView.findViewById(R.id.username);
         name.setText(username);
+        // в списке друзей отобажаются аватарки
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
         final View finalConvertView = convertView;
         reference.child(username).child("avatar").addValueEventListener(new ValueEventListener() {
