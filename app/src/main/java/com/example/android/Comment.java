@@ -3,6 +3,7 @@ package com.example.android;
 import java.util.HashMap;
 
 public class Comment {
+    // класс комментария к посту
     private String author, text, time;
     private String reply;
     private HashMap<String, String> likes;

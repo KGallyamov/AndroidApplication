@@ -59,6 +59,7 @@ public class AnotherUserPage extends AppCompatActivity {
 
         author_login = intent.getStringExtra("author");
         login.setText(author_login);
+        // считывание данных пользователя
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("Users").child(author_login).addValueEventListener(new ValueEventListener() {
             @Override
@@ -133,6 +134,7 @@ public class AnotherUserPage extends AppCompatActivity {
                     }
                 }
                 String current_user_login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
+                // данные показываются в зависимости от настроек приватности
                 if(user.getPrivacy_settings().get("see_my_posts").equals("everyone")) {
                     fill(user_links);
                 }else if(user.getPrivacy_settings().get("see_my_posts").equals("friends") &&
@@ -228,6 +230,7 @@ public class AnotherUserPage extends AppCompatActivity {
 
             }
         });
+        // отправка сообщения пользователю
         write_message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -295,6 +298,7 @@ public class AnotherUserPage extends AppCompatActivity {
                 dialogBuilder.show();
             }
         });
+        // закрыть окно
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -302,7 +306,7 @@ public class AnotherUserPage extends AppCompatActivity {
             }
         });
     }
-
+    // заполнить ленту постами, отправленными выбранным пользователем
     private void fill(final ArrayList<String> links) {
         DatabaseReference data = FirebaseDatabase.getInstance().getReference().child("Data");
         data.addValueEventListener(new ValueEventListener() {

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class CommentAdapter extends ArrayAdapter<Comment> {
+    // адаптер списка комментариев
     TextView author;
     String where, pos_path;
     ArrayList<String> comment_paths;
@@ -46,6 +47,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.comment_item, null);
 
         }
+        // в комментарии отображается аватарка пользователя
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(db.getAuthor());
         final View finalConvertView = convertView;
         reference.child("avatar").addValueEventListener(new ValueEventListener() {
@@ -61,6 +63,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 
             }
         });
+        // комментарии можно лайкать и дизлайкать
         DatabaseReference likes = FirebaseDatabase.getInstance().getReference();
         likes.child(where).child(pos_path).child("comments").child(comment_paths.get(position)).
                 child("likes").addValueEventListener(new ValueEventListener() {
@@ -113,6 +116,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 
             }
         });
+        // пользователь еще не оценил комментарий
         ((TextView) finalConvertView.findViewById(R.id.up)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

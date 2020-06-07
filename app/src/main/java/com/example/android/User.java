@@ -3,6 +3,7 @@ package com.example.android;
 import java.util.HashMap;
 
 public class User {
+    // класс пользователя
     private String password;
     private String role;
     private String avatar;

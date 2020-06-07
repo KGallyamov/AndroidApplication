@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class SendMessageWithImage extends AppCompatActivity {
+    // отпрвака сообщения с картинкой
     public EditText message;
     public ImageView image;
     public Button send;

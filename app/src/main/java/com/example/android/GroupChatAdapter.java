@@ -325,24 +325,34 @@ public class GroupChatAdapter extends ArrayAdapter<Message> {
                     public void onClick(View v) {
                         alertDialog.dismiss();
                         if(message.getAuthor().equals(login)) {
-                            final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(), R.style.MyAlertDialogStyle);
+                            final AlertDialog.Builder ask = new AlertDialog.Builder(getContext(),
+                                    R.style.MyAlertDialogStyle);
                             ask.setMessage("Are you sure you want to delete this message?").setCancelable(false)
                                     .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(final DialogInterface dialog, int which) {
-                                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                                            reference.child("GroupChats").child(path).child("messages").
-                                                    child(message_path.get(position)).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    dialog.dismiss();
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(getContext(), "Please check your connection", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
+                                            // пользователь удаляет закрепленное сообщение
+                                            if(message_path.get(position).equals(pinned_message_link)){
+                                                Toast.makeText(getContext(), "unpin the message first",
+                                                        Toast.LENGTH_SHORT).show();
+                                                alertDialog.dismiss();
+                                            }else {
+                                                DatabaseReference reference = FirebaseDatabase.getInstance().
+                                                        getReference();
+                                                reference.child("GroupChats").child(path).child("messages").
+                                                        child(message_path.get(position)).removeValue().
+                                                        addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(getContext(), "Please check your connection", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
 
 
                                         }

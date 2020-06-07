@@ -1,6 +1,7 @@
 package com.example.android;
 
 public class Message {
+    // класс сообщения
     private String text;
     private String author;
     private String time;

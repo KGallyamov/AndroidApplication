@@ -6,14 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,22 +18,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
+    // адаптер новостной ленты
     public List<RecyclerItem> listItems;
     private Context mContext;
     public String where = "";
@@ -48,7 +42,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
 
-    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role, ArrayList<String> paths, String login, float current_user_rating) {
+    public MyAdapter(List<RecyclerItem> listItems, Context mContext, String s, String role,
+                     ArrayList<String> paths, String login, float current_user_rating) {
         this.listItems = listItems;
         this.mContext = mContext;
         this.where = s;
@@ -69,10 +64,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final RecyclerItem itemList = listItems.get(position);
-        float middle = 0;
+        // открыть окно поста
         holder.click(position);
         holder.txtTitle.setText(itemList.getTitle());
         String s;
+        // в TextView описания показываются только до 117 символов от самого описания
         try{
             if ((mContext.getResources().getConfiguration().screenLayout &
                     Configuration.SCREENLAYOUT_SIZE_MASK) ==
@@ -152,7 +148,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         }
 
 
-
+        // откроет страницу автора поста
         holder.author.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,6 +165,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                 mContext.startActivity(intent);
             }
         });
+
         DatabaseReference likes = FirebaseDatabase.getInstance().getReference();
         likes.child(where).child(paths.get(position)).child("rating").addValueEventListener(new ValueEventListener() {
             @Override
@@ -180,6 +177,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
                     }
                     if(i.getKey().equals(login)){
                         final float author_rating = mContext.getSharedPreferences("Author_rating", MODE_PRIVATE).getFloat("rating", 0);
+                        // оценивание поста (уже есть оенка от данного пользователя)
                         if(i.getValue().toString().equals("up")){
                             holder.upvote.setBackground(mContext.getResources().getDrawable(R.drawable.ic_thumb_up_activated_24dp));
                             holder.downvote.setOnClickListener(new View.OnClickListener() {
@@ -220,7 +218,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
             }
         });
-
+        // оценивание поста
         holder.upvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -263,7 +261,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
             }
         });
-
+        // если пользователь просматривает сохраненные посты
         if(where.equals("Favorite")){
             holder.txtSave.setBackground(mContext.getDrawable(R.drawable.ic_star_black_24dp));
             holder.txtSave.setOnClickListener(new View.OnClickListener() {
@@ -374,6 +372,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         public void click(final int position) {
             final int pos = position;
+            // откроет окно поста
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override

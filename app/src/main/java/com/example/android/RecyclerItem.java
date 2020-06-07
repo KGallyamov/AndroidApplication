@@ -25,6 +25,7 @@ public class RecyclerItem {
     }
 
 
+
     public RecyclerItem(String title, String description, String image, String heading,
                         ArrayList<String> tags, HashMap<String, String> rating, HashMap<String,
                         Comment> comments, String author, String time) {

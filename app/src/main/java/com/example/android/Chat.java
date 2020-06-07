@@ -44,26 +44,26 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Chat extends Fragment {
-    ListView chats;
+    // фрагмент, содержащий чаты и беседы пользователя
+    private ListView chats;
     String login = FirebaseAuth.getInstance().getCurrentUser().getEmail().split("@")[0];
-    View dialogView;
-    ImageButton start_conv;
-    RecyclerView group_chats;
+    private View dialogView;
+    private ImageButton start_conv;
+    private RecyclerView group_chats;
     Context context = getContext();
-    AlertDialog dialogBuilder = null;
-    Uri filePath = null;
+    private AlertDialog dialogBuilder = null;
+    private Uri filePath = null;
 
     public Chat() {
     }
 
-    String image_link;
-    LayoutInflater inf;
+    private String image_link;
+    private LayoutInflater inf;
 
     Chat(String login) {
         this.login = login;
@@ -77,6 +77,7 @@ public class Chat extends Fragment {
         inf = inflater;
         group_chats = (RecyclerView) myView.findViewById(R.id.group_chats);
         DatabaseReference user_chats = FirebaseDatabase.getInstance().getReference();
+        // список беседы, в которых состоит пользователь, хранятся в его классе
         user_chats.child("Users").child(login).child("chats").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -98,6 +99,7 @@ public class Chat extends Fragment {
         });
 
         start_conv = (ImageButton) myView.findViewById(R.id.start_converstaion);
+        // личные сообщения пользователя сортируются по времени последнего сообщения
         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("Messages").addValueEventListener(new ValueEventListener() {
             @Override
@@ -130,6 +132,7 @@ public class Chat extends Fragment {
 
             }
         });
+        // начать диалог или создать чат
         start_conv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,6 +218,7 @@ public class Chat extends Fragment {
                         n_hour = Integer.parseInt(n_hms.substring(0, 2)),
                         n_minute = Integer.parseInt(n_hms.substring(3, 5)),
                         n_second = Integer.parseInt(n_hms.substring(6));
+                // отправили не в этом году
                 if (year < n_year) {
                     again = true;
                     String k = times[i];
@@ -224,6 +228,7 @@ public class Chat extends Fragment {
                     names[i] = names[i + 1];
                     names[i + 1] = k;
                 } else if (year == n_year) {
+                    // в этом году, но не в этом месяце
                     if (month < n_month) {
                         again = true;
                         String k = times[i];
@@ -233,6 +238,7 @@ public class Chat extends Fragment {
                         names[i] = names[i + 1];
                         names[i + 1] = k;
                     } else if (month == n_month) {
+                        // в этом году и месяце, но не сегодня
                         if (day < n_day) {
                             again = true;
                             String k = times[i];
@@ -242,6 +248,7 @@ public class Chat extends Fragment {
                             names[i] = names[i + 1];
                             names[i + 1] = k;
                         } else if (n_day == day) {
+                            // сегодня, но больше чем часом раньше
                             if (hour < n_hour) {
                                 again = true;
                                 String k = times[i];
@@ -251,6 +258,7 @@ public class Chat extends Fragment {
                                 names[i] = names[i + 1];
                                 names[i + 1] = k;
                             } else if (hour == n_hour) {
+                                // несколькими минутами ранее
                                 if (minute < n_minute) {
                                     again = true;
                                     String k = times[i];
@@ -260,6 +268,7 @@ public class Chat extends Fragment {
                                     names[i] = names[i + 1];
                                     names[i + 1] = k;
                                 } else if (minute == n_minute) {
+                                    // только что
                                     if (second < n_second) {
                                         again = true;
                                         String k = times[i];
@@ -276,6 +285,7 @@ public class Chat extends Fragment {
                 }
             }
         }
+        // непрочитанные сообщения
         for (String i : messages.keySet()) {
             for (Message j : messages.get(i).values()) {
                 if (!j.getAuthor().equals(login)) {
@@ -294,6 +304,7 @@ public class Chat extends Fragment {
                 unread.put(i, 0);
             }
         }
+        // пользователь не начал чатов
         if (names.length == 0) {
             TextView heading = getActivity().findViewById(R.id.heading);
             heading.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -304,9 +315,8 @@ public class Chat extends Fragment {
             chats.setAdapter(adapter);
         }
     }
-
+    // написать в личные сообщения
     public void startDialog() {
-        //TOO: только если есть допуск
         final AlertDialog dialogBuilder = new AlertDialog.Builder(getContext()).create();
         View dialogView = inf.inflate(R.layout.start_dialog, null);
 
@@ -369,9 +379,8 @@ public class Chat extends Fragment {
         dialogBuilder.setView(dialogView);
         dialogBuilder.show();
     }
-
+    // создать чат
     public void startChat() {
-        //TDO: только если есть допуск
         dialogBuilder = new AlertDialog.Builder(getContext()).create();
         dialogView = inf.inflate(R.layout.start_group_chat, null);
 
@@ -503,13 +512,14 @@ public class Chat extends Fragment {
     }
 
     private void updateUsers(String[] receviers, String key) {
-        Log.d("Look", key);
+        Log.d("Chat_515", key);
+        // нужно добавить ссылку на чат в список чатов у каждого пользователя
         for (String recevier : receviers) {
             DatabaseReference update = FirebaseDatabase.getInstance().getReference();
             update.child("Users").child(recevier).child("chats").push().setValue(key);
         }
     }
-
+    // адаптер списка бесед
     public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.ViewHolder> {
         ArrayList<String> chats;
 

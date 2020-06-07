@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class NewAccount extends AppCompatActivity {
+    // созадние нового аккаунта
     DatabaseReference databaseReference, check;
     EditText login, password;
     Button confirm;
@@ -71,6 +72,7 @@ public class NewAccount extends AppCompatActivity {
                         }
                         try {
                             String mail = text_login.split("@")[1];
+                            // Firebase Authentication принимает только gmail-адреса
                             if (!already_exists && !(text_login.length() == 0) && !(text_password.length() < 8) && mail.equals("gmail.com")) {
                                 already_exists = true;
                                 auth = FirebaseAuth.getInstance();

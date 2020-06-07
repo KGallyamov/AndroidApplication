@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    // активити с основными фрагментами
     ImageButton btn_add, btn_main, btn_profile, btn_message;
     NewsFeed nf;
     Add_post add;
@@ -41,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         text_login = intent.getStringExtra("Login");
         DatabaseReference online = FirebaseDatabase.getInstance().getReference();
+        // пользователь зашел в приложение
         online.child("Users").child(text_login).child("lastSeen").setValue("online");
+        // импорт данных с БД
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(text_login);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
